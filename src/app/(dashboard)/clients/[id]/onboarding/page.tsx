@@ -46,7 +46,7 @@ export default async function ClientOnboardingPage({ params }: { params: Promise
   const { tasks, status } = statusResult;
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto w-full pb-10">
+    <div className="space-y-6 w-full pb-10">
       {/* 서브 헤더 (고객사명 표시) */}
       <div className="flex items-center justify-between bg-white px-5 py-4 rounded-2xl border border-slate-100 shadow-sm mb-4">
         <div className="flex items-center gap-3">
@@ -54,8 +54,11 @@ export default async function ClientOnboardingPage({ params }: { params: Promise
             <Package className="w-5 h-5 text-[#ff5c39]" />
           </div>
           <div className="flex flex-col">
-            <span className="text-sm font-black text-slate-800 leading-tight">{client.company_name}</span>
-            <span className="text-[11px] font-bold text-slate-400">현재 상태: {client.progress_status}</span>
+            <span className="text-2xl font-black text-slate-800 leading-tight mb-1">{client.company_name}</span>
+            <p className="text-sm font-medium text-slate-400">
+              최종 운영 전환을 위해 모든 항목을 확인해 주세요. 모든 항목이 완료되면 자동으로 <span className="text-[#58bf6f] font-bold">'운영중'</span> 상태로 전환됩니다.
+            </p>
+            <span className="text-[11px] font-bold text-slate-400 mt-1">현재 상태: {client.progress_status}</span>
           </div>
         </div>
         <TransitionLink href={`/clients/${id}`}>
@@ -67,11 +70,6 @@ export default async function ClientOnboardingPage({ params }: { params: Promise
       </div>
 
       <div className="px-1">
-        <h2 className="text-xl font-black text-slate-800 mb-1 tracking-tight">운영 준비 체크리스트</h2>
-        <p className="text-sm font-medium text-slate-400 mb-6">
-          최종 운영 전환을 위해 모든 항목을 확인해 주세요. 모든 항목이 완료되면 자동으로 <span className="text-[#58bf6f] font-bold">'운영중'</span> 상태로 전환됩니다.
-        </p>
-        
         <ChecklistView 
           clientId={id} 
           tasks={tasks || []} 

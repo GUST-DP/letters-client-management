@@ -214,7 +214,7 @@ export function DashboardShell({ children, userEmail }: DashboardShellProps) {
                 {pathname === "/" && "Dashboard"}
                 {pathname === "/clients" && "고객사 계약관리"}
                 {pathname === "/client-detail" && "고객사 세부정보"}
-                {pathname.includes("/onboarding") && "온보딩 체크리스트"}
+                {pathname.includes("/onboarding") && "운영준비 체크리스트"}
                 {pathname.startsWith("/clients/") && !pathname.includes("/onboarding") && "고객사 세부정보"}
                 {pathname === "/client-issues" && "고객사 이슈관리"}
                 {pathname === "/issues" && "서비스 이슈관리"}

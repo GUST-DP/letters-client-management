@@ -167,7 +167,7 @@ export function ChecklistView({ clientId, tasks, initialStatus }: ChecklistViewP
   };
 
   return (
-    <div className="space-y-10 pb-32 max-w-7xl mx-auto">
+    <div className="space-y-3 pb-32 w-full">
       {/* 진행도 섹션 */}
       <div className="bg-white rounded-xl p-6 border shadow-sm flex items-center justify-between gap-8">
         <div className="flex-1">

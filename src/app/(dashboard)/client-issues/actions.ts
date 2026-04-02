@@ -68,7 +68,7 @@ export async function createClientOperationIssue(formData: FormData) {
       .single();
 
     const now = new Date();
-    const timestamp = `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+    const timestamp = `${now.getFullYear()}.${now.getMonth()+1}.${now.getDate()} ${now.getHours()}:${now.getMinutes()}`;
 
     await sendTeamsMessage({
       title: `🏢 [고객사 이슈] 새로운 이슈가 등록되었습니다.`,
@@ -148,7 +148,7 @@ export async function updateClientOperationIssue(formData: FormData) {
       .single();
 
     const now = new Date();
-    const timestamp = `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+    const timestamp = `${now.getFullYear()}.${now.getMonth()+1}.${now.getDate()} ${now.getHours()}:${now.getMinutes()}`;
 
     await sendTeamsMessage({
       title: `✅ [고객사 이슈] 조치사항이 등록되었습니다.`,

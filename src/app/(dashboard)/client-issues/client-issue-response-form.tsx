@@ -35,19 +35,18 @@ interface ClientIssueResponseFormProps {
   userName: string;
 }
 
-const STATUS_OPTIONS = ["접수완료", "처리중", "처리완료"];
+const STATUS_OPTIONS = ["이슈등록", "조치등록"];
 
 const STATUS_COLORS: Record<string, string> = {
-  "접수완료": "bg-rose-50 text-rose-600 border-rose-200",
-  "처리중": "bg-amber-50 text-amber-600 border-amber-200",
-  "처리완료": "bg-emerald-50 text-emerald-600 border-emerald-200",
+  "이슈등록": "bg-rose-50 text-rose-600 border-rose-200",
+  "조치등록": "bg-emerald-50 text-emerald-600 border-emerald-200",
 };
 
 export function ClientIssueResponseForm({ selectedIssue, userEmail, userName }: ClientIssueResponseFormProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [actionTaken, setActionTaken] = useState("");
   const [preventiveMeasure, setPreventiveMeasure] = useState("");
-  const [status, setStatus] = useState("접수완료");
+  const [status, setStatus] = useState("이슈등록");
   const [file, setFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
@@ -56,13 +55,13 @@ export function ClientIssueResponseForm({ selectedIssue, userEmail, userName }: 
     if (selectedIssue) {
       setActionTaken(selectedIssue.action_taken || "");
       setPreventiveMeasure(selectedIssue.preventive_measure || "");
-      setStatus(selectedIssue.status || "접수완료");
+      setStatus(selectedIssue.status || "이슈등록");
       setFile(null);
       setIsEditing(false);
     } else {
       setActionTaken("");
       setPreventiveMeasure("");
-      setStatus("접수완료");
+      setStatus("이슈등록");
       setFile(null);
       setIsEditing(false);
     }
@@ -271,7 +270,7 @@ export function ClientIssueResponseForm({ selectedIssue, userEmail, userName }: 
                 <td className="px-6 py-6 border-r border-slate-200 text-center w-32">
                   {selectedIssue && (
                     <Badge variant="outline" className={cn("font-bold text-[11px] whitespace-nowrap", STATUS_COLORS[selectedIssue.status] || "")}>
-                      {selectedIssue.status || "접수완료"}
+                      {selectedIssue.status || "이슈등록"}
                     </Badge>
                   )}
                 </td>

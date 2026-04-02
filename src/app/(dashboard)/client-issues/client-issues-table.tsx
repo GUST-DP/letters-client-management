@@ -58,7 +58,7 @@ const ISSUE_CATEGORIES = [
   "불용재고회수지연", "입고누락", "입고팔렛트기준미준수", "기타",
 ];
 
-const STATUS_OPTIONS = ["접수완료", "처리중", "처리완료"];
+const STATUS_OPTIONS = ["이슈등록", "조치등록"];
 
 const CATEGORY_COLORS: Record<string, string> = {
   "입고지연": "bg-amber-50 text-amber-600 border-amber-200",
@@ -72,9 +72,8 @@ const CATEGORY_COLORS: Record<string, string> = {
 };
 
 const STATUS_COLORS: Record<string, string> = {
-  "접수완료": "bg-rose-50 text-rose-600 border-rose-200",
-  "처리중": "bg-amber-50 text-amber-600 border-amber-200",
-  "처리완료": "bg-emerald-50 text-emerald-600 border-emerald-200",
+  "이슈등록": "bg-rose-50 text-rose-600 border-rose-200",
+  "조치등록": "bg-emerald-50 text-emerald-600 border-emerald-200",
 };
 
 interface ClientIssueTableProps {
@@ -339,7 +338,7 @@ export function ClientIssueTable({
                       <td className="py-2.5 px-4 border-r border-slate-100 text-center text-slate-600 font-bold whitespace-nowrap">{item.responsible_party || "-"}</td>
                       <td className="py-2.5 px-4 border-r border-slate-100 text-center">
                         <Badge variant="outline" className={cn("font-bold text-[11px] whitespace-nowrap", STATUS_COLORS[item.status] || "")}>
-                          {item.status || "접수완료"}
+                          {item.status || "이슈등록"}
                         </Badge>
                       </td>
                       <td className="py-2.5 px-4 text-center text-slate-500 whitespace-nowrap font-medium">{item.author_name || "-"}</td>

@@ -323,7 +323,7 @@ export function ClientIssueDetailModal({
                 </div>
              </div>
              <div className="text-[11px] font-bold bg-slate-50 px-3 py-1.5 rounded-full border border-slate-100 uppercase tracking-tighter">
-                STATUS: {issue.status || "접수완료"}
+                STATUS: {issue.status || "이슈등록"}
              </div>
           </div>
         </div>

@@ -59,36 +59,34 @@ export async function createClientOperationIssue(formData: FormData) {
 
   if (error) return { error: error.message };
 
-  // 팀즈 알림 전송 (비동기)
-  (async () => {
-    try {
-      const { data: clientData } = await supabase
-        .from('clients')
-        .select('company_name')
-        .eq('id', client_id)
-        .single();
+  // 팀즈 알림 전송 (Vercel 서버리스 환경을 위해 await 명시)
+  try {
+    const { data: clientData } = await supabase
+      .from('clients')
+      .select('company_name')
+      .eq('id', client_id)
+      .single();
 
-      const now = new Date();
-      const timestamp = `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+    const now = new Date();
+    const timestamp = `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2, '0')}`;
 
-      await sendTeamsMessage({
-        title: `🏢 [고객사 이슈] 새로운 이슈가 등록되었습니다.`,
-        subtitle: `${timestamp} | 등록자: ${author_name}`,
-        buttonUrl: "https://letters-client-management.vercel.app/client-issues",
-        buttonLabel: "📋 고객사 이슈관리 바로가기",
-        buttons: file_url ? [{ label: "📎 첨부파일 보기", url: file_url }] : [],
-        sections: [
-          { "name": "고객사", "value": clientData?.company_name || "알수없음" },
-          { "name": "이슈유형", "value": issue_category },
-          { "name": "책임주체", "value": responsible_party || "-" },
-          { "name": "건명", "value": title || "-" },
-        ],
-        lastSection: { "name": "이슈내용 상세", "value": issue_content },
-      });
-    } catch (err) {
-      console.error("팀즈 알림 실패 (고객사 이슈 등록):", err);
-    }
-  })();
+    await sendTeamsMessage({
+      title: `🏢 [고객사 이슈] 새로운 이슈가 등록되었습니다.`,
+      subtitle: `${timestamp} | 등록자: ${author_name}`,
+      buttonUrl: "https://letters-client-management.vercel.app/client-issues",
+      buttonLabel: "📋 고객사 이슈관리 바로가기",
+      buttons: file_url ? [{ label: "📎 첨부파일 보기", url: file_url }] : [],
+      sections: [
+        { "name": "고객사", "value": clientData?.company_name || "알수없음" },
+        { "name": "이슈유형", "value": issue_category },
+        { "name": "책임주체", "value": responsible_party || "-" },
+        { "name": "건명", "value": title || "-" },
+      ],
+      lastSection: { "name": "이슈내용 상세", "value": issue_content },
+    });
+  } catch (err) {
+    console.error("팀즈 알림 실패 (고객사 이슈 등록):", err);
+  }
 
   revalidatePath("/client-issues");
   return { success: true };
@@ -141,38 +139,36 @@ export async function updateClientOperationIssue(formData: FormData) {
 
   if (error) return { error: error.message };
 
-  // 팀즈 알림 전송 (비동기)
-  (async () => {
-    try {
-      const { data: issueData } = await supabase
-        .from('client_operation_issues')
-        .select('*, clients(company_name)')
-        .eq('id', id)
-        .single();
+  // 팀즈 알림 전송 (Vercel 서버리스 환경을 위해 await 명시)
+  try {
+    const { data: issueData } = await supabase
+      .from('client_operation_issues')
+      .select('*, clients(company_name)')
+      .eq('id', id)
+      .single();
 
-      const now = new Date();
-      const timestamp = `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+    const now = new Date();
+    const timestamp = `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2, '0')}`;
 
-      await sendTeamsMessage({
-        title: `✅ [고객사 이슈] 조치사항이 등록되었습니다.`,
-        subtitle: `${timestamp} | 상태: ${status}`,
-        buttonUrl: "https://letters-client-management.vercel.app/client-issues",
-        buttonLabel: "📋 고객사 이슈관리 바로가기",
-        buttons: response_file_url ? [{ label: "📎 증빙파일 보기", url: response_file_url }] : [],
-        sections: [
-          { "name": "고객사", "value": (issueData as any)?.clients?.company_name || "알수없음" },
-          { "name": "이슈유형", "value": (issueData as any)?.issue_category || "-" },
-          { "name": "건명", "value": (issueData as any)?.title || "-" },
-        ],
-        lastSections: [
-          { "name": "조치내용", "value": action_taken, "color": "Good" },
-          { "name": "재발방지 대책", "value": preventive_measure || "-", "color": "Warning" },
-        ],
-      });
-    } catch (err) {
-      console.error("팀즈 알림 실패 (고객사 이슈 업데이트):", err);
-    }
-  })();
+    await sendTeamsMessage({
+      title: `✅ [고객사 이슈] 조치사항이 등록되었습니다.`,
+      subtitle: `${timestamp} | 상태: ${status}`,
+      buttonUrl: "https://letters-client-management.vercel.app/client-issues",
+      buttonLabel: "📋 고객사 이슈관리 바로가기",
+      buttons: response_file_url ? [{ label: "📎 증빙파일 보기", url: response_file_url }] : [],
+      sections: [
+        { "name": "고객사", "value": (issueData as any)?.clients?.company_name || "알수없음" },
+        { "name": "이슈유형", "value": (issueData as any)?.issue_category || "-" },
+        { "name": "건명", "value": (issueData as any)?.title || "-" },
+      ],
+      lastSections: [
+        { "name": "조치내용", "value": action_taken, "color": "Good" },
+        { "name": "재발방지 대책", "value": preventive_measure || "-", "color": "Warning" },
+      ],
+    });
+  } catch (err) {
+    console.error("팀즈 알림 실패 (고객사 이슈 업데이트):", err);
+  }
 
   revalidatePath("/client-issues");
   return { success: true };

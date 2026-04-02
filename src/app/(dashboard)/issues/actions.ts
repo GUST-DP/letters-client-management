@@ -55,37 +55,34 @@ export async function createIssue(formData: FormData) {
     return { error: error.message };
   }
 
-  // 팀즈 알림 전송 (비동기로 실행하여 응답 속도에 영향을 주지 않음)
-  (async () => {
-    try {
-      const { data: clientData } = await supabase
-        .from('clients')
-        .select('company_name')
-        .eq('id', formData.get('client_id'))
-        .single();
+  // 팀즈 알림 전송 (Vercel 서버리스 환경을 위해 await 명시)
+  try {
+    const { data: clientData } = await supabase
+      .from('clients')
+      .select('company_name')
+      .eq('id', formData.get('client_id'))
+      .single();
 
-      const now = new Date();
-      const timestamp = `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')} ${now.getHours() >= 12 ? 'PM' : 'AM'} ${now.getHours() % 12 || 12}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+    const now = new Date();
+    const timestamp = `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2, '0')}`;
 
-      await sendTeamsMessage({
-        title: `🔔 새로운 이슈가 등록되었습니다.`,
-        subtitles: [timestamp, `📌 건명: ${formData.get('title')}`],
-        buttonUrl: "http://localhost:3000/issues",
-        buttonLabel: "🛡️ 서비스 이슈관리 바로가기",
-        buttons: file_url ? [{ label: "📎 첨부파일 보기", url: file_url }] : [],
-        sections: [
-          { "name": "고객사", "value": clientData?.company_name || "알수없음" },
-          { "name": "이슈유형", "value": formData.get('issue_type') as string },
-          { "name": "권역장", "value": formData.get('manager_name') as string },
-          { "name": "시공팀", "value": formData.get('construction_team') as string },
-          { "name": "등록자", "value": formData.get('author_name') as string },
-        ],
-        lastSection: { "name": "이슈내용 요약", "value": formData.get('issue_content') as string },
-      });
-    } catch (err) {
-      console.error("팀즈 알림 실패 (이슈 등록):", err);
-    }
-  })();
+    await sendTeamsMessage({
+      title: `🔔 [서비스 이슈] 새로운 이슈가 등록되었습니다.`,
+      subtitle: `${timestamp} | 등록자: ${formData.get('author_name')}`,
+      buttonUrl: "https://letters-client-management.vercel.app/issues",
+      buttonLabel: "🛡️ 서비스 이슈관리 바로가기",
+      buttons: file_url ? [{ label: "📎 첨부파일 보기", url: file_url }] : [],
+      sections: [
+        { "name": "고객사", "value": clientData?.company_name || "알수없음" },
+        { "name": "이슈유형", "value": formData.get('issue_type') as string },
+        { "name": "권역장", "value": formData.get('manager_name') as string },
+        { "name": "시공팀", "value": formData.get('construction_team') as string },
+      ],
+      lastSection: { "name": "이슈내용 요약", "value": formData.get('issue_content') as string },
+    });
+  } catch (err) {
+    console.error("팀즈 알림 실패 (서비스 이슈 등록):", err);
+  }
 
   revalidatePath("/issues");
   return { success: true };
@@ -145,41 +142,37 @@ export async function updateIssueResponse(formData: FormData) {
     return { error: error.message };
   }
 
-  // 팀즈 알림 전송 (비동기)
-  (async () => {
-    try {
-      const { data: issueData } = await supabase
-        .from('client_issues')
-        .select('*, clients(company_name)')
-        .eq('id', issueId)
-        .single();
+  // 팀즈 알림 전송 (Vercel 서버리스 환경을 위해 await 명시)
+  try {
+    const { data: issueData } = await supabase
+      .from('client_issues')
+      .select('*, clients(company_name)')
+      .eq('id', issueId)
+      .single();
 
-      const now = new Date();
-      const timestamp = `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')} ${now.getHours() >= 12 ? 'PM' : 'AM'} ${now.getHours() % 12 || 12}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+    const now = new Date();
+    const timestamp = `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2, '0')}`;
 
-      await sendTeamsMessage({
-        title: `✅ 이슈 조치등록이 완료되었습니다.`,
-        subtitles: [timestamp, `📌 건명: ${issueData?.title}`],
-        buttonUrl: "http://localhost:3000/issues",
-        buttonLabel: "🛡️ 서비스 이슈관리 바로가기",
-        buttons: response_file_url ? [{ label: "📎 증빙파일 보기", url: response_file_url }] : [],
-        sections: [
-          { "name": "고객사", "value": (issueData as any)?.clients?.company_name || "알수없음" },
-          { "name": "이슈유형", "value": (issueData as any)?.issue_type || "-" },
-          { "name": "권역장", "value": (issueData as any)?.manager_name || "-" },
-          { "name": "시공팀", "value": (issueData as any)?.construction_team || "-" },
-          { "name": "답변등록자", "value": formData.get('responder_name') as string },
-        ],
-        lastSections: [
-          { "name": "이슈내용 요약", "value": (issueData as any)?.issue_content || "-" },
-          { "name": "조치내용", "value": formData.get('action_taken') as string, "color": "Good" },
-          { "name": "재발방지 대책", "value": formData.get('preventive_measure') as string || "-", "color": "Warning" },
-        ],
-      });
-    } catch (err) {
-      console.error("팀즈 알림 실패 (조치 완료):", err);
-    }
-  })();
+    await sendTeamsMessage({
+      title: `✅ [서비스 이슈] 조치등록이 완료되었습니다.`,
+      subtitle: `${timestamp} | 답변등록자: ${formData.get('responder_name')}`,
+      buttonUrl: "https://letters-client-management.vercel.app/issues",
+      buttonLabel: "🛡️ 서비스 이슈관리 바로가기",
+      buttons: response_file_url ? [{ label: "📎 증빙파일 보기", url: response_file_url }] : [],
+      sections: [
+        { "name": "고객사", "value": (issueData as any)?.clients?.company_name || "알수없음" },
+        { "name": "이슈유형", "value": (issueData as any)?.issue_type || "-" },
+        { "name": "권역장", "value": (issueData as any)?.manager_name || "-" },
+        { "name": "시공팀", "value": (issueData as any)?.construction_team || "-" },
+      ],
+      lastSections: [
+        { "name": "조치내용", "value": formData.get('action_taken') as string, "color": "Good" },
+        { "name": "재발방지 대책", "value": formData.get('preventive_measure') as string || "-", "color": "Warning" },
+      ],
+    });
+  } catch (err) {
+    console.error("팀즈 알림 실패 (서비스 이슈 조치 완료):", err);
+  }
 
   revalidatePath("/issues");
   return { success: true };

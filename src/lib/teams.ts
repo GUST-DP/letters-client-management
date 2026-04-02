@@ -144,6 +144,8 @@ export async function sendTeamsMessage(content: {
   }
 
   try {
+    console.log(`[Teams Notification] Sending message to webhook... (Title: ${content.title})`);
+    
     const response = await fetch(webhookUrl, {
       method: "POST",
       headers: {
@@ -154,9 +156,11 @@ export async function sendTeamsMessage(content: {
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error("MS Teams 알림 전송 실패:", errorText);
+      console.error(`[Teams Notification] Failed (Status: ${response.status}):`, errorText);
+    } else {
+      console.log(`[Teams Notification] Successfully sent message.`);
     }
   } catch (error) {
-    console.error("MS Teams 알림 전송 중 오류 발생:", error);
+    console.error("[Teams Notification] Critical error during fetch:", error);
   }
 }

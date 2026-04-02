@@ -1,0 +1,296 @@
+"use client";
+
+import React, { useState, useEffect } from "react";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { useTransition } from "react";
+import { 
+  Package, 
+  LayoutDashboard, 
+  Users, 
+  Calculator, 
+  Settings, 
+  ChevronLeft, 
+  ChevronRight,
+  LogOut,
+  ChevronDown,
+  AlertTriangle,
+  ClipboardList,
+  FileText
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+
+interface DashboardShellProps {
+  children: React.ReactNode;
+  userEmail?: string | null;
+}
+
+import { useLoading } from "@/components/providers/loading-provider";
+
+export function DashboardShell({ children, userEmail }: DashboardShellProps) {
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+  const { isLoading, startLoading } = useLoading();
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isAdminOpen, setIsAdminOpen] = useState(true);
+  const [mounted, setMounted] = useState(false);
+  const pathname = usePathname();
+
+  // 하이드레이션 방지
+  useEffect(() => {
+    setMounted(true);
+    const saved = localStorage.getItem("sidebar-collapsed");
+    if (saved !== null) {
+      setIsCollapsed(saved === "true");
+    }
+  }, []);
+
+  const handleNavClick = (e: React.MouseEvent, href: string) => {
+    e.preventDefault();
+    // 전역 로딩 팝업 표시
+    startLoading();
+    // 트랜지션 시작 (배경에서 로드하여 흰 화면 방지)
+    startTransition(() => {
+      router.push(href);
+    });
+  };
+
+  // 로딩 상태 결정 (전역 isLoading 또는 현재 트랜지션 로딩 isPending)
+  const showLoading = isLoading || isPending;
+
+  const toggleSidebar = () => {
+    const newState = !isCollapsed;
+    setIsCollapsed(newState);
+    localStorage.setItem("sidebar-collapsed", String(newState));
+  };
+
+  const navItems = [
+    { name: "대시보드", href: "/", icon: LayoutDashboard },
+    { name: "고객사 계약관리", href: "/clients", icon: Users },
+    { name: "고객사 세부정보", href: "/client-detail", icon: FileText },
+    { name: "고객사 이슈관리", href: "/client-issues", icon: ClipboardList },
+    { name: "서비스 이슈관리", href: "/issues", icon: AlertTriangle },
+    { name: "매출 및 입금관리", href: "/sales", icon: Calculator },
+  ];
+
+  const adminItems = [
+    { name: "코스트센터 관리", href: "/settings?tab=costcenter", tab: "costcenter", path: null },
+    { name: "서비스 형태 관리", href: "/settings?tab=servicetype", tab: "servicetype", path: null },
+    { name: "체크리스트 관리", href: "/settings?tab=checklist", tab: "checklist", path: null },
+    { name: "계정 관리", href: "/settings/accounts", tab: null, path: "/settings/accounts" },
+  ];
+
+  if (!mounted) {
+    return (
+      <div className="flex min-h-screen bg-[#f5eee8]">
+        {/* Placeholder or empty to avoid hydration mismatch */}
+        <div className="w-[240px] bg-[#414344] shrink-0" />
+        <div className="flex-1" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex min-h-screen bg-[#f5eee8] w-full font-sans text-slate-900 selection:bg-[#ff5c39]/10">
+      {/* Sidebar */}
+      <aside 
+        className={cn(
+          "bg-[#414344] text-[#ececec] flex flex-col transition-all duration-300 sticky top-0 h-screen z-50 shadow-xl overflow-hidden",
+          isCollapsed ? "w-16" : "w-44"
+        )}
+      >
+        {/* Sidebar Header */}
+        <div className="h-[61px] flex items-center justify-center px-2 border-b border-[#ececec]/10 shrink-0 select-none">
+          <a
+            href="/"
+            onClick={(e) => handleNavClick(e, "/")}
+            className="flex items-center justify-center w-full h-full overflow-hidden focus:outline-none focus:ring-0 select-none cursor-pointer"
+          >
+            <img 
+              src="/letus-logo.png" 
+              alt="LETUS Logo"
+              draggable={false} 
+              className={cn(
+                "brightness-0 invert object-contain transition-all duration-300 pointer-events-none select-none", 
+                isCollapsed ? "h-10 w-auto scale-[1.35]" : "h-16 w-auto scale-[2]"
+              )} 
+            />
+          </a>
+        </div>
+
+        {/* Navigation Section */}
+        <nav className="flex-1 overflow-y-auto overflow-x-hidden p-2 space-y-1 scrollbar-hide pt-4">
+          {navItems.map((item) => {
+            const isActive = pathname === item.href;
+            return (
+              <a
+                key={item.href}
+                href={item.href}
+                onClick={(e) => handleNavClick(e, item.href)}
+                className={cn(
+                  "flex items-center gap-3 px-3 py-2.5 rounded-md transition-all group relative cursor-pointer",
+                  isActive 
+                    ? "bg-[#ececec]/10 text-white font-extrabold shadow-sm" 
+                    : "text-[#ececec]/80 hover:bg-[#ececec]/5 hover:text-white",
+                  isCollapsed && "justify-center px-0"
+                )}
+              >
+                <item.icon className={cn("w-5 h-5 shrink-0 transition-colors", isActive ? "text-[#ff5c39]" : "text-[#ececec]/60 group-hover:text-[#ff5c39]")} />
+                {!isCollapsed && <span className="text-sm truncate">{item.name}</span>}
+                {isCollapsed && isActive && (
+                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-white rounded-r-full" />
+                )}
+              </a>
+            );
+          })}
+
+          <div className="pt-1">
+            {isCollapsed ? (
+              <a
+                href="/settings"
+                onClick={(e) => handleNavClick(e, "/settings")}
+                className={cn(
+                  "flex items-center justify-center p-3 rounded-md hover:bg-[#ececec]/5 transition-all text-[#ececec]/80 cursor-pointer",
+                  pathname.startsWith("/settings") ? "bg-[#ececec]/10 text-white border border-[#ececec]/20" : ""
+                )}
+              >
+                <Settings className={cn("w-5 h-5 transition-colors", pathname.startsWith("/settings") ? "text-[#ff5c39]" : "text-[#ececec]/60")} />
+              </a>
+            ) : (
+              <Collapsible open={isAdminOpen} onOpenChange={setIsAdminOpen}>
+                <CollapsibleTrigger
+                  className={cn(
+                    "flex items-center gap-3 px-3 py-2.5 rounded-md transition-all group cursor-pointer w-full text-left",
+                    pathname.startsWith("/settings") 
+                      ? "bg-[#ececec]/10 text-white font-extrabold shadow-sm" 
+                      : "text-[#ececec]/80 hover:bg-[#ececec]/5 hover:text-white"
+                  )}
+                >
+                  <Settings className={cn("w-5 h-5 shrink-0 transition-colors", pathname.startsWith("/settings") ? "text-[#ff5c39]" : "text-[#ececec]/60 group-hover:text-[#ff5c39]")} />
+                  <span className="text-sm flex-1 truncate">기준관리</span>
+                  <ChevronDown className={cn("w-4 h-4 transition-transform shrink-0 outline-none border-none", isAdminOpen ? "" : "-rotate-90")} />
+                </CollapsibleTrigger>
+                <CollapsibleContent className="space-y-0.5 mt-1">
+                  {adminItems.map((item) => (
+                    <AdminLink key={item.href} item={item} onClick={handleNavClick} />
+                  ))}
+                </CollapsibleContent>
+              </Collapsible>
+            )}
+          </div>
+        </nav>
+  
+        {/* Sidebar Footer */}
+        <div className="mt-auto p-2 pb-8 border-t border-[#ececec]/10 shrink-0">
+          <Button
+            variant="ghost"
+            className={cn(
+              "w-full flex items-center transition-all text-[#ececec]/80 hover:bg-[#ececec]/5 hover:text-white group",
+              isCollapsed ? "justify-center px-0" : "justify-start px-3 gap-3"
+            )}
+            onClick={toggleSidebar}
+          >
+            {isCollapsed ? <ChevronRight className="w-5 h-5 transition-colors group-hover:text-[#ff5c39]" /> : (
+              <>
+                <ChevronLeft className="w-5 h-5 transition-colors group-hover:text-[#ff5c39]" />
+                <span className="text-sm font-bold">사이드바 접기</span>
+              </>
+            )}
+          </Button>
+        </div>
+      </aside>
+  
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col min-w-0">
+        {/* Top Header */}
+        <header className="h-[61px] bg-[#ff5c39] border-none flex items-center justify-between px-3 sticky top-0 z-40 shrink-0 shadow-md">
+          <div className="flex items-center gap-2">
+              <h2 className="text-xl font-black text-white tracking-tight pl-1">
+                {pathname === "/" && "Dashboard"}
+                {pathname === "/clients" && "고객사 계약관리"}
+                {pathname === "/client-detail" && "고객사 세부정보"}
+                {pathname.includes("/onboarding") && "온보딩 체크리스트"}
+                {pathname.startsWith("/clients/") && !pathname.includes("/onboarding") && "고객사 세부정보"}
+                {pathname === "/client-issues" && "고객사 이슈관리"}
+                {pathname === "/issues" && "서비스 이슈관리"}
+                {pathname === "/sales" && "매출 및 입금관리"}
+                {pathname.startsWith("/settings") && "기준관리"}
+              </h2>
+          </div>
+          
+          <div className="flex items-center gap-6">
+            <div className="flex flex-col items-end">
+              <span className="text-[10px] text-white/80 font-bold tracking-widest uppercase">User Account</span>
+              <span className="text-sm font-extrabold text-white">{userEmail}</span>
+            </div>
+            <div className="h-8 w-px bg-white/20" />
+            <form action="/auth/signout" method="post">
+              <Button variant="ghost" size="sm" className="text-white hover:text-[#ff5c39] hover:bg-white gap-2 transition-colors">
+                <LogOut className="w-4 h-4" />
+                <span className="font-bold text-xs">로그아웃</span>
+              </Button>
+            </form>
+          </div>
+        </header>
+
+        {/* Page Content - NO MAX WIDTH */}
+        <main className="flex-1 px-3 pt-3 pb-8 w-full overflow-y-auto relative">
+          {children}
+
+          {/* 전역 로딩 팝업 (isPending이 끝날 때까지 기존 화면 유지) */}
+          {showLoading && (
+            <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/5 backdrop-blur-[1px] animate-in fade-in duration-200">
+               <div className="bg-white p-6 rounded-2xl shadow-[0_20px_70px_rgba(0,0,0,0.2)] border border-slate-100 flex flex-col items-center gap-4 scale-100 animate-in zoom-in-95 duration-300">
+                <div className="relative w-12 h-12">
+                  <div className="absolute top-0 left-0 w-full h-full border-[3px] border-slate-50 rounded-full" />
+                  <div className="absolute top-0 left-0 w-full h-full border-[3px] border-[#ff5c39] rounded-full border-t-transparent animate-spin" />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="text-[9px] font-black text-[#ff5c39] uppercase tracking-widest animate-pulse">LETUS</span>
+                  </div>
+                </div>
+                <div className="flex flex-col items-center gap-1">
+                  <p className="text-[11px] font-black text-slate-500 tracking-tight">잠시만 기다려주세요</p>
+                  <div className="flex gap-1 mt-0.5">
+                    <span className="w-1 h-1 bg-[#ff5c39] rounded-full animate-bounce [animation-delay:-0.3s]" />
+                    <span className="w-1 h-1 bg-[#ff5c39] rounded-full animate-bounce [animation-delay:-0.15s]" />
+                    <span className="w-1 h-1 bg-[#ff5c39] rounded-full animate-bounce" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </main>
+      </div>
+    </div>
+  );
+}
+
+function AdminLink({ item, onClick }: { item: { name: string; href: string; tab: string | null; path?: string | null }; onClick?: (e: React.MouseEvent, href: string) => void }) {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const currentTab = searchParams.get("tab");
+  
+  // path 기반(계정관리) 또는 tab 기반(기존) 활성화 판단
+  const isActive = item.path
+    ? pathname === item.path
+    : pathname === "/settings" && currentTab === item.tab;
+
+  return (
+    <a
+      href={item.href}
+      onClick={(e) => onClick?.(e, item.href)}
+      className={cn(
+        "flex items-center gap-3 pl-10 pr-3 py-2 rounded-md text-[13px] transition-all group cursor-pointer",
+        isActive ? "text-[#ff5c39] font-extrabold bg-[#ececec]/5 shadow-sm" : "text-[#ececec]/70 hover:text-white hover:bg-[#ececec]/5"
+      )}
+    >
+      <span className="truncate">{item.name}</span>
+    </a>
+  );
+}
+

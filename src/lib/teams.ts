@@ -1,6 +1,7 @@
 /**
  * MS Teams 알림 전송 유틸리티
- * 이전 정상 작동 버전(AdaptiveCard 1.4)의 구조로 완벽 복구되었습니다.
+ * 
+ * [원복] 이전의 정상 작동하던 구조로 복구되었습니다.
  */
 
 export async function sendTeamsMessage(content: {
@@ -17,11 +18,10 @@ export async function sendTeamsMessage(content: {
   const webhookUrl = process.env.TEAMS_WEBHOOK_URL;
 
   if (!webhookUrl) {
-    console.warn("[Teams Notification] TEAMS_WEBHOOK_URL is missing.");
+    console.warn("TEAMS_WEBHOOK_URL is not defined in environment variables");
     return;
   }
 
-  // 본문(body) 생성 로직
   const body: any[] = [
     {
       "type": "TextBlock",
@@ -108,7 +108,6 @@ export async function sendTeamsMessage(content: {
     });
   });
 
-  // 최종 페이로드 구조 (AdaptiveCard 1.4)
   const payload: any = {
     "type": "message",
     "attachments": [
@@ -128,7 +127,7 @@ export async function sendTeamsMessage(content: {
 
   const allButtons: { label: string; url: string }[] = [];
   if (content.buttonUrl) {
-    allButtons.push({ label: content.buttonLabel || "바로가기", url: content.buttonUrl });
+    allButtons.push({ label: content.buttonLabel || "사이트 바로가기", url: content.buttonUrl });
   }
   if (content.buttons && content.buttons.length > 0) {
     allButtons.push(...content.buttons);
@@ -152,9 +151,9 @@ export async function sendTeamsMessage(content: {
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error(`[Teams Notification] Failed (${response.status}):`, errorText);
+      console.error("Teams notification failed:", response.status, errorText);
     }
   } catch (error) {
-    console.error("[Teams Notification] Critical Error:", error);
+    console.error("Error sending Teams notification:", error);
   }
 }

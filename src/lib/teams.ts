@@ -141,6 +141,11 @@ export async function sendTeamsMessage(content: {
   }
 
   try {
+    const isLocal = process.env.NODE_ENV === 'development';
+    const obfuscatedUrl = webhookUrl.substring(0, 10) + "...";
+    
+    console.log(`[Teams Notification] Attempting to send message. URL Prefix: ${obfuscatedUrl}, Env: ${process.env.NODE_ENV}`);
+
     const response = await fetch(webhookUrl, {
       method: "POST",
       headers: {
@@ -151,9 +156,11 @@ export async function sendTeamsMessage(content: {
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error("Teams notification failed:", response.status, errorText);
+      console.error(`[Teams Notification] HTTP Error ${response.status}:`, errorText);
+    } else {
+      console.log(`[Teams Notification] Successfully sent message. Status: ${response.status}`);
     }
   } catch (error) {
-    console.error("Error sending Teams notification:", error);
+    console.error("[Teams Notification] Network/Critical Error:", error);
   }
 }

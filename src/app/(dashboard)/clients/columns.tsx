@@ -198,12 +198,12 @@ export const getColumns = (managers: any[], totalTaskCount: number): ColumnDef<C
           {isAllDone ? (
             <>
               <CheckCircle2 className="w-3.5 h-3.5" />
-              <span className="font-semibold text-xs">작성완료 ({completedCount}/{totalCount})</span>
+              <span className="font-bold text-xs uppercase tracking-tight">작성완료 ({completedCount}/{totalCount})</span>
             </>
           ) : (
             <>
               <AlertTriangle className="w-3.5 h-3.5" />
-              <span className="font-semibold text-xs">{totalCount === 0 ? "작성필요" : `작성중 (${completedCount}/{totalCount})`}</span>
+              <span className="font-bold text-xs uppercase tracking-tight">{totalCount === 0 ? "작성필요" : `작성중 (${completedCount}/${totalCount})`}</span>
             </>
           )}
         </TransitionLink>

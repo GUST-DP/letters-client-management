@@ -177,9 +177,9 @@ export function ChecklistView({ clientId, tasks, initialStatus }: ChecklistViewP
               <h3 className="text-3xl font-black text-primary">{progressPercent}%</h3>
             </div>
             <div className="text-right">
-              <span className="text-gray-900 font-bold text-base">{completedCount}</span>
-              <span className="text-gray-400 text-sm italic mx-1">/</span>
-              <span className="text-gray-400 text-sm italic">{totalCount} 항목 완료</span>
+              <span className="text-gray-400 text-xs font-bold mr-1">전체 {totalCount}개 중</span>
+              <span className="text-gray-900 font-black text-xl">{completedCount}</span>
+              <span className="text-gray-400 text-sm font-bold ml-1">개 완료</span>
             </div>
           </div>
           <Progress value={progressPercent} className="h-3 bg-gray-100" />

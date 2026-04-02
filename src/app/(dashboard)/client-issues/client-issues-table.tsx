@@ -27,7 +27,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { AddClientIssueModal } from "./add-client-issue-modal";
+import { AddClientIssueModal, ClientIssueDetailModal } from "./add-client-issue-modal";
 import { updateClientOperationIssue, deleteClientOperationIssue } from "./actions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -104,6 +104,8 @@ export function ClientIssueTable({
   const [endDate, setEndDate] = useState("");
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [detailIssue, setDetailIssue] = useState<any | null>(null);
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
   const router = useRouter();
 
   const uniqueClients = useMemo(() =>
@@ -159,6 +161,11 @@ export function ClientIssueTable({
       onDeleteSuccess?.();
       router.refresh();
     }
+  };
+
+  const handleOpenDetail = (item: any) => {
+    setDetailIssue(item);
+    setIsDetailOpen(true);
   };
 
   return (
@@ -309,7 +316,13 @@ export function ClientIssueTable({
                           {item.issue_category}
                         </Badge>
                       </td>
-                      <td className="py-2.5 px-4 border-r border-slate-100 font-bold text-slate-700 max-w-[200px] truncate">
+                      <td 
+                        className="py-2.5 px-4 border-r border-slate-100 font-bold text-slate-700 max-w-[200px] truncate hover:text-[#ff5c39] hover:underline"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleOpenDetail(item);
+                        }}
+                      >
                         {item.title || item.issue_content?.substring(0, 30)}
                       </td>
                       <td className="py-2.5 px-4 border-r border-slate-100 text-center">
@@ -379,6 +392,11 @@ export function ClientIssueTable({
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      <ClientIssueDetailModal 
+        issue={detailIssue} 
+        open={isDetailOpen} 
+        onOpenChange={setIsDetailOpen} 
+      />
     </div>
   );
 }

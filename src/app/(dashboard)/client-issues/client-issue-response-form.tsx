@@ -20,6 +20,7 @@ import {
   ChevronDown
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
 import {
   Select,
   SelectContent,
@@ -35,6 +36,12 @@ interface ClientIssueResponseFormProps {
 }
 
 const STATUS_OPTIONS = ["접수완료", "처리중", "처리완료"];
+
+const STATUS_COLORS: Record<string, string> = {
+  "접수완료": "bg-rose-50 text-rose-600 border-rose-200",
+  "처리중": "bg-amber-50 text-amber-600 border-amber-200",
+  "처리완료": "bg-emerald-50 text-emerald-600 border-emerald-200",
+};
 
 export function ClientIssueResponseForm({ selectedIssue, userEmail, userName }: ClientIssueResponseFormProps) {
   const [isEditing, setIsEditing] = useState(false);
@@ -204,64 +211,106 @@ export function ClientIssueResponseForm({ selectedIssue, userEmail, userName }: 
           </div>
         </form>
       ) : (
-        /* 조회 모드 */
-        <div className="flex-1 border border-slate-100 rounded-2xl overflow-hidden bg-slate-50/30 animate-in fade-in duration-300">
-          <div className="grid grid-cols-2 h-full">
-            <div className="border-r border-slate-100 flex flex-col">
-               <div className="bg-slate-800/90 text-white px-5 py-3 flex items-center gap-2">
-                  <MessageSquareText className="w-4 h-4 text-orange-400" />
-                  <span className="text-[12px] font-black uppercase tracking-widest">조치내용 (Action)</span>
-               </div>
-               <div className="p-6 flex-1 overflow-y-auto">
-                 <p className="text-[14px] text-slate-700 leading-relaxed whitespace-pre-wrap font-medium">
-                   {selectedIssue.action_taken || <span className="text-slate-300 italic">아직 등록된 조치내용이 없습니다.</span>}
-                 </p>
-               </div>
-            </div>
-            <div className="flex flex-col">
-               <div className="bg-slate-800/90 text-white px-5 py-3 flex items-center gap-2">
-                  <ShieldAlert className="w-4 h-4 text-emerald-400" />
-                  <span className="text-[12px] font-black uppercase tracking-widest">재발방지 대책</span>
-               </div>
-               <div className="p-6 flex-1 overflow-y-auto">
-                 <p className="text-[14px] text-slate-700 leading-relaxed whitespace-pre-wrap font-medium">
-                   {selectedIssue.preventive_measure || <span className="text-slate-300 italic">아직 등록된 재발방지대책이 없습니다.</span>}
-                 </p>
-               </div>
-               <div className="mt-auto p-4 bg-white border-t border-slate-100 flex items-center justify-between gap-4">
-                  <div className="flex items-center gap-4">
-                    <div className="flex flex-col">
-                      <span className="text-[10px] font-black text-slate-400 uppercase tracking-tighter">진행상태</span>
-                      <span className={cn(
-                        "text-xs font-black",
-                        selectedIssue.status === "처리완료" ? "text-emerald-600" : "text-orange-500"
-                      )}>{selectedIssue.status || "접수완료"}</span>
-                    </div>
-                    {selectedIssue.response_file_url && (
-                      <>
-                        <div className="w-px h-8 bg-slate-100" />
-                        <div className="flex flex-col">
-                          <span className="text-[10px] font-black text-slate-400 uppercase tracking-tighter">첨부파일</span>
-                          <a 
-                            href={selectedIssue.response_file_url} 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="flex items-center gap-1.5 text-xs font-bold text-blue-600 hover:underline"
-                          >
-                            <Paperclip className="w-3.5 h-3.5" />
-                            증빙 확인
-                          </a>
-                        </div>
-                      </>
+        /* 조회 모드: 표 형식 노출 (이슈 미선택 시에도 표 구조 유지) */
+        <div className="border border-slate-200 rounded-2xl overflow-hidden animate-in fade-in duration-300">
+          <table className="w-full border-collapse">
+            <thead className="bg-slate-800">
+              <tr className="border-b border-transparent">
+                <th className="px-6 py-3 text-left text-[13px] font-black text-slate-300 uppercase tracking-wider border-r border-slate-700/50 h-10">
+                  <div className="flex items-center justify-center gap-2">
+                    <MessageSquareText className="w-3.5 h-3.5 text-orange-400" />
+                    조치사항 (Action)
+                  </div>
+                </th>
+                <th className="px-6 py-3 text-left text-[13px] font-black text-slate-300 uppercase tracking-wider border-r border-slate-700/50 h-10">
+                  <div className="flex items-center justify-center gap-2">
+                    <ShieldAlert className="w-3.5 h-3.5 text-emerald-500" />
+                    재발방지 대책
+                  </div>
+                </th>
+                <th className="px-6 py-3 text-left text-[13px] font-black text-slate-300 uppercase tracking-wider border-r border-slate-700/50 w-32 h-10">
+                  <div className="flex items-center justify-center gap-2">
+                    <div className="w-3.5 h-3.5 rounded-full bg-slate-400" />
+                    진행상태
+                  </div>
+                </th>
+                <th className="px-6 py-3 text-left text-[13px] font-black text-slate-300 uppercase tracking-wider border-r border-slate-700/50 w-40 h-10">
+                  <div className="flex items-center justify-center gap-2">
+                    <UserCheck className="w-3.5 h-3.5 text-slate-400" />
+                    답변등록자
+                  </div>
+                </th>
+                <th className="px-6 py-3 text-left text-[13px] font-black text-slate-300 uppercase tracking-wider w-44 h-10">
+                  <div className="flex items-center justify-center gap-2">
+                    <Paperclip className="w-3.5 h-3.5 text-blue-400" />
+                    증빙파일
+                  </div>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td className="px-6 py-6 border-r border-slate-200 align-top max-w-sm">
+                  <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-wrap min-h-[60px]">
+                    {selectedIssue?.action_taken || (
+                      <span className="text-slate-300 italic">
+                        {selectedIssue ? "내용이 없습니다." : "이슈를 선택하면 표시됩니다."}
+                      </span>
                     )}
+                  </p>
+                </td>
+                <td className="px-6 py-6 border-r border-slate-200 align-top max-w-sm bg-emerald-50/5">
+                  <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-wrap min-h-[60px]">
+                    {selectedIssue?.preventive_measure || (
+                      <span className="text-slate-300 italic">
+                        {selectedIssue ? "내용이 없습니다." : "이슈를 선택하면 표시됩니다."}
+                      </span>
+                    )}
+                  </p>
+                </td>
+                <td className="px-6 py-6 border-r border-slate-200 text-center w-32">
+                  {selectedIssue && (
+                    <Badge variant="outline" className={cn("font-bold text-[11px] whitespace-nowrap", STATUS_COLORS[selectedIssue.status] || "")}>
+                      {selectedIssue.status || "접수완료"}
+                    </Badge>
+                  )}
+                </td>
+                <td className="px-6 py-6 align-top text-center border-r border-slate-200 w-40">
+                  <div className="inline-flex flex-col items-center">
+                    <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center mb-2">
+                      <UserCheck className="w-5 h-5 text-slate-400" />
+                    </div>
+                    <span className="text-xs font-bold text-slate-600 bg-slate-50 px-3 py-1 rounded-full border border-slate-200">
+                      {selectedIssue?.responder_name || "-"}
+                    </span>
                   </div>
-                  <div className="flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100">
-                     <UserCheck className="w-3.5 h-3.5 text-slate-400" />
-                     <span className="text-[11px] font-bold text-slate-600">{selectedIssue.responder_name || "담당자 미지정"}</span>
-                  </div>
-               </div>
-            </div>
-          </div>
+                </td>
+                <td className="px-6 py-6 align-top w-44">
+                  {selectedIssue?.response_file_url ? (
+                    <div className="w-full text-left">
+                      <a 
+                        href={selectedIssue.response_file_url} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 p-2 bg-emerald-50 text-emerald-700 rounded-lg border border-emerald-100 hover:bg-emerald-100 transition-all w-full group overflow-hidden shadow-sm"
+                      >
+                        <Paperclip className="w-3.5 h-3.5 shrink-0" />
+                        <span className="truncate flex-1 text-left text-xs font-bold">
+                          증빙 확인
+                        </span>
+                        <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity ml-auto shrink-0" />
+                      </a>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center gap-2 h-full py-2 opacity-30">
+                      <Paperclip className="w-5 h-5 text-slate-300" />
+                      <span className="text-[10px] font-bold text-slate-400">파일 없음</span>
+                    </div>
+                  )}
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       )}
     </div>

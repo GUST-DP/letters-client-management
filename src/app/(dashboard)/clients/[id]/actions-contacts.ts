@@ -1,4 +1,4 @@
 "use server";
 
-import { upsertClientContact, deleteClientContact } from "@/app/client-issues/actions";
+import { upsertClientContact, deleteClientContact } from "@/app/(dashboard)/client-issues/actions";
 export { upsertClientContact, deleteClientContact };

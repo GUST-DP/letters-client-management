@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { IssueDetailModal } from "@/app/issues/add-issue-modal";
+import { IssueDetailModal } from "@/app/(dashboard)/issues/add-issue-modal";
 
 interface RecentIssueTableProps {
   issues: any[];

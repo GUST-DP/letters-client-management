@@ -303,6 +303,37 @@ export default async function Home() {
             </CardContent>
           </Card>
 
+          {/* 계약고객사 */}
+          <Card className="border-none shadow-sm bg-[#414344] text-white overflow-hidden">
+            <CardHeader className="p-2 pb-0">
+              <CardTitle className="text-[13px] font-bold text-white flex items-center gap-1">
+                <Users className="h-3.5 w-3.5 text-white" /> 계약고객사
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-2 flex flex-col justify-center items-center h-full">
+              <div className="text-[28px] font-black tracking-tight leading-none mb-2 text-white flex items-baseline justify-center">
+                {contractTotal}
+                <span className="text-[11px] font-bold text-white ml-0.5 shrink-0">사</span>
+              </div>
+              <div className="flex justify-center gap-2">
+                <div className="text-center">
+                  <div className="text-[9px] text-white font-medium">운영중</div>
+                  <div className="text-[13px] font-black text-[#ff5c39]">{activeClients.length}</div>
+                </div>
+                <div className="h-5 w-px bg-white/20 my-auto" />
+                <div className="text-center">
+                  <div className="text-[9px] text-white font-medium">계약진행</div>
+                  <div className="text-[13px] font-black text-white">{progressClients.length}</div>
+                </div>
+                <div className="h-5 w-px bg-white/20 my-auto" />
+                <div className="text-center">
+                  <div className="text-[9px] text-white font-medium">해지</div>
+                  <div className="text-[13px] font-black text-white">{terminatedClients.length}</div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
           {/* 계약 리드타임 */}
           <Card className="border-none shadow-sm bg-[#414344] text-white overflow-hidden">
             <CardHeader className="p-2 pb-0">
@@ -324,8 +355,6 @@ export default async function Home() {
               )}
             </CardContent>
           </Card>
-
-
 
           {/* 서비스 이슈관리 */}
           <Card className="border-none shadow-sm bg-[#414344] text-white overflow-hidden">

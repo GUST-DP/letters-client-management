@@ -68,7 +68,7 @@ export function RiskTableClient({
               <thead className="sticky top-0 z-10 shadow-sm">
                 <tr className="bg-slate-800 border-b border-slate-700">
                   <th className="text-left py-2 px-4 font-bold text-slate-200 border-r border-slate-700/50 text-[12px] whitespace-nowrap">고객사명</th>
-                  <th className="text-center py-2 px-2 font-bold text-slate-200 border-r border-slate-700/50 w-24 text-[12px] whitespace-nowrap">평균 리드타임</th>
+                  <th className="text-center py-2 px-2 font-bold text-slate-200 border-r border-slate-700/50 w-24 text-[12px] whitespace-nowrap">평균 입금 리드타임</th>
                   <th className="text-center py-2 px-2 font-bold text-slate-200 border-r border-slate-700/50 w-16 text-[12px] whitespace-nowrap">발생월</th>
                   <th className="text-right py-2 px-4 font-bold text-slate-200 w-32 text-[12px] whitespace-nowrap">미수금액 (원)</th>
                 </tr>

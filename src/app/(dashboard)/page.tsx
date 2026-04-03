@@ -177,6 +177,21 @@ export default async function Home() {
   const annualDonutData = [...clientsList].sort((a, b) => b.annual - a.annual).map(c => ({ name: c.name, value: c.annual }));
   const monthlyDonutData = [...clientsList].sort((a, b) => b.lastMonth - a.lastMonth).filter(c => c.lastMonth > 0).map(c => ({ name: c.name, value: c.lastMonth }));
 
+  // ── 고객사별 평균 입금 리드타임 계산
+  const avgPaymentLeadTimeMap: Record<string, number[]> = {};
+  salesData.forEach(s => {
+    if (s.payment_lead_time !== null && s.payment_lead_time !== undefined) {
+      if (!avgPaymentLeadTimeMap[s.client_id]) avgPaymentLeadTimeMap[s.client_id] = [];
+      avgPaymentLeadTimeMap[s.client_id].push(Number(s.payment_lead_time));
+    }
+  });
+
+  const clientAvgLeadTime: Record<string, string> = {};
+  Object.entries(avgPaymentLeadTimeMap).forEach(([clientId, times]) => {
+    const avg = times.reduce((a, b) => a + b, 0) / times.length;
+    clientAvgLeadTime[clientId] = avg.toFixed(1);
+  });
+
   // ── 미수금 RAW 데이터 (고객사명 / 평균입금리드타임 / 발생월 / 미수금액 각 행)
   interface RiskRow { clientName: string; avgLeadDays: string; month: string; amount: number }
   const riskRows: RiskRow[] = [];
@@ -185,7 +200,7 @@ export default async function Home() {
     if (unpaidAmt > 0) {
       riskRows.push({
         clientName: s.clients?.company_name || "알 수 없음",
-        avgLeadDays: "5.2",
+        avgLeadDays: clientAvgLeadTime[s.client_id] || "-",
         month: s.sales_month,
         amount: unpaidAmt,
       });

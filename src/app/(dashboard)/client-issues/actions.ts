@@ -74,7 +74,7 @@ export async function createClientOperationIssue(formData: FormData) {
       sendTeamsMessage({
         title: `🏢 [고객사 이슈] 새로운 이슈가 등록되었습니다.`,
         subtitle: `${timestamp} | 등록자: ${author_name}`,
-        buttonUrl: "https://letters-client-management.vercel.app/client-issues",
+        buttonUrl: "https://letus-client-management.vercel.app/client-issues",
         buttonLabel: "📋 고객사 이슈관리 바로가기",
         buttons: file_url ? [{ label: "📎 첨부파일 보기", url: file_url }] : [],
         sections: [
@@ -156,7 +156,7 @@ export async function updateClientOperationIssue(formData: FormData) {
       sendTeamsMessage({
         title: `✅ [고객사 이슈] 조치사항이 등록되었습니다.`,
         subtitle: `${timestamp} | 상태: ${status}`,
-        buttonUrl: "https://letters-client-management.vercel.app/client-issues",
+        buttonUrl: "https://letus-client-management.vercel.app/client-issues",
         buttonLabel: "📋 고객사 이슈관리 바로가기",
         buttons: response_file_url ? [{ label: "📎 증빙파일 보기", url: response_file_url }] : [],
         sections: [

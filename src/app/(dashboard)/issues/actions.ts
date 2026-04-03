@@ -70,7 +70,7 @@ export async function createIssue(formData: FormData) {
       sendTeamsMessage({
         title: `🔔 [서비스 이슈] 새로운 이슈가 등록되었습니다.`,
         subtitle: `${timestamp} | 등록자: ${formData.get('author_name')}`,
-        buttonUrl: "https://letters-client-management.vercel.app/issues",
+        buttonUrl: "https://letus-client-management.vercel.app/issues",
         buttonLabel: "🛡️ 서비스 이슈관리 바로가기",
         buttons: file_url ? [{ label: "📎 첨부파일 보기", url: file_url }] : [],
         sections: [
@@ -159,7 +159,7 @@ export async function updateIssueResponse(formData: FormData) {
       sendTeamsMessage({
         title: `✅ [서비스 이슈] 조치등록이 완료되었습니다.`,
         subtitle: `${timestamp} | 답변등록자: ${formData.get('responder_name')}`,
-        buttonUrl: "https://letters-client-management.vercel.app/issues",
+        buttonUrl: "https://letus-client-management.vercel.app/issues",
         buttonLabel: "🛡️ 서비스 이슈관리 바로가기",
         buttons: response_file_url ? [{ label: "📎 증빙파일 보기", url: response_file_url }] : [],
         sections: [

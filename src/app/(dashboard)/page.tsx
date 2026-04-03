@@ -227,6 +227,30 @@ export default async function Home() {
         {/* ── KPI 6 카드 ── */}
         <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
 
+          {/* 연간 누적 매출현황 */}
+          <Card className="border-none shadow-sm bg-[#414344] text-white overflow-hidden">
+            <CardHeader className="p-2 pb-0">
+              <CardTitle className="text-[13px] font-bold text-white flex items-center gap-1">
+                <Wallet className="h-3.5 w-3.5 text-white" /> 연간 누적 매출현황
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-2">
+              <div className="text-[10px] font-bold text-white text-right mb-0">원(KRW)</div>
+              <div className="text-[28px] font-black tracking-tighter font-mono text-[#ff5c39] leading-none text-right mb-1">
+                {fmtKRW(yearlyCumulativeSales)}
+              </div>
+              <div className="flex flex-col gap-1.5 mt-1.5">
+                <div className="flex items-center justify-between text-[11px] font-bold text-white">
+                  <span>목표: {fmtCompact(YEARLY_GOAL)}</span>
+                  <span>{yearlyAchievement}%</span>
+                </div>
+                <div className="w-full bg-white/10 h-1.5 rounded-full overflow-hidden">
+                  <div className="bg-[#ff5c39] h-full rounded-full" style={{ width: `${Math.min(Number(yearlyAchievement), 100)}%` }} />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
           {/* 전월 매출현황 */}
           <Card className="border-none shadow-sm bg-[#414344] text-white overflow-hidden">
             <CardHeader className="p-2 pb-0">
@@ -275,30 +299,6 @@ export default async function Home() {
                     {m.replace(/^\d{4}-/, "")}월: {fmtCompact(amt)}
                   </Badge>
                 ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* 연간 누적 매출현황 */}
-          <Card className="border-none shadow-sm bg-[#414344] text-white overflow-hidden">
-            <CardHeader className="p-2 pb-0">
-              <CardTitle className="text-[13px] font-bold text-white flex items-center gap-1">
-                <Wallet className="h-3.5 w-3.5 text-white" /> 연간 누적 매출현황
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-2">
-              <div className="text-[10px] font-bold text-white text-right mb-0">원(KRW)</div>
-              <div className="text-[28px] font-black tracking-tighter font-mono text-[#ff5c39] leading-none text-right mb-1">
-                {fmtKRW(yearlyCumulativeSales)}
-              </div>
-              <div className="flex flex-col gap-1.5 mt-1.5">
-                <div className="flex items-center justify-between text-[11px] font-bold text-white">
-                  <span>목표: {fmtCompact(YEARLY_GOAL)}</span>
-                  <span>{yearlyAchievement}%</span>
-                </div>
-                <div className="w-full bg-white/10 h-1.5 rounded-full overflow-hidden">
-                  <div className="bg-[#ff5c39] h-full rounded-full" style={{ width: `${Math.min(Number(yearlyAchievement), 100)}%` }} />
-                </div>
               </div>
             </CardContent>
           </Card>

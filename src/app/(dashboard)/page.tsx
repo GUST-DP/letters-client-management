@@ -271,9 +271,6 @@ export default async function Home() {
                     {Number(salesMoM) >= 0 ? "▲" : "▼"} {Math.abs(Number(salesMoM))}%
                   </span>
                 </div>
-                <div className="text-[9px] text-white/50 text-right italic">
-                  MoM Comparison
-                </div>
               </div>
             </CardContent>
           </Card>
@@ -364,20 +361,20 @@ export default async function Home() {
               </CardTitle>
             </CardHeader>
             <CardContent className="p-2 flex flex-col justify-center items-center h-full">
-              <div className="text-[26px] font-black tracking-tight leading-none mb-3 text-white flex items-baseline justify-center">
-                <span className="text-[10px] font-bold text-white mr-1.5 shrink-0">전체 이슈</span>
+              <div className="text-[28px] font-black tracking-tight leading-none mb-2 text-white flex items-baseline justify-center">
+                <span className="text-[11px] font-bold text-white mr-1.5 shrink-0">전체 이슈등록 건</span>
                 {issueCount}
                 <span className="text-[10px] font-bold text-white ml-0.5 shrink-0">건</span>
               </div>
-              <div className="flex items-center justify-center gap-3 w-full border-t border-white/10 pt-2">
-                <div className="flex items-baseline gap-1">
-                  <span className="text-[9px] text-white/70">이슈건수: </span>
-                  <span className="text-[12px] font-bold text-[#ff5c39]">{issueCount}건</span>
+              <div className="flex justify-center gap-3">
+                <div className="text-center">
+                  <div className="text-[9px] text-white font-medium">이슈등록</div>
+                  <div className="text-[13px] font-black text-[#ff5c39]">{issueCount}</div>
                 </div>
-                <div className="w-px h-2.5 bg-white/20" />
-                <div className="flex items-baseline gap-1">
-                  <span className="text-[9px] text-white/70">조치완료: </span>
-                  <span className="text-[12px] font-bold text-white">{completedIssueCount}건</span>
+                <div className="h-5 w-px bg-white/20 my-auto" />
+                <div className="text-center">
+                  <div className="text-[9px] text-white font-medium">조치등록</div>
+                  <div className="text-[13px] font-black text-white">{completedIssueCount}</div>
                 </div>
               </div>
             </CardContent>

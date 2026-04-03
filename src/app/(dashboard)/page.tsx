@@ -251,12 +251,12 @@ export default async function Home() {
             </CardContent>
           </Card>
 
-          {/* 전월 매출현황 */}
+          {/* 금월 매출현황 */}
           <Card className="border-none shadow-sm bg-[#414344] text-white overflow-hidden">
             <CardHeader className="p-2 pb-0">
               <CardTitle className="text-[13px] font-bold text-white flex items-center justify-between">
-                <span className="flex items-center gap-1"><CalendarDays className="h-3.5 w-3.5 text-white" /> 전월 매출현황</span>
-                <Badge className="bg-white/10 text-white border-none text-[9px] h-4 px-1 py-0">전월</Badge>
+                <span className="flex items-center gap-1"><CalendarDays className="h-3.5 w-3.5 text-white" /> 금월 매출현황</span>
+                <Badge className="bg-white/10 text-white border-none text-[9px] h-4 px-1 py-0">{currentMonth}월</Badge>
               </CardTitle>
             </CardHeader>
             <CardContent className="p-2">
@@ -271,6 +271,33 @@ export default async function Home() {
                 </div>
                 <div className="w-full bg-white/10 h-1.5 rounded-full overflow-hidden">
                   <div className="bg-[#ff5c39] h-full rounded-full" style={{ width: `${Math.min(Number(monthlyAchievement), 100)}%` }} />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* 전월 매출현황 */}
+          <Card className="border-none shadow-sm bg-[#414344] text-white overflow-hidden">
+            <CardHeader className="p-2 pb-0">
+              <CardTitle className="text-[13px] font-bold text-white flex items-center justify-between">
+                <span className="flex items-center gap-1"><CalendarDays className="h-3.5 w-3.5 text-white" /> 전월 매출현황</span>
+                <Badge className="bg-white/10 text-white border-none text-[9px] h-4 px-1 py-0">{lastMonthDate.getMonth() + 1}월</Badge>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-2">
+              <div className="text-[10px] font-bold text-white text-right mb-0">원(KRW)</div>
+              <div className="text-[28px] font-black tracking-tighter font-mono text-[#ff5c39] leading-none text-right mb-1">
+                {fmtKRW(totalLastSales)}
+              </div>
+              <div className="flex flex-col gap-1.5 mt-1.5">
+                <div className="flex items-center justify-between text-[11px] font-bold text-white">
+                  <span>전월 대비 증감</span>
+                  <span className={Number(salesMoM) >= 0 ? "text-emerald-400" : "text-rose-400"}>
+                    {Number(salesMoM) >= 0 ? "▲" : "▼"} {Math.abs(Number(salesMoM))}%
+                  </span>
+                </div>
+                <div className="text-[9px] text-white/50 text-right italic">
+                  MoM Comparison
                 </div>
               </div>
             </CardContent>
@@ -333,27 +360,7 @@ export default async function Home() {
             </CardContent>
           </Card>
 
-          {/* 계약 리드타임 */}
-          <Card className="border-none shadow-sm bg-[#414344] text-white overflow-hidden">
-            <CardHeader className="p-2 pb-0">
-              <CardTitle className="text-[13px] font-bold text-white flex items-center gap-1">
-                <FileText className="h-3.5 w-3.5 text-white" /> 계약 리드타임
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-2 flex flex-col justify-center items-center h-full">
-              <div className="text-[28px] font-black text-[#ff5c39] tracking-tight leading-none mb-2 flex items-baseline justify-center">
-                {avgLeadTime}
-                <span className="text-[11px] font-bold text-white ml-0.5 shrink-0">일</span>
-              </div>
-              <div className="flex items-center justify-center gap-1 text-[10px] font-medium text-white/80">
-                <Clock className="h-2.5 w-2.5" />
-                <span>인입 ~ 계약 평균 ({leadTimes.length}건)</span>
-              </div>
-              {leadTimes.length === 0 && clientsData.length > 0 && (
-                <div className="text-[9px] text-white/80 mt-1 text-center">계약일 정보 없음</div>
-              )}
-            </CardContent>
-          </Card>
+
 
           {/* 서비스 이슈관리 */}
           <Card className="border-none shadow-sm bg-[#414344] text-white overflow-hidden">

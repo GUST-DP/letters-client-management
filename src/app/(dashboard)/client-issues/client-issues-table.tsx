@@ -180,27 +180,29 @@ export function ClientIssueTable({
       </div>
 
       {/* 필터 바 */}
-      <div className="flex flex-wrap items-center justify-between gap-3 bg-white px-5 py-3 rounded-2xl border border-slate-200 shadow-sm overflow-x-auto">
-        <div className="flex items-center gap-6">
-          <div className="flex items-center gap-2 border-r border-slate-100 pr-6">
-            <label className="text-xs font-black text-slate-400 uppercase whitespace-nowrap">조회기간</label>
-            <input
-              type="date"
-              value={startDate}
-              onChange={e => setStartDate(e.target.value)}
-              className="h-9 px-3 rounded-lg border border-slate-200 text-xs font-bold text-slate-700 bg-slate-50 focus:outline-none focus:ring-1 focus:ring-slate-300 w-[130px]"
-            />
-            <span className="text-slate-300 font-bold">-</span>
-            <input
-              type="date"
-              value={endDate}
-              onChange={e => setEndDate(e.target.value)}
-              className="h-9 px-3 rounded-lg border border-slate-200 text-xs font-bold text-slate-700 bg-slate-50 focus:outline-none focus:ring-1 focus:ring-slate-300 w-[130px]"
-            />
+      <div className="flex flex-nowrap items-center justify-between gap-3 bg-white px-4 py-2.5 rounded-2xl border border-slate-200 shadow-sm overflow-x-auto">
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 border-r border-slate-100 pr-4">
+            <label className="text-[11px] font-black text-slate-400 uppercase whitespace-nowrap">조회기간</label>
+            <div className="flex items-center gap-1.5">
+              <input
+                type="date"
+                value={startDate}
+                onChange={e => setStartDate(e.target.value)}
+                className="h-8 px-2 rounded-lg border border-slate-200 text-[11px] font-bold text-slate-700 bg-slate-50 focus:outline-none w-[110px]"
+              />
+              <span className="text-slate-300 font-bold">-</span>
+              <input
+                type="date"
+                value={endDate}
+                onChange={e => setEndDate(e.target.value)}
+                className="h-8 px-2 rounded-lg border border-slate-200 text-[11px] font-bold text-slate-700 bg-slate-50 focus:outline-none w-[110px]"
+              />
+            </div>
           </div>
 
-          <div className="flex items-center gap-2 border-r border-slate-100 pr-6">
-            <label className="text-xs font-black text-slate-400 uppercase whitespace-nowrap">고객사</label>
+          <div className="flex items-center gap-2 border-r border-slate-100 pr-4">
+            <label className="text-[11px] font-black text-slate-400 uppercase whitespace-nowrap">고객사</label>
             <SearchableSelect
               options={[
                 { value: "all", label: "전체" },
@@ -208,15 +210,15 @@ export function ClientIssueTable({
               ]}
               value={filterClient}
               onValueChange={v => setFilterClient(v ?? "all")}
-              placeholder="고객사 검색..."
-              className="w-[170px] h-9 bg-slate-50 border-slate-100 text-xs font-bold"
+              placeholder="전체"
+              className="w-[140px] h-8 bg-slate-50 border-slate-100 text-[11px] font-bold"
             />
           </div>
 
-          <div className="flex items-center gap-2 border-r border-slate-100 pr-6">
-            <label className="text-xs font-black text-slate-400 uppercase whitespace-nowrap">이슈유형</label>
+          <div className="flex items-center gap-2 border-r border-slate-100 pr-4">
+            <label className="text-[11px] font-black text-slate-400 uppercase whitespace-nowrap">이슈유형</label>
             <Select value={filterCategory} onValueChange={(v) => v && setFilterCategory(v)}>
-              <SelectTrigger className="w-[150px] h-9 bg-slate-50 border-slate-100 text-xs font-bold">
+              <SelectTrigger className="w-[120px] h-8 bg-slate-50 border-slate-100 text-[11px] font-bold">
                 <SelectValue>{filterCategory === "all" ? "전체" : filterCategory}</SelectValue>
               </SelectTrigger>
               <SelectContent>
@@ -226,10 +228,10 @@ export function ClientIssueTable({
             </Select>
           </div>
 
-          <div className="flex items-center gap-2">
-            <label className="text-xs font-black text-slate-400 uppercase whitespace-nowrap">상태</label>
+          <div className="flex items-center gap-1.5 min-w-max">
+            <label className="text-[11px] font-black text-slate-400 uppercase whitespace-nowrap">상태</label>
             <Select value={filterStatus} onValueChange={(v) => v && setFilterStatus(v)}>
-              <SelectTrigger className="w-[120px] h-9 bg-slate-50 border-slate-100 text-xs font-bold">
+              <SelectTrigger className="w-[90px] h-8 bg-slate-50 border-slate-100 text-[11px] font-bold">
                 <SelectValue>{filterStatus === "all" ? "전체" : filterStatus}</SelectValue>
               </SelectTrigger>
               <SelectContent>

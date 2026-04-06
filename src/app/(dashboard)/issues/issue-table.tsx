@@ -162,29 +162,29 @@ export function IssueTable({ data, clients, teams, userEmail, userName, onRowCli
       </div>
 
       {/* 필터 및 액션 바 */}
-      <div className="flex items-center justify-between bg-white px-5 py-3 rounded-2xl border border-slate-200 shadow-sm overflow-x-auto">
-        <div className="flex items-center gap-6 min-w-max">
-          <div className="flex items-center gap-3 border-r border-slate-200 pr-6">
-            <label className="text-sm font-bold text-slate-600 whitespace-nowrap">조회기간</label>
-            <div className="flex items-center gap-2">
+      <div className="flex flex-nowrap items-center justify-between bg-white px-4 py-2.5 rounded-2xl border border-slate-200 shadow-sm overflow-x-auto">
+        <div className="flex items-center gap-4 min-w-max">
+          <div className="flex items-center gap-2 border-r border-slate-200 pr-4">
+            <label className="text-[11px] font-black text-slate-400 uppercase whitespace-nowrap">조회기간</label>
+            <div className="flex items-center gap-1.5">
               <input 
                 type="date" 
                 value={startDate} 
                 onChange={e => setStartDate(e.target.value)}
-                className="h-9 px-3 rounded-lg border border-slate-200 text-xs font-bold text-slate-700 bg-slate-50 focus:outline-none focus:ring-1 focus:ring-slate-300 w-[130px]"
+                className="h-8 px-2 rounded-lg border border-slate-200 text-[11px] font-bold text-slate-700 bg-slate-50 focus:outline-none w-[110px]"
               />
-              <span className="text-slate-400 font-bold">-</span>
+              <span className="text-slate-300 font-bold">-</span>
               <input 
                 type="date" 
                 value={endDate} 
                 onChange={e => setEndDate(e.target.value)}
-                className="h-9 px-3 rounded-lg border border-slate-200 text-xs font-bold text-slate-700 bg-slate-50 focus:outline-none focus:ring-1 focus:ring-slate-300 w-[130px]"
+                className="h-8 px-2 rounded-lg border border-slate-200 text-[11px] font-bold text-slate-700 bg-slate-50 focus:outline-none w-[110px]"
               />
             </div>
           </div>
 
           <div className="flex items-center gap-2">
-            <label className="text-sm font-bold text-slate-600 whitespace-nowrap">고객사</label>
+            <label className="text-[11px] font-black text-slate-400 uppercase whitespace-nowrap">고객사</label>
             <SearchableSelect
               options={[
                 { value: "all", label: "전체" },
@@ -193,7 +193,7 @@ export function IssueTable({ data, clients, teams, userEmail, userName, onRowCli
               value={filterClient}
               onValueChange={(val) => setFilterClient(val ?? "all")}
               placeholder="전체"
-              className="w-[180px] bg-slate-50 border-slate-100 font-bold text-xs"
+              className="w-[140px] h-8 bg-slate-50 border-slate-100 text-[11px] font-bold"
             />
           </div>
         </div>

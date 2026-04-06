@@ -57,6 +57,8 @@ export default function ClientIssuesPage() {
 
   if (isLoading) return null;
 
+  const currentSelectedIssue = selectedIssue ? issues.find(i => i.id === selectedIssue.id) || selectedIssue : null;
+
   return (
     <div className="flex flex-col gap-4 pb-10">
       {/* 상단: 목록 영역 */}
@@ -75,7 +77,7 @@ export default function ClientIssuesPage() {
       {/* 하단: 상세 조치 영역 */}
       <div className="flex-none h-[460px]">
         <ClientIssueResponseForm 
-          selectedIssue={selectedIssue}
+          selectedIssue={currentSelectedIssue}
           userEmail={user?.email || ""}
           userName={profile?.full_name || user?.email || ""}
         />

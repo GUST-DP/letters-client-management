@@ -263,11 +263,23 @@ export function ClientIssueResponseForm({ selectedIssue, userEmail, userName }: 
                   </p>
                 </td>
                 <td className="px-6 py-6 border-r border-slate-200 text-center w-32">
-                  {selectedIssue && (
-                    <Badge variant="outline" className={cn("font-bold text-[11px] whitespace-nowrap", STATUS_COLORS[selectedIssue.status] || "")}>
-                      {selectedIssue.status || "이슈등록"}
-                    </Badge>
-                  )}
+                  {selectedIssue && (() => {
+                    const val = selectedIssue.status || "이슈등록";
+                    const isCompleted = val === "조치등록" || val === "조치완료";
+                    return (
+                      <Badge 
+                        variant="outline" 
+                        className={cn(
+                          "font-bold text-[11px] whitespace-nowrap", 
+                          isCompleted 
+                            ? "bg-emerald-50 text-emerald-600 border-emerald-200" 
+                            : "bg-rose-50 text-rose-600 border-rose-200"
+                        )}
+                      >
+                        {isCompleted ? "조치등록" : "이슈등록"}
+                      </Badge>
+                    );
+                  })()}
                 </td>
                 <td className="px-6 py-6 align-top text-center border-r border-slate-200 w-40">
                   <div className="inline-flex flex-col items-center">

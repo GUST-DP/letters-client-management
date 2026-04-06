@@ -180,29 +180,29 @@ export function ClientIssueTable({
       </div>
 
       {/* 필터 바 */}
-      <div className="flex flex-nowrap items-center justify-between gap-3 bg-white px-4 py-2.5 rounded-2xl border border-slate-200 shadow-sm overflow-x-auto">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 border-r border-slate-100 pr-4">
-            <label className="text-[11px] font-black text-slate-400 uppercase whitespace-nowrap">조회기간</label>
-            <div className="flex items-center gap-1.5">
+      <div className="flex flex-nowrap items-center justify-between gap-2 bg-white px-3 py-2 rounded-2xl border border-slate-200 shadow-sm overflow-x-auto min-w-0">
+        <div className="flex items-center gap-2.5 flex-1 min-w-0">
+          <div className="flex items-center gap-1.5 border-r border-slate-100 pr-3 shrink-0">
+            <label className="text-[10px] font-black text-slate-400 uppercase whitespace-nowrap">조회기간</label>
+            <div className="flex items-center gap-1">
               <input
                 type="date"
                 value={startDate}
                 onChange={e => setStartDate(e.target.value)}
-                className="h-8 px-2 rounded-lg border border-slate-200 text-[11px] font-bold text-slate-700 bg-slate-50 focus:outline-none w-[110px]"
+                className="h-8 px-1.5 rounded-lg border border-slate-200 text-[10px] font-bold text-slate-700 bg-slate-50 focus:outline-none w-[100px]"
               />
               <span className="text-slate-300 font-bold">-</span>
               <input
                 type="date"
                 value={endDate}
                 onChange={e => setEndDate(e.target.value)}
-                className="h-8 px-2 rounded-lg border border-slate-200 text-[11px] font-bold text-slate-700 bg-slate-50 focus:outline-none w-[110px]"
+                className="h-8 px-1.5 rounded-lg border border-slate-200 text-[10px] font-bold text-slate-700 bg-slate-50 focus:outline-none w-[100px]"
               />
             </div>
           </div>
 
-          <div className="flex items-center gap-2 border-r border-slate-100 pr-4">
-            <label className="text-[11px] font-black text-slate-400 uppercase whitespace-nowrap">고객사</label>
+          <div className="flex items-center gap-1.5 border-r border-slate-100 pr-3 shrink-0">
+            <label className="text-[10px] font-black text-slate-400 uppercase whitespace-nowrap">고객사</label>
             <SearchableSelect
               options={[
                 { value: "all", label: "전체" },
@@ -211,14 +211,14 @@ export function ClientIssueTable({
               value={filterClient}
               onValueChange={v => setFilterClient(v ?? "all")}
               placeholder="전체"
-              className="w-[140px] h-8 bg-slate-50 border-slate-100 text-[11px] font-bold"
+              className="w-[120px] h-8 bg-slate-50 border-slate-100 text-[10px] font-bold"
             />
           </div>
 
-          <div className="flex items-center gap-2 border-r border-slate-100 pr-4">
-            <label className="text-[11px] font-black text-slate-400 uppercase whitespace-nowrap">이슈유형</label>
+          <div className="flex items-center gap-1.5 border-r border-slate-100 pr-3 shrink-0">
+            <label className="text-[10px] font-black text-slate-400 uppercase whitespace-nowrap">이슈유형</label>
             <Select value={filterCategory} onValueChange={(v) => v && setFilterCategory(v)}>
-              <SelectTrigger className="w-[120px] h-8 bg-slate-50 border-slate-100 text-[11px] font-bold">
+              <SelectTrigger className="w-[110px] h-8 bg-slate-50 border-slate-100 text-[10px] font-bold">
                 <SelectValue>{filterCategory === "all" ? "전체" : filterCategory}</SelectValue>
               </SelectTrigger>
               <SelectContent>
@@ -228,10 +228,10 @@ export function ClientIssueTable({
             </Select>
           </div>
 
-          <div className="flex items-center gap-1.5 min-w-max">
-            <label className="text-[11px] font-black text-slate-400 uppercase whitespace-nowrap">상태</label>
+          <div className="flex items-center gap-1.5 shrink-0">
+            <label className="text-[10px] font-black text-slate-400 uppercase whitespace-nowrap">상태</label>
             <Select value={filterStatus} onValueChange={(v) => v && setFilterStatus(v)}>
-              <SelectTrigger className="w-[90px] h-8 bg-slate-50 border-slate-100 text-[11px] font-bold">
+              <SelectTrigger className="w-[85px] h-8 bg-slate-50 border-slate-100 text-[10px] font-bold">
                 <SelectValue>{filterStatus === "all" ? "전체" : filterStatus}</SelectValue>
               </SelectTrigger>
               <SelectContent>
@@ -242,7 +242,7 @@ export function ClientIssueTable({
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 shrink-0 ml-2">
           <Button
             variant="outline"
             size="sm"

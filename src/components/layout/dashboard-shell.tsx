@@ -24,6 +24,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import { createClient } from "@/utils/supabase/client";
 
 interface DashboardShellProps {
   children: React.ReactNode;
@@ -39,19 +40,65 @@ export function DashboardShell({ children, userEmail }: DashboardShellProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isAdminOpen, setIsAdminOpen] = useState(true);
   const [mounted, setMounted] = useState(false);
+  const [hasNew, setHasNew] = useState<Record<string, boolean>>({});
   const pathname = usePathname();
 
-  // 하이드레이션 방지
+  // 하이드레이션 방지 및 신규 알람 체크
   useEffect(() => {
     setMounted(true);
     const saved = localStorage.getItem("sidebar-collapsed");
     if (saved !== null) {
       setIsCollapsed(saved === "true");
     }
+
+    // 신규 데이터 체크 실행
+    checkForNewData();
+
+    // 1분마다 주기적으로 체크 (실시간성 확보)
+    const interval = setInterval(checkForNewData, 60000);
+    return () => clearInterval(interval);
   }, []);
+
+  // 탭 이동 시에도 체크 (다른 탭에서 방문했을 수 있으므로)
+  useEffect(() => {
+    checkForNewData();
+  }, [pathname]);
+
+  const checkForNewData = async () => {
+    const supabase = createClient();
+    
+    // 로컬 스토리지에서 마지막 방문 시간 가져오기 (없으면 아주 옛날 시간)
+    const lastVisited = {
+      clients: localStorage.getItem("last_visited_/clients") || new Date(0).toISOString(),
+      clientIssues: localStorage.getItem("last_visited_/client-issues") || new Date(0).toISOString(),
+      serviceIssues: localStorage.getItem("last_visited_/issues") || new Date(0).toISOString(),
+    };
+
+    try {
+      const [clientRes, opIssueRes, svIssueRes] = await Promise.all([
+        supabase.from('clients').select('id', { count: 'exact', head: true }).gt('created_at', lastVisited.clients),
+        supabase.from('client_operation_issues').select('id', { count: 'exact', head: true }).gt('created_at', lastVisited.clientIssues),
+        supabase.from('client_issues').select('id', { count: 'exact', head: true }).gt('created_at', lastVisited.serviceIssues),
+      ]);
+
+      setHasNew({
+        "/clients": (clientRes.count || 0) > 0,
+        "/client-detail": (clientRes.count || 0) > 0,
+        "/client-issues": (opIssueRes.count || 0) > 0,
+        "/issues": (svIssueRes.count || 0) > 0,
+      });
+    } catch (err) {
+      console.error("New data check error:", err);
+    }
+  };
 
   const handleNavClick = (e: React.MouseEvent, href: string) => {
     e.preventDefault();
+
+    // 방문 시간 기록 및 즉시 뱃지 제거
+    localStorage.setItem(`last_visited_${href}`, new Date().toISOString());
+    setHasNew(prev => ({ ...prev, [href]: false }));
+
     // 전역 로딩 팝업 표시
     startLoading();
     // 트랜지션 시작 (배경에서 로드하여 흰 화면 방지)
@@ -141,7 +188,20 @@ export function DashboardShell({ children, userEmail }: DashboardShellProps) {
                 )}
               >
                 <item.icon className={cn("w-5 h-5 shrink-0 transition-colors", isActive ? "text-[#ff5c39]" : "text-[#ececec]/60 group-hover:text-[#ff5c39]")} />
-                {!isCollapsed && <span className="text-sm truncate">{item.name}</span>}
+                {!isCollapsed && <span className="text-sm truncate flex-1">{item.name}</span>}
+                
+                {/* 신규 알림 뱃지 */}
+                {hasNew[item.href] && (
+                  <span className={cn(
+                    "bg-[#ff5c39] text-white font-black flex items-center justify-center animate-pulse shadow-sm shadow-[#ff5c39]/40 shrink-0",
+                    isCollapsed 
+                      ? "absolute top-1.5 right-1.5 w-2 h-2 rounded-full" 
+                      : "w-4 h-4 rounded-full text-[9px] ml-auto"
+                  )}>
+                    {!isCollapsed && "N"}
+                  </span>
+                )}
+
                 {isCollapsed && isActive && (
                   <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-white rounded-r-full" />
                 )}

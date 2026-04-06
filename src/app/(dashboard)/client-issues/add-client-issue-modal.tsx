@@ -231,12 +231,8 @@ export function AddClientIssueModal({
             >
               취소
             </Button>
-            <Button
-              type="submit"
-              disabled={isSubmitting}
-              className="bg-[#ff5c39] hover:bg-[#e04f32] text-white font-black px-8"
-            >
-              {isSubmitting ? "등록 중..." : "이슈 등록"}
+            <Button type="submit" disabled={isSubmitting} className="h-10 bg-[#ff5c39] hover:bg-[#e04f32] text-white text-sm px-12 font-black shadow-lg shadow-[#ff5c39]/20 transition-all active:scale-95">
+              {isSubmitting ? "처리 중..." : "이슈등록"}
             </Button>
           </DialogFooter>
         </form>

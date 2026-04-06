@@ -148,7 +148,7 @@ export function DashboardShell({ children, userEmail }: DashboardShellProps) {
       <aside 
         className={cn(
           "bg-[#414344] text-[#ececec] flex flex-col transition-all duration-300 sticky top-0 h-screen z-50 shadow-xl overflow-hidden",
-          isCollapsed ? "w-16" : "w-44"
+          isCollapsed ? "w-16" : "w-48"
         )}
       >
         {/* Sidebar Header */}
@@ -171,7 +171,7 @@ export function DashboardShell({ children, userEmail }: DashboardShellProps) {
         </div>
 
         {/* Navigation Section */}
-        <nav className="flex-1 overflow-y-auto overflow-x-hidden p-2 space-y-1 scrollbar-hide pt-4">
+        <nav className="flex-1 overflow-y-auto overflow-x-hidden p-2 space-y-0.5 scrollbar-hide pt-4">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
             return (
@@ -180,7 +180,7 @@ export function DashboardShell({ children, userEmail }: DashboardShellProps) {
                 href={item.href}
                 onClick={(e) => handleNavClick(e, item.href)}
                 className={cn(
-                  "flex items-center gap-3 px-3 py-2.5 rounded-md transition-all group relative cursor-pointer",
+                  "flex items-center gap-2.5 px-2.5 py-1.25 rounded-md transition-all group relative cursor-pointer",
                   isActive 
                     ? "bg-[#ececec]/10 text-white font-extrabold shadow-sm" 
                     : "text-[#ececec]/80 hover:bg-[#ececec]/5 hover:text-white",
@@ -188,19 +188,20 @@ export function DashboardShell({ children, userEmail }: DashboardShellProps) {
                 )}
               >
                 <item.icon className={cn("w-5 h-5 shrink-0 transition-colors", isActive ? "text-[#ff5c39]" : "text-[#ececec]/60 group-hover:text-[#ff5c39]")} />
-                {!isCollapsed && <span className="text-[12px] truncate flex-1">{item.name}</span>}
                 
-                {/* 신규 알림 뱃지 */}
+                {/* 신규 알림 뱃지 (왼쪽 배치) */}
                 {hasNew[item.href] && (
                   <span className={cn(
                     "bg-[#ff5c39] text-white font-black flex items-center justify-center animate-pulse shadow-sm shadow-[#ff5c39]/40 shrink-0",
                     isCollapsed 
                       ? "absolute top-1.5 right-1.5 w-2 h-2 rounded-full" 
-                      : "w-4 h-4 rounded-full text-[9px] ml-auto"
+                      : "w-3.5 h-3.5 rounded-full text-[8px]"
                   )}>
                     {!isCollapsed && "N"}
                   </span>
                 )}
+
+                {!isCollapsed && <span className="text-[12px] truncate flex-1">{item.name}</span>}
 
                 {isCollapsed && isActive && (
                   <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-white rounded-r-full" />
@@ -225,17 +226,17 @@ export function DashboardShell({ children, userEmail }: DashboardShellProps) {
               <Collapsible open={isAdminOpen} onOpenChange={setIsAdminOpen}>
                 <CollapsibleTrigger
                   className={cn(
-                    "flex items-center gap-3 px-3 py-2.5 rounded-md transition-all group cursor-pointer w-full text-left",
+                    "flex items-center gap-2.5 px-2.5 py-1.25 rounded-md transition-all group cursor-pointer w-full text-left",
                     pathname.startsWith("/settings") 
                       ? "bg-[#ececec]/10 text-white font-extrabold shadow-sm" 
                       : "text-[#ececec]/80 hover:bg-[#ececec]/5 hover:text-white"
                   )}
                 >
                   <Settings className={cn("w-5 h-5 shrink-0 transition-colors", pathname.startsWith("/settings") ? "text-[#ff5c39]" : "text-[#ececec]/60 group-hover:text-[#ff5c39]")} />
-                  <span className="text-sm flex-1 truncate">기준관리</span>
+                  <span className="text-[12px] flex-1 truncate">기준관리</span>
                   <ChevronDown className={cn("w-4 h-4 transition-transform shrink-0 outline-none border-none", isAdminOpen ? "" : "-rotate-90")} />
                 </CollapsibleTrigger>
-                <CollapsibleContent className="space-y-0.5 mt-1">
+                <CollapsibleContent className="space-y-0.5 mt-0.5">
                   {adminItems.map((item) => (
                     <AdminLink key={item.href} item={item} onClick={handleNavClick} />
                   ))}
@@ -246,19 +247,19 @@ export function DashboardShell({ children, userEmail }: DashboardShellProps) {
         </nav>
   
         {/* Sidebar Footer */}
-        <div className="mt-auto p-2 pb-8 border-t border-[#ececec]/10 shrink-0">
+        <div className="mt-auto p-2 pb-4 border-t border-[#ececec]/10 shrink-0">
           <Button
             variant="ghost"
             className={cn(
-              "w-full flex items-center transition-all text-[#ececec]/80 hover:bg-[#ececec]/5 hover:text-white group",
-              isCollapsed ? "justify-center px-0" : "justify-start px-3 gap-3"
+              "w-full flex items-center transition-all text-[#ececec]/80 hover:bg-[#ececec]/5 hover:text-white group h-9",
+              isCollapsed ? "justify-center px-0" : "justify-start px-2.5 gap-2.5"
             )}
             onClick={toggleSidebar}
           >
             {isCollapsed ? <ChevronRight className="w-5 h-5 transition-colors group-hover:text-[#ff5c39]" /> : (
               <>
                 <ChevronLeft className="w-5 h-5 transition-colors group-hover:text-[#ff5c39]" />
-                <span className="text-sm font-bold">사이드바 접기</span>
+                <span className="text-[12px] font-bold">사이드바 접기</span>
               </>
             )}
           </Button>

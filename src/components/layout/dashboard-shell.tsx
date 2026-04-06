@@ -245,16 +245,16 @@ export function DashboardShell({ children, userEmail }: DashboardShellProps) {
           {/* 전역 로딩 팝업 (isPending이 끝날 때까지 기존 화면 유지) */}
           {showLoading && (
             <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/5 backdrop-blur-[1px] animate-in fade-in duration-200">
-                <div className="bg-white p-[60px] rounded-3xl shadow-[0_30px_100px_rgba(0,0,0,0.3)] border border-slate-100 flex flex-col items-center gap-[34px] scale-100 animate-in zoom-in-95 duration-500">
-                <div className="relative w-[120px] h-[120px]">
-                  <div className="absolute top-0 left-0 w-full h-full border-[6px] border-slate-50 rounded-full" />
-                  <div className="absolute top-0 left-0 w-full h-full border-[6px] border-[#ff5c39] rounded-full border-t-transparent animate-spin" />
+                <div className="bg-white p-[42px] rounded-3xl shadow-[0_30px_100px_rgba(0,0,0,0.3)] border border-slate-100 flex flex-col items-center gap-[24px] scale-100 animate-in zoom-in-95 duration-500">
+                <div className="relative w-[84px] h-[84px]">
+                  <div className="absolute top-0 left-0 w-full h-full border-[4px] border-slate-50 rounded-full" />
+                  <div className="absolute top-0 left-0 w-full h-full border-[4px] border-[#ff5c39] rounded-full border-t-transparent animate-spin" />
                   <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="text-[20px] font-black text-[#ff5c39] uppercase tracking-widest animate-pulse">LETUS</span>
+                      <span className="text-[16px] font-black text-[#ff5c39] uppercase tracking-widest animate-pulse">LETUS</span>
                   </div>
                 </div>
-                <div className="flex flex-col items-center gap-4">
-                  <p className="text-[28px] font-black text-slate-600 tracking-tight">잠시만 기다려주세요</p>
+                <div className="flex flex-col items-center gap-3">
+                  <p className="text-[20px] font-black text-slate-600 tracking-tight">잠시만 기다려주세요</p>
                   <div className="flex gap-1.5 mt-1">
                     <span className="w-1.5 h-1.5 bg-[#ff5c39] rounded-full animate-bounce [animation-delay:-0.3s]" />
                     <span className="w-1.5 h-1.5 bg-[#ff5c39] rounded-full animate-bounce [animation-delay:-0.15s]" />

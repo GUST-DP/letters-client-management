@@ -138,136 +138,138 @@ export function AddIssueModal({ clients, teams, userEmail, userName }: AddIssueM
     <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) resetForm(); }}>
       <DialogTrigger className={cn(buttonVariants({ size: "sm", variant: "default" }), "bg-[#414344] text-white hover:bg-[#ff5c39] transition-colors gap-1.5 h-8 px-3 rounded-lg text-sm cursor-pointer")}>
         <Plus className="w-4 h-4" />
-        이슈 등록
+        이슈등록
       </DialogTrigger>
-      <DialogContent className="max-w-[1000px] w-[90vw] max-h-[95vh] overflow-y-auto p-8 bg-white border border-slate-100 shadow-2xl rounded-2xl">
-        <DialogHeader className="mb-6 text-left border-b pb-4">
-          <DialogTitle className="text-2xl font-black tracking-tight text-slate-800">
-            신규 이슈 등록
+      <DialogContent className="max-w-[1000px] w-[90vw] max-h-[95vh] overflow-y-auto p-0 bg-white border-0 shadow-2xl rounded-2xl">
+        <DialogHeader className="p-6 border-b border-slate-100">
+          <DialogTitle className="text-lg font-black text-slate-900 flex items-center gap-2">
+            <span className="w-2 h-5 bg-orange-500 rounded-full inline-block" />
+            서비스 이슈 신규 등록
           </DialogTitle>
         </DialogHeader>
+        <div className="p-8">
+          <form onSubmit={handleSubmit} className="space-y-8">
+            {/* 기본 정보 (4열 그리드) */}
+            <div className="grid grid-cols-4 gap-x-8 gap-y-6">
+              <div className="space-y-2">
+                <Label className="text-sm font-bold text-slate-700 whitespace-nowrap">발생일 <span className="text-red-500">*</span></Label>
+                <Input type="date" required value={occurrenceDate} onChange={e => setOccurrenceDate(e.target.value)} className="h-11 text-sm border-slate-200 shadow-sm" />
+              </div>
 
-        <form onSubmit={handleSubmit} className="space-y-8">
-          {/* 기본 정보 (4열 그리드) */}
-          <div className="grid grid-cols-4 gap-x-8 gap-y-6">
-            <div className="space-y-2">
-              <Label className="text-sm font-bold text-slate-700 whitespace-nowrap">발생일 <span className="text-red-500">*</span></Label>
-              <Input type="date" required value={occurrenceDate} onChange={e => setOccurrenceDate(e.target.value)} className="h-11 text-sm border-slate-200 shadow-sm" />
-            </div>
-
-            <div className="space-y-2">
-              <Label className="text-sm font-bold text-slate-700 whitespace-nowrap">고객사 <span className="text-red-500">*</span></Label>
-              <SearchableSelect
-                options={clients.map(c => ({ value: c.id, label: c.company_name }))}
-                value={clientId}
-                onValueChange={setClientId}
-                placeholder="고객사 선택"
-                className="h-11 shadow-sm w-full"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label className="text-sm font-bold text-slate-700 whitespace-nowrap">이슈유형 <span className="text-red-500">*</span></Label>
-              <Select value={issueType} onValueChange={(val) => setIssueType(val || "")} required>
-                <SelectTrigger className="h-11 text-sm border-slate-200 shadow-sm">
-                  <SelectValue placeholder="선택" />
-                </SelectTrigger>
-                <SelectContent>
-                  {ISSUE_TYPES.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label className="text-sm font-bold text-slate-700 whitespace-nowrap">발생주체 <span className="text-red-500">*</span></Label>
-              <Select value={occurrenceSubject} onValueChange={(val) => setOccurrenceSubject(val || "")} required>
-                <SelectTrigger className="h-11 text-sm border-slate-200 shadow-sm">
-                  <SelectValue placeholder="선택" />
-                </SelectTrigger>
-                <SelectContent>
-                  {SUBJECTS.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label className="text-sm font-bold text-slate-700 whitespace-nowrap">발생원인 <span className="text-red-500">*</span></Label>
-              <Select value={rootCause} onValueChange={(val) => setRootCause(val || "")} required>
-                <SelectTrigger className="h-11 text-sm border-slate-200 shadow-sm">
-                  <SelectValue placeholder="선택" />
-                </SelectTrigger>
-                <SelectContent>
-                  {ROOT_CAUSES.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label className="text-sm font-bold text-slate-700 whitespace-nowrap">건명 <span className="text-red-500">*</span></Label>
-              <Input placeholder="이슈 건명 입력" required value={title} onChange={e => setTitle(e.target.value)} className="h-11 text-sm font-semibold border-slate-200 shadow-sm" />
-            </div>
-
-            <div className="space-y-2">
-              <Label className="text-sm font-bold text-slate-700 whitespace-nowrap">담당자 및 권역장 <span className="text-red-500">*</span></Label>
-              <Input placeholder="이름" required value={managerName} onChange={e => setManagerName(e.target.value)} className="h-11 text-sm border-slate-200 shadow-sm" />
-            </div>
-
-            <div className="space-y-2">
-              <Label className="text-sm font-bold text-slate-700 whitespace-nowrap">시공팀 <span className="text-red-500">*</span></Label>
-              <Input placeholder="팀명" required value={constructionTeam} onChange={e => setConstructionTeam(e.target.value)} className="h-11 text-sm border-slate-200 shadow-sm" />
-            </div>
-
-            <div className="space-y-2">
-              <Label className="text-sm font-bold text-slate-700 whitespace-nowrap">이슈등록자</Label>
-              <Input value={userName} disabled className="h-11 text-sm bg-slate-50 text-slate-600 font-bold border-slate-200" />
-            </div>
-
-            <div className="space-y-2">
-              <Label className="text-sm font-bold text-slate-700 whitespace-nowrap">첨부파일</Label>
-              <div className="flex items-center gap-2">
-                <Input 
-                  id="file-upload" 
-                  type="file" 
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFile(e.target.files?.[0] || null)} 
-                  className="h-11 text-sm cursor-pointer file:text-xs file:font-bold border-slate-200 flex-1" 
+              <div className="space-y-2">
+                <Label className="text-sm font-bold text-slate-700 whitespace-nowrap">고객사 <span className="text-red-500">*</span></Label>
+                <SearchableSelect
+                  options={clients.map(c => ({ value: c.id, label: c.company_name }))}
+                  value={clientId}
+                  onValueChange={setClientId}
+                  placeholder="고객사 선택"
+                  className="h-11 shadow-sm w-full"
                 />
               </div>
-            </div>
 
-            <div className="space-y-2">
-              <Label className="text-sm font-bold text-slate-700 whitespace-nowrap">F/U 필요팀</Label>
-              <Select value={fuRequiredTeam} onValueChange={(val) => setFuRequiredTeam(val || "")}>
-                <SelectTrigger className="h-11 text-sm border-slate-200 shadow-sm bg-blue-50/30">
-                  <SelectValue placeholder="팀 선택" />
-                </SelectTrigger>
-                <SelectContent>
-                  {teams.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
+              <div className="space-y-2">
+                <Label className="text-sm font-bold text-slate-700 whitespace-nowrap">이슈유형 <span className="text-red-500">*</span></Label>
+                <Select value={issueType} onValueChange={(val) => setIssueType(val || "")} required>
+                  <SelectTrigger className="h-11 text-sm border-slate-200 shadow-sm">
+                    <SelectValue placeholder="선택" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {ISSUE_TYPES.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
 
-          <div className="pt-4 border-t border-slate-100">
-            <div className="space-y-2">
-              <Label className="text-sm font-bold text-slate-700 uppercase tracking-wider">이슈 상세 내용 <span className="text-red-500">*</span></Label>
-              <Textarea placeholder="발생된 이슈를 육하원칙에 따라 상세히 기재해주세요." required value={issueContent} onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setIssueContent(e.target.value)} className="min-h-[150px] text-sm resize-none border-slate-200 shadow-sm focus:ring-1 focus:ring-[#ff5c39]/30" />
-            </div>
-          </div>
+              <div className="space-y-2">
+                <Label className="text-sm font-bold text-slate-700 whitespace-nowrap">발생주체 <span className="text-red-500">*</span></Label>
+                <Select value={occurrenceSubject} onValueChange={(val) => setOccurrenceSubject(val || "")} required>
+                  <SelectTrigger className="h-11 text-sm border-slate-200 shadow-sm">
+                    <SelectValue placeholder="선택" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {SUBJECTS.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
 
-          <DialogFooter className="pt-6 border-t border-slate-100">
-            <div className="flex w-full items-center justify-between">
-              <p className="text-[11px] text-slate-400 font-medium">* 필수 정보 입력 후 이슈를 등록해 주세요. 조치 사항은 목록에서 선택하여 입력 가능합니다.</p>
-              <div className="flex items-center gap-4">
-                <Button type="button" variant="outline" onClick={() => setOpen(false)} className="h-10 text-sm px-8 font-bold border-slate-200 hover:bg-slate-50 transition-all text-slate-600">
-                  취소
-                </Button>
-                <Button type="submit" disabled={isSubmitting} className="h-10 bg-[#ff5c39] hover:bg-[#e04f32] text-white text-sm px-12 font-black shadow-lg shadow-[#ff5c39]/20 transition-all active:scale-95">
-                  {isSubmitting ? "처리 중..." : "이슈 등록하기"}
-                </Button>
+              <div className="space-y-2">
+                <Label className="text-sm font-bold text-slate-700 whitespace-nowrap">발생원인 <span className="text-red-500">*</span></Label>
+                <Select value={rootCause} onValueChange={(val) => setRootCause(val || "")} required>
+                  <SelectTrigger className="h-11 text-sm border-slate-200 shadow-sm">
+                    <SelectValue placeholder="선택" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {ROOT_CAUSES.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-sm font-bold text-slate-700 whitespace-nowrap">건명 <span className="text-red-500">*</span></Label>
+                <Input placeholder="이슈 건명 입력" required value={title} onChange={e => setTitle(e.target.value)} className="h-11 text-sm font-semibold border-slate-200 shadow-sm" />
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-sm font-bold text-slate-700 whitespace-nowrap">담당자 및 권역장 <span className="text-red-500">*</span></Label>
+                <Input placeholder="이름" required value={managerName} onChange={e => setManagerName(e.target.value)} className="h-11 text-sm border-slate-200 shadow-sm" />
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-sm font-bold text-slate-700 whitespace-nowrap">시공팀 <span className="text-red-500">*</span></Label>
+                <Input placeholder="팀명" required value={constructionTeam} onChange={e => setConstructionTeam(e.target.value)} className="h-11 text-sm border-slate-200 shadow-sm" />
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-sm font-bold text-slate-700 whitespace-nowrap">이슈등록자</Label>
+                <Input value={userName} disabled className="h-11 text-sm bg-slate-50 text-slate-600 font-bold border-slate-200" />
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-sm font-bold text-slate-700 whitespace-nowrap">첨부파일</Label>
+                <div className="flex items-center gap-2">
+                  <Input 
+                    id="file-upload" 
+                    type="file" 
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFile(e.target.files?.[0] || null)} 
+                    className="h-11 text-sm cursor-pointer file:text-xs file:font-bold border-slate-200 flex-1" 
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-sm font-bold text-slate-700 whitespace-nowrap">F/U 필요팀</Label>
+                <Select value={fuRequiredTeam} onValueChange={(val) => setFuRequiredTeam(val || "")}>
+                  <SelectTrigger className="h-11 text-sm border-slate-200 shadow-sm bg-blue-50/30">
+                    <SelectValue placeholder="팀 선택" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {teams.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
-          </DialogFooter>
-        </form>
+
+            <div className="pt-4 border-t border-slate-100">
+              <div className="space-y-2">
+                <Label className="text-sm font-bold text-slate-700 uppercase tracking-wider">이슈 상세 내용 <span className="text-red-500">*</span></Label>
+                <Textarea placeholder="발생된 이슈를 육하원칙에 따라 상세히 기재해주세요." required value={issueContent} onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setIssueContent(e.target.value)} className="min-h-[150px] text-sm resize-none border-slate-200 shadow-sm focus:ring-1 focus:ring-[#ff5c39]/30" />
+              </div>
+            </div>
+
+            <DialogFooter className="pt-6 border-t border-slate-100">
+              <div className="flex w-full items-center justify-between">
+                <p className="text-[11px] text-slate-400 font-medium">* 필수 정보 입력 후 이슈를 등록해 주세요. 조치 사항은 목록에서 선택하여 입력 가능합니다.</p>
+                <div className="flex items-center gap-4">
+                  <Button type="button" variant="outline" onClick={() => setOpen(false)} className="h-10 text-sm px-8 font-bold border-slate-200 hover:bg-slate-50 transition-all text-slate-600">
+                    취소
+                  </Button>
+                  <Button type="submit" disabled={isSubmitting} className="h-10 bg-[#ff5c39] hover:bg-[#e04f32] text-white text-sm px-12 font-black shadow-lg shadow-[#ff5c39]/20 transition-all active:scale-95">
+                    {isSubmitting ? "처리 중..." : "이슈 등록하기"}
+                  </Button>
+                </div>
+              </div>
+            </DialogFooter>
+          </form>
+        </div>
       </DialogContent>
     </Dialog>
   );

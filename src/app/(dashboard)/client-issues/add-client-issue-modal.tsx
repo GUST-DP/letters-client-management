@@ -125,7 +125,7 @@ export function AddClientIssueModal({
         className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-black ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-[#ff5c39] hover:bg-[#e04f32] text-white h-9 px-4 shadow-lg shadow-[#ff5c39]/20"
       >
         <Plus className="w-4 h-4" />
-        이슈 신규등록
+        이슈등록
       </DialogTrigger>
       <DialogContent className="sm:max-w-[600px] bg-white rounded-2xl shadow-2xl border-0">
         <DialogHeader className="pb-4 border-b border-slate-100">

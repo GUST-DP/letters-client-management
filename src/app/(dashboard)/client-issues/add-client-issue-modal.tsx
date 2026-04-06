@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -57,17 +57,30 @@ export function AddClientIssueModal({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
 
-  const [occurrenceDate, setOccurrenceDate] = useState(
-    new Date().toISOString().split("T")[0]
-  );
+  const [occurrenceDate, setOccurrenceDate] = useState("");
   const [clientId, setClientId] = useState(defaultClientId ?? "");
   const [issueCategory, setIssueCategory] = useState("");
   const [issueContent, setIssueContent] = useState("");
   const [responsibleParty, setResponsibleParty] = useState("");
   const [file, setFile] = useState<File | null>(null);
 
+  // 모달이 열릴 때마다 오늘 날짜로 동기화 (KST 등 현지 시간 기준)
+  useEffect(() => {
+    if (open) {
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, '0');
+      const day = String(today.getDate()).padStart(2, '0');
+      setOccurrenceDate(`${year}-${month}-${day}`);
+    }
+  }, [open, defaultClientId]);
+
   const resetForm = () => {
-    setOccurrenceDate(new Date().toISOString().split("T")[0]);
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    setOccurrenceDate(`${year}-${month}-${day}`);
     setClientId(defaultClientId ?? "");
     setIssueCategory("");
     setIssueContent("");

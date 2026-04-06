@@ -11,6 +11,7 @@ import {
   DialogTrigger,
   DialogFooter,
 } from "@/components/ui/dialog";
+import { useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -53,7 +54,7 @@ export function AddIssueModal({ clients, teams, userEmail, userName }: AddIssueM
   const router = useRouter();
 
   // Form states
-  const [occurrenceDate, setOccurrenceDate] = useState("");
+  const [occurrenceDate, setOccurrenceDate] = useState(new Date().toISOString().split('T')[0]);
   const [clientId, setClientId] = useState("");
   const [issueType, setIssueType] = useState("");
   const [issueContent, setIssueContent] = useState("");
@@ -65,6 +66,17 @@ export function AddIssueModal({ clients, teams, userEmail, userName }: AddIssueM
   const [fuRequiredTeam, setFuRequiredTeam] = useState("");
   const [status, setStatus] = useState("이슈등록");
   const [file, setFile] = useState<File | null>(null);
+
+  // 모달이 열릴 때마다 오늘 날짜로 동기화 (KST 등 현지 시간 기준)
+  useEffect(() => {
+    if (open) {
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, '0');
+      const day = String(today.getDate()).padStart(2, '0');
+      setOccurrenceDate(`${year}-${month}-${day}`);
+    }
+  }, [open]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -104,7 +116,11 @@ export function AddIssueModal({ clients, teams, userEmail, userName }: AddIssueM
   };
 
   const resetForm = () => {
-    setOccurrenceDate("");
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    setOccurrenceDate(`${year}-${month}-${day}`);
     setClientId("");
     setIssueType("");
     setIssueContent("");
@@ -119,7 +135,7 @@ export function AddIssueModal({ clients, teams, userEmail, userName }: AddIssueM
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) resetForm(); }}>
       <DialogTrigger className={cn(buttonVariants({ size: "sm", variant: "default" }), "bg-[#414344] text-white hover:bg-[#ff5c39] transition-colors gap-1.5 h-8 px-3 rounded-lg text-sm cursor-pointer")}>
         <Plus className="w-4 h-4" />
         이슈 등록

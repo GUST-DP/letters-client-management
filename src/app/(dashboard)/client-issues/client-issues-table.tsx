@@ -317,14 +317,18 @@ export function ClientIssueTable({
                           {item.issue_category}
                         </Badge>
                       </td>
-                      <td 
-                        className="py-2.5 px-4 border-r border-slate-100 font-bold text-slate-700 max-w-[200px] truncate hover:text-[#ff5c39] hover:underline"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleOpenDetail(item);
-                        }}
-                      >
-                        {item.title || item.issue_content?.substring(0, 30)}
+                      <td className="py-2.5 px-4 border-r border-slate-100">
+                        <button 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleOpenDetail(item);
+                          }}
+                          className="w-full text-blue-600 hover:text-blue-800 hover:underline text-[13px] font-bold truncate text-left flex items-center gap-1 group"
+                          title="상세 보기"
+                        >
+                          <span className="text-[11.5px] group-hover:scale-110 transition-transform shrink-0">🔍</span>
+                          <span className="truncate">{item.title || item.issue_content?.substring(0, 30)}</span>
+                        </button>
                       </td>
                       <td className="py-2.5 px-4 border-r border-slate-100 text-center">
                         {item.file_url ? (

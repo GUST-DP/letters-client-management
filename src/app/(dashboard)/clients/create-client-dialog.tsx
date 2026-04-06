@@ -193,13 +193,16 @@ export function CreateClientDialog({ costCenters, serviceTypes, profiles }: Prop
                 >
                   <SelectTrigger className="h-10 text-sm font-medium border-slate-200 focus:ring-[#ff5c39]/20">
                     <SelectValue placeholder="영업 담당자 배정">
-                      {profiles.find(p => p.id === smId) ? (profiles.find(p => p.id === smId)?.full_name ? `${profiles.find(p => p.id === smId)?.full_name} (${profiles.find(p => p.id === smId)?.email})` : profiles.find(p => p.id === smId)?.email) : undefined}
+                      {(() => {
+                        const p = profiles.find(p => p.id === smId);
+                        return p ? (p.full_name || p.email) : undefined;
+                      })()}
                     </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
                     {profiles.map((p) => (
                       <SelectItem key={p.id} value={p.id}>
-                        {p.full_name ? `${p.full_name} (${p.email})` : p.email}
+                        {p.full_name || p.email}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -215,14 +218,18 @@ export function CreateClientDialog({ costCenters, serviceTypes, profiles }: Prop
                 >
                   <SelectTrigger className="h-10 text-sm font-medium border-slate-200 focus:ring-[#ff5c39]/20">
                     <SelectValue placeholder="운영 담당자 배정 (선택)">
-                      {profiles.find(p => p.id === omId) ? (profiles.find(p => p.id === omId)?.full_name ? `${profiles.find(p => p.id === omId)?.full_name} (${profiles.find(p => p.id === omId)?.email})` : profiles.find(p => p.id === omId)?.email) : undefined}
+                      {(() => {
+                        const p = profiles.find(p => p.id === omId);
+                        if (omId === "unassigned") return "미배정";
+                        return p ? (p.full_name || p.email) : undefined;
+                      })()}
                     </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="unassigned">미배정</SelectItem>
                     {profiles.map((p) => (
                       <SelectItem key={p.id} value={p.id}>
-                        {p.full_name ? `${p.full_name} (${p.email})` : p.email}
+                        {p.full_name || p.email}
                       </SelectItem>
                     ))}
                   </SelectContent>

@@ -79,7 +79,7 @@ export function ClientIssueResponseForm({ selectedIssue, userEmail, userName }: 
     
     const fd = new FormData();
     fd.append('id', selectedIssue.id);
-    fd.append('status', status);
+    fd.append('status', '조치등록'); // 조치 내용 저장 시 무조건 '조치등록'으로 변경
     fd.append('action_taken', actionTaken);
     fd.append('preventive_measure', preventiveMeasure);
     if (file) fd.append('file', file);
@@ -101,7 +101,7 @@ export function ClientIssueResponseForm({ selectedIssue, userEmail, userName }: 
       {/* 헤더 */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <div className="w-2 h-6 bg-orange-500 rounded-full" />
+          <div className="w-2 h-6 bg-[#ff5c39] rounded-full" />
           <h2 className="text-base font-black text-slate-800 tracking-tight">상세 조치 내역</h2>
         </div>
         
@@ -109,7 +109,7 @@ export function ClientIssueResponseForm({ selectedIssue, userEmail, userName }: 
           !isEditing ? (
             <Button 
               onClick={() => setIsEditing(true)}
-              className="bg-slate-900 hover:bg-black text-white font-black px-6 gap-2 rounded-xl shadow-lg"
+              className="bg-[#ff5c39] hover:bg-[#e04f32] text-white font-black px-6 gap-2 rounded-xl shadow-lg shadow-[#ff5c39]/20 transition-all active:scale-95"
             >
               <MessageSquarePlus className="w-4 h-4" />
               조치사항 등록/수정
@@ -128,8 +128,8 @@ export function ClientIssueResponseForm({ selectedIssue, userEmail, userName }: 
       </div>
 
       {!selectedIssue ? (
-        <div className="flex-1 flex flex-col items-center justify-center text-slate-400 gap-3 border-2 border-dashed border-slate-50 rounded-2xl">
-          <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center">
+        <div className="flex-1 flex flex-col items-center justify-center text-slate-400 gap-3 border-2 border-dashed border-slate-100 rounded-2xl bg-slate-50/30">
+          <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm">
             <FileText className="w-8 h-8 text-slate-200" />
           </div>
           <p className="text-sm font-bold">목록에서 이슈를 선택하면 상세 내용을 확인하고 조치사항을 등록할 수 있습니다.</p>
@@ -139,7 +139,7 @@ export function ClientIssueResponseForm({ selectedIssue, userEmail, userName }: 
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
               <div className="bg-slate-800 px-4 py-2 flex items-center gap-2">
-                <MessageSquareText className="w-3.5 h-3.5 text-orange-400" />
+                <MessageSquareText className="w-3.5 h-3.5 text-[#ff5c39]" />
                 <span className="text-white text-[11px] font-black uppercase tracking-wider">조치사항 입력</span>
               </div>
               <div className="p-4">
@@ -147,7 +147,7 @@ export function ClientIssueResponseForm({ selectedIssue, userEmail, userName }: 
                   placeholder="실제 조치된 상세 내용을 입력하세요." 
                   value={actionTaken} 
                   onChange={e => setActionTaken(e.target.value)} 
-                  className="min-h-[140px] text-sm border-slate-100 focus:ring-orange-500/20 resize-none font-medium"
+                  className="min-h-[140px] text-sm border-slate-100 focus:ring-[#ff5c39]/20 resize-none font-medium"
                 />
               </div>
             </div>
@@ -167,18 +167,13 @@ export function ClientIssueResponseForm({ selectedIssue, userEmail, userName }: 
             </div>
           </div>
           
-          <div className="bg-slate-50 p-4 rounded-xl flex items-center justify-between border border-slate-100">
+          <div className="bg-slate-50 p-4 rounded-xl flex items-center justify-between border border-slate-100 shadow-inner-sm">
              <div className="flex items-center gap-8">
-               <div className="flex flex-col gap-1.5">
-                 <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">진행상태</Label>
-                 <Select value={status} onValueChange={(v) => v && setStatus(v)}>
-                   <SelectTrigger className="w-[140px] h-10 bg-white border-slate-200 font-bold text-xs">
-                     <SelectValue />
-                   </SelectTrigger>
-                   <SelectContent>
-                     {STATUS_OPTIONS.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
-                   </SelectContent>
-                 </Select>
+               <div className="flex flex-col gap-1.5 opacity-50 grayscale pointer-events-none">
+                 <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">진행상태 (자동변경)</Label>
+                 <div className="w-[140px] h-10 bg-white border border-slate-200 rounded-lg flex items-center px-3 text-xs font-bold text-slate-500">
+                   조치등록
+                 </div>
                </div>
                
                <div className="h-12 w-px bg-slate-200" />
@@ -203,9 +198,9 @@ export function ClientIssueResponseForm({ selectedIssue, userEmail, userName }: 
              <Button 
                type="submit" 
                disabled={isSubmitting}
-               className="bg-orange-500 hover:bg-orange-600 text-white font-black px-12 h-12 shadow-lg shadow-orange-500/20 rounded-xl"
+               className="bg-slate-900 hover:bg-black text-white font-extrabold px-12 h-12 shadow-xl shadow-slate-200 rounded-xl transition-all active:scale-95"
              >
-               {isSubmitting ? "저장 중..." : "조치 결과 저장하기"}
+               {isSubmitting ? "저장 중..." : "조치 내용 저장하기"}
              </Button>
           </div>
         </form>

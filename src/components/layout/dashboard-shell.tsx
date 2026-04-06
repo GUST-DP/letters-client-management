@@ -188,7 +188,7 @@ export function DashboardShell({ children, userEmail }: DashboardShellProps) {
                 )}
               >
                 <item.icon className={cn("w-5 h-5 shrink-0 transition-colors", isActive ? "text-[#ff5c39]" : "text-[#ececec]/60 group-hover:text-[#ff5c39]")} />
-                {!isCollapsed && <span className="text-sm truncate flex-1">{item.name}</span>}
+                {!isCollapsed && <span className="text-[12px] truncate flex-1">{item.name}</span>}
                 
                 {/* 신규 알림 뱃지 */}
                 {hasNew[item.href] && (
@@ -345,7 +345,7 @@ function AdminLink({ item, onClick }: { item: { name: string; href: string; tab:
       href={item.href}
       onClick={(e) => onClick?.(e, item.href)}
       className={cn(
-        "flex items-center gap-3 pl-10 pr-3 py-2 rounded-md text-[13px] transition-all group cursor-pointer",
+        "flex items-center gap-3 pl-9 pr-3 py-2 rounded-md text-[11px] transition-all group cursor-pointer",
         isActive ? "text-[#ff5c39] font-extrabold bg-[#ececec]/5 shadow-sm" : "text-[#ececec]/70 hover:text-white hover:bg-[#ececec]/5"
       )}
     >

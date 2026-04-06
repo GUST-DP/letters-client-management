@@ -140,7 +140,7 @@ export function AddIssueModal({ clients, teams, userEmail, userName }: AddIssueM
         <Plus className="w-4 h-4" />
         이슈등록
       </DialogTrigger>
-      <DialogContent className="max-w-[1000px] w-[90vw] max-h-[95vh] overflow-y-auto p-0 bg-white border-0 shadow-2xl rounded-2xl">
+      <DialogContent className="max-w-[1000px] w-[90vw] max-h-[95vh] overflow-y-auto p-0 bg-white border-0 shadow-2xl rounded-2xl text-slate-900">
         <DialogHeader className="p-6 border-b border-slate-100">
           <DialogTitle className="text-lg font-black text-slate-900 flex items-center gap-2">
             <span className="w-2 h-5 bg-orange-500 rounded-full inline-block" />
@@ -263,7 +263,7 @@ export function AddIssueModal({ clients, teams, userEmail, userName }: AddIssueM
                     취소
                   </Button>
                   <Button type="submit" disabled={isSubmitting} className="h-10 bg-[#ff5c39] hover:bg-[#e04f32] text-white text-sm px-12 font-black shadow-lg shadow-[#ff5c39]/20 transition-all active:scale-95">
-                    {isSubmitting ? "처리 중..." : "이슈 등록하기"}
+                    {isSubmitting ? "처리 중..." : "이슈등록"}
                   </Button>
                 </div>
               </div>

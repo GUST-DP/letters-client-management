@@ -343,9 +343,24 @@ export function ClientIssueTable({
                       </td>
                       <td className="py-2.5 px-4 border-r border-slate-100 text-center text-slate-600 font-bold whitespace-nowrap">{item.responsible_party || "-"}</td>
                       <td className="py-2.5 px-4 border-r border-slate-100 text-center">
-                        <Badge variant="outline" className={cn("font-bold text-[11px] whitespace-nowrap", STATUS_COLORS[item.status] || "")}>
-                          {item.status || "이슈등록"}
-                        </Badge>
+                        {(() => {
+                          const val = item.status || "이슈등록";
+                          const isCompleted = val === "조치등록" || val === "조치완료";
+                          const displayStatus = isCompleted ? "조치등록" : "이슈등록";
+                          return (
+                            <Badge 
+                              variant="outline" 
+                              className={cn(
+                                "font-bold text-[11px] whitespace-nowrap", 
+                                isCompleted 
+                                  ? "bg-emerald-50 text-emerald-600 border-emerald-200" 
+                                  : "bg-rose-50 text-rose-600 border-rose-200"
+                              )}
+                            >
+                              {displayStatus}
+                            </Badge>
+                          );
+                        })()}
                       </td>
                       <td className="py-2.5 px-4 text-center text-slate-500 whitespace-nowrap font-medium">{item.author_name || "-"}</td>
                     </tr>

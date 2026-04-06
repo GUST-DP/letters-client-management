@@ -22,6 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 import { SearchableSelect } from "@/components/ui/searchable-select";
 import { createClientOperationIssue } from "./actions";
 import { toast } from "sonner";
@@ -288,8 +289,21 @@ export function ClientIssueDetailModal({
               <div className="h-9 flex items-center px-3 rounded-lg bg-slate-50 border border-slate-100 text-xs font-bold text-slate-700">{issue.author_name}</div>
             </div>
             <div className="space-y-1">
-              <Label className="text-[10px] font-black text-slate-400 uppercase">상태</Label>
-              <div className="h-9 flex items-center px-3 rounded-lg bg-blue-50 border border-blue-100 text-xs font-black text-blue-600">{issue.status || "이슈등록"}</div>
+              <Label className="text-[10px] font-black text-slate-400 uppercase">진행상태</Label>
+              {(() => {
+                const val = issue.status || "이슈등록";
+                const isCompleted = val === "조치등록" || val === "조치완료";
+                return (
+                  <div className={cn(
+                    "h-9 flex items-center px-3 rounded-lg text-xs font-black",
+                    isCompleted 
+                      ? "bg-emerald-50 border border-emerald-100 text-emerald-600" 
+                      : "bg-rose-50 border border-rose-100 text-rose-600"
+                  )}>
+                    {isCompleted ? "조치등록" : "이슈등록"}
+                  </div>
+                );
+              })()}
             </div>
             {issue.file_url && (
               <div className="space-y-1 col-span-2">

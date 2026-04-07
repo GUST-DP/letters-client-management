@@ -134,7 +134,7 @@ export async function sendTeamsMessage(content: {
   }
 
   if (allButtons.length > 0) {
-    // 버튼을 본문 하단에 작은 텍스트 링크 형태로 배치 (글씨 크기 축소 요청 반영)
+    // 버튼을 본문 하단에 작은 박스 형태로 배치 (글씨 크기 축소 + 박스 디자인 유지 요청 반영)
     body.push({
       "type": "Container",
       "spacing": "Medium",
@@ -145,17 +145,22 @@ export async function sendTeamsMessage(content: {
           "columns": allButtons.map(btn => ({
             "type": "Column",
             "width": "auto",
+            "style": "emphasis",
+            "selectAction": {
+              "type": "Action.OpenUrl",
+              "url": btn.url
+            },
             "items": [
               {
                 "type": "TextBlock",
-                "text": `[${btn.label}](${btn.url})`,
+                "text": btn.label,
                 "size": "Small",
                 "weight": "Bolder",
-                "color": "Accent",
+                "horizontalAlignment": "Center",
                 "wrap": true
               }
             ],
-            "spacing": "Medium"
+            "spacing": "Small"
           }))
         }
       ]

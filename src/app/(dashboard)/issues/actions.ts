@@ -2,7 +2,7 @@
 
 import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
-import { sendTeamsMessage } from "@/lib/teams";
+import { sendTeamsMessage, getKSTTimestamp } from "@/lib/teams";
 
 export async function createIssue(formData: FormData) {
   const supabase = await createClient();
@@ -41,8 +41,7 @@ export async function createIssue(formData: FormData) {
         .eq('id', formData.get('client_id'))
         .single();
 
-      const now = new Date();
-      const timestamp = `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+      const timestamp = getKSTTimestamp(); // 한국 표준시(KST) 기준
 
       sendTeamsMessage({
         title: `🔔 새로운 [서비스]이슈가 등록되었습니다.`,
@@ -112,8 +111,7 @@ export async function updateIssueResponse(formData: FormData) {
         .eq('id', id)
         .single();
 
-      const now = new Date();
-      const timestamp = `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+      const timestamp = getKSTTimestamp(); // 한국 표준시(KST) 기준
 
       sendTeamsMessage({
         title: `✅ 조치등록이 완료되었습니다.`,

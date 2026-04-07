@@ -1,8 +1,26 @@
 /**
  * MS Teams 알림 전송 유틸리티
- * 
- * [원복] 이전의 정상 작동하던 구조로 복구되었습니다.
  */
+
+/**
+ * 한국 표준시(KST, UTC+9) 기반의 타임스탬프를 반환합니다.
+ * Vercel 서버는 UTC로 동작하므로, Asia/Seoul 타임존을 명시적으로 지정합니다.
+ * 반환 형식: "YYYY.MM.DD HH:mm"
+ */
+export function getKSTTimestamp(): string {
+  return new Date().toLocaleString("ko-KR", {
+    timeZone: "Asia/Seoul",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  })
+  .replace(/\. /g, ".")   // "2026. 04. 07." → "2026.04.07."
+  .replace(/\.$/, "")     // 마지막 점 제거
+  .replace(",", "");      // 날짜와 시간 사이 쉼표 제거
+}
 
 export async function sendTeamsMessage(content: {
   title: string;

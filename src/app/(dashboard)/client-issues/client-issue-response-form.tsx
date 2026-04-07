@@ -47,7 +47,7 @@ export function ClientIssueResponseForm({ selectedIssue, userEmail, userName }: 
   const [isEditing, setIsEditing] = useState(false);
   const [actionTaken, setActionTaken] = useState("");
   const [preventiveMeasure, setPreventiveMeasure] = useState("");
-  const [status, setStatus] = useState("이슈등록");
+  const [responderName, setResponderName] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
@@ -56,17 +56,17 @@ export function ClientIssueResponseForm({ selectedIssue, userEmail, userName }: 
     if (selectedIssue) {
       setActionTaken(selectedIssue.action_taken || "");
       setPreventiveMeasure(selectedIssue.preventive_measure || "");
-      setStatus(selectedIssue.status || "이슈등록");
+      setResponderName(selectedIssue.responder_name || userName || userEmail);
       setFile(null);
       setIsEditing(false);
     } else {
       setActionTaken("");
       setPreventiveMeasure("");
-      setStatus("이슈등록");
+      setResponderName("");
       setFile(null);
       setIsEditing(false);
     }
-  }, [selectedIssue]);
+  }, [selectedIssue, userEmail, userName]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -118,12 +118,13 @@ export function ClientIssueResponseForm({ selectedIssue, userEmail, userName }: 
       fd.append('status', '조치등록'); // 조치 내용 저장 시 무조건 '조치등록'으로 변경
       fd.append('action_taken', actionTaken);
       fd.append('preventive_measure', preventiveMeasure);
+      fd.append('responder_name', responderName);
       if (response_file_url) fd.append('response_file_url', response_file_url);
       if (response_file_name) fd.append('response_file_name', response_file_name);
 
       const result = await updateClientOperationIssue(fd);
 
-      if (result.error) {
+      if (result && result.error) {
         toast.error(result.error);
       } else {
         toast.success("조치 사항이 저장되었습니다.");
@@ -139,7 +140,7 @@ export function ClientIssueResponseForm({ selectedIssue, userEmail, userName }: 
   };
 
   return (
-    <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xl min-h-[460px] flex flex-col">
+    <div className="bg-white p-3 rounded-3xl border border-slate-200 shadow-xl min-h-[460px] flex flex-col">
       {/* 헤더 */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
@@ -209,27 +210,36 @@ export function ClientIssueResponseForm({ selectedIssue, userEmail, userName }: 
             </div>
           </div>
           
-          <div className="bg-slate-50 p-4 rounded-xl flex items-center justify-between border border-slate-100 shadow-inner-sm">
-             <div className="flex items-center gap-8">
-               <div className="flex flex-col gap-1.5 opacity-50 grayscale pointer-events-none">
-                 <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">진행상태 (자동변경)</Label>
-                 <div className="w-[140px] h-10 bg-white border border-slate-200 rounded-lg flex items-center px-3 text-xs font-bold text-slate-500">
-                   조치등록
-                 </div>
+          <div className="bg-slate-50 p-4 border border-slate-100 rounded-xl flex items-center justify-between shadow-inner-sm">
+            <div className="flex items-center gap-6">
+               <div className="flex flex-col gap-1">
+                 <Label className="text-[11px] font-black text-slate-500 uppercase tracking-widest pl-1">답변등록자</Label>
+                 <Input 
+                   value={responderName} 
+                   onChange={e => setResponderName(e.target.value)} 
+                   className="h-9 w-40 text-xs font-bold bg-white"
+                 />
                </div>
-               
-               <div className="h-12 w-px bg-slate-200" />
 
-               <div className="flex flex-col gap-1.5 flex-1 max-w-sm">
-                 <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">조치 증빙 첨부</Label>
+               <div className="h-10 w-px bg-slate-200 mx-2" />
+               
+               <div className="flex flex-col gap-1">
+                 <div className="flex items-center gap-2">
+                   <Label className="text-[11px] font-black text-slate-500 uppercase tracking-widest pl-1">조치 증빙 첨부</Label>
+                   {selectedIssue?.response_file_url && (
+                     <a href={selectedIssue.response_file_url} target="_blank" rel="noopener noreferrer" className="text-[10px] text-blue-600 hover:underline flex items-center gap-1 font-bold">
+                       <ExternalLink className="w-3 h-3 shrink-0" /> 기존 파일 보기
+                     </a>
+                   )}
+                 </div>
                  <div className="flex items-center gap-2">
                     <Input 
                       type="file" 
                       onChange={(e) => setFile(e.target.files?.[0] || null)}
-                      className="text-[11px] h-10 bg-white border-slate-200 file:bg-slate-100 file:border-0 file:text-[10px] file:font-black file:h-full file:mr-3"
+                      className="text-xs h-9 w-64 bg-white border-slate-200 file:text-[10px] file:font-black"
                     />
                     {file && (
-                      <Button type="button" variant="ghost" size="sm" onClick={() => setFile(null)} className="text-slate-400 px-2 h-10">
+                      <Button type="button" variant="ghost" size="sm" onClick={() => setFile(null)} className="text-slate-400 px-2 h-9">
                         <X className="w-4 h-4" />
                       </Button>
                     )}
@@ -240,7 +250,7 @@ export function ClientIssueResponseForm({ selectedIssue, userEmail, userName }: 
              <Button 
                type="submit" 
                disabled={isSubmitting}
-               className="bg-slate-900 hover:bg-black text-white font-extrabold px-12 h-12 shadow-xl shadow-slate-200 rounded-xl transition-all active:scale-95"
+               className="bg-slate-900 hover:bg-black text-white font-extrabold px-10 h-11 shadow-xl rounded-xl transition-all active:scale-95"
              >
                {isSubmitting ? "저장 중..." : "조치 내용 저장하기"}
              </Button>

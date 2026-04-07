@@ -377,6 +377,59 @@ export function ClientIssueDetailModal({
             </div>
           </div>
 
+          {/* 조치내용 & 재발방지 대책 (데이터 있을 때만 표시) */}
+          {(issue.action_taken || issue.preventive_measure) && (
+            <div className="pt-3 border-t border-emerald-100 space-y-4">
+              {issue.action_taken && (
+                <div className="space-y-1.5">
+                  <div className="flex items-center gap-2 mb-1">
+                    <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
+                    <Label className="text-[10px] font-black text-emerald-600 uppercase tracking-wider">상세 조치 내용</Label>
+                  </div>
+                  <div className="p-4 rounded-xl bg-emerald-50/30 border border-emerald-100 text-xs leading-relaxed text-slate-700 whitespace-pre-wrap font-medium">
+                    {issue.action_taken}
+                  </div>
+                </div>
+              )}
+              
+              {issue.preventive_measure && (
+                <div className="space-y-1.5">
+                  <div className="flex items-center gap-2 mb-1">
+                    <div className="w-1.5 h-1.5 bg-amber-500 rounded-full" />
+                    <Label className="text-[10px] font-black text-amber-600 uppercase tracking-wider">재발방지 대책</Label>
+                  </div>
+                  <div className="p-4 rounded-xl bg-amber-50/30 border border-amber-100 text-xs leading-relaxed text-slate-700 whitespace-pre-wrap font-medium">
+                    {issue.preventive_measure}
+                  </div>
+                </div>
+              )}
+
+              {issue.response_file_url && (
+                <div className="space-y-1.5">
+                  <Label className="text-[10px] font-black text-slate-400 uppercase tracking-wider pl-3.5">조치 증빙 첨부파일</Label>
+                  <div className="h-9 flex items-center px-3 rounded-lg bg-emerald-50 border border-emerald-100 overflow-hidden mx-3.5">
+                    <a 
+                      href={issue.response_file_url} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 text-xs font-bold text-emerald-600 hover:text-emerald-800 transition-colors w-full group"
+                    >
+                      <Paperclip className="w-3.5 h-3.5 shrink-0" />
+                      <span className="truncate">{issue.response_file_name || "증빙 파일 보기"}</span>
+                      <ExternalLink className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity ml-auto shrink-0" />
+                    </a>
+                  </div>
+                </div>
+              )}
+              
+              <div className="flex items-center justify-end px-3.5">
+                <span className="text-[10px] font-bold text-slate-400 bg-slate-100 px-2 py-1 rounded-full uppercase">
+                  Updated: {issue.updated_at ? new Date(issue.updated_at).toLocaleDateString() : "-"}
+                </span>
+              </div>
+            </div>
+          )}
+
           <DialogFooter className="pt-4 border-t border-slate-100">
             <Button type="button" onClick={() => onOpenChange(false)} className="h-9 bg-slate-900 hover:bg-black text-white px-8 font-black rounded-lg text-xs">
               확인 완료

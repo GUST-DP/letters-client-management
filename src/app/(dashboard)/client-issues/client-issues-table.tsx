@@ -163,6 +163,7 @@ export function ClientIssueTable({
   };
 
   const handleOpenDetail = (item: any) => {
+    onRowClick?.(item); // 상세 보기 시 해당 행 자동 선택 (하단 폼 동기화)
     setDetailIssue(item);
     setIsDetailOpen(true);
   };
@@ -278,7 +279,7 @@ export function ClientIssueTable({
           <table className="w-full border-collapse text-[13px] min-w-max">
             <thead className="bg-slate-800">
               <tr>
-                {["No", "발생일", "고객사", "이슈유형", "이슈내용(요약)", "첨부", "책임주체", "진행상태", "등록자"].map(h => (
+                {["No", "발생일", "진행상태", "고객사", "이슈유형", "이슈내용(요약)", "첨부", "책임주체", "등록자"].map(h => (
                   <th key={h} className="h-12 px-4 text-center font-black text-slate-300 border-r border-slate-700/50 last:border-r-0 text-[12px] uppercase tracking-wider whitespace-nowrap">
                     {h}
                   </th>
@@ -311,6 +312,26 @@ export function ClientIssueTable({
                     >
                       <td className="py-2.5 px-4 border-r border-slate-100 text-center text-slate-400">{idx + 1}</td>
                       <td className="py-2.5 px-4 border-r border-slate-100 text-center font-bold text-slate-700 whitespace-nowrap">{item.occurrence_date}</td>
+                      <td className="py-2.5 px-4 border-r border-slate-100 text-center">
+                        {(() => {
+                          const val = item.status || "이슈등록";
+                          const isCompleted = val === "조치등록" || val === "조치완료";
+                          const displayStatus = isCompleted ? "조치등록" : "이슈등록";
+                          return (
+                            <Badge 
+                              variant="outline" 
+                              className={cn(
+                                "font-bold text-[11px] whitespace-nowrap", 
+                                isCompleted 
+                                  ? "bg-emerald-50 text-emerald-600 border-emerald-200" 
+                                  : "bg-rose-50 text-rose-600 border-rose-200"
+                              )}
+                            >
+                              {displayStatus}
+                            </Badge>
+                          );
+                        })()}
+                      </td>
                       <td className="py-2.5 px-4 border-r border-slate-100 font-bold text-slate-800 whitespace-nowrap">{item.clients?.company_name || "-"}</td>
                       <td className="py-2.5 px-4 border-r border-slate-100 text-center">
                         <Badge variant="outline" className={cn("font-bold text-[11px] whitespace-nowrap", CATEGORY_COLORS[item.issue_category] || "bg-gray-50 text-gray-500")}>
@@ -342,26 +363,6 @@ export function ClientIssueTable({
                         )}
                       </td>
                       <td className="py-2.5 px-4 border-r border-slate-100 text-center text-slate-600 font-bold whitespace-nowrap">{item.responsible_party || "-"}</td>
-                      <td className="py-2.5 px-4 border-r border-slate-100 text-center">
-                        {(() => {
-                          const val = item.status || "이슈등록";
-                          const isCompleted = val === "조치등록" || val === "조치완료";
-                          const displayStatus = isCompleted ? "조치등록" : "이슈등록";
-                          return (
-                            <Badge 
-                              variant="outline" 
-                              className={cn(
-                                "font-bold text-[11px] whitespace-nowrap", 
-                                isCompleted 
-                                  ? "bg-emerald-50 text-emerald-600 border-emerald-200" 
-                                  : "bg-rose-50 text-rose-600 border-rose-200"
-                              )}
-                            >
-                              {displayStatus}
-                            </Badge>
-                          );
-                        })()}
-                      </td>
                       <td className="py-2.5 px-4 text-center text-slate-500 whitespace-nowrap font-medium">{item.author_name || "-"}</td>
                     </tr>
                   )

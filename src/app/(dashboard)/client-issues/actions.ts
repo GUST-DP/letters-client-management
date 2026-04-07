@@ -18,9 +18,6 @@ export async function createClientOperationIssue(formData: FormData) {
   let file_url = formData.get("file_url") as string || null;
   const file_name = formData.get("file_name") as string || null;
 
-  // 서버 측 업로드 로직 제거 (클라이언트 직접 업로드 방식 적용)
-
-
   const { error } = await supabase.from("client_operation_issues").insert({
     client_id,
     occurrence_date,
@@ -78,16 +75,15 @@ export async function updateClientOperationIssue(formData: FormData) {
   const status = formData.get("status") as string;
   const action_taken = formData.get("action_taken") as string;
   const preventive_measure = formData.get("preventive_measure") as string;
+  const responder_name = formData.get("responder_name") as string;
   let response_file_url = formData.get("response_file_url") as string || undefined;
   const response_file_name = formData.get("response_file_name") as string || undefined;
-
-  // 서버 측 업로드 로직 제거 (클라이언트 직접 업로드 방식 적용)
-
 
   const updateData: any = {
     status,
     action_taken,
     preventive_measure,
+    responder_name,
     updated_at: new Date().toISOString()
   };
 
@@ -125,6 +121,7 @@ export async function updateClientOperationIssue(formData: FormData) {
           { "name": "고객사", "value": (issueData as any)?.clients?.company_name || "알수없음" },
           { "name": "이슈유형", "value": (issueData as any)?.issue_category || "-" },
           { "name": "상태", "value": status },
+          { "name": "답변등록자", "value": responder_name },
         ],
         lastSections: [
           { "name": "이슈내용 요약", "value": (issueData as any)?.issue_content || "-" },

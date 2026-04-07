@@ -1,13 +1,6 @@
 import type { Metadata } from "next";
-import { Noto_Serif_KR } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
-
-const notoSerifKR = Noto_Serif_KR({
-  subsets: ["latin"],
-  weight: ["200", "300", "400", "500", "600", "700", "900"],
-  variable: "--font-noto-serif",
-});
 
 export const metadata: Metadata = {
   title: "LETUS 고객사 관리 플랫폼",
@@ -24,7 +17,7 @@ export default function RootLayout({
   return (
     <html lang="ko" suppressHydrationWarning>
       <body
-        className={`${notoSerifKR.variable} font-serif antialiased bg-[#f5eee8]`}
+        className="font-serif antialiased bg-[#f5eee8]"
         suppressHydrationWarning
       >
         <LoadingProvider>

@@ -118,13 +118,13 @@ export async function updateIssueResponse(formData: FormData) {
       sendTeamsMessage({
         title: `✅ 조치등록이 완료되었습니다.`,
         subtitle: timestamp,
+        subtitles: [`📌 건명: ${(issueData as any)?.title || "-"}`],
         buttonUrl: "https://letus-client-management.vercel.app/issues",
         buttonLabel: "고객사 이슈관리 바로가기",
         buttons: response_file_url ? [{ label: "증빙파일 보기", url: response_file_url }] : [],
         sections: [
           { "name": "고객사", "value": (issueData as any)?.clients?.company_name || "알수없음" },
           { "name": "이슈유형", "value": (issueData as any)?.issue_type || "-" },
-          { "name": "건명", "value": (issueData as any)?.title || "-" },
           { "name": "권역장", "value": (issueData as any)?.manager_name || "-" },
           { "name": "시공팀", "value": (issueData as any)?.construction_team || "-" },
           { "name": "답변등록자", "value": responder_name },

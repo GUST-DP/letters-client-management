@@ -298,7 +298,7 @@ export function DashboardShell({ children, userEmail }: DashboardShellProps) {
         </header>
 
         {/* Page Content - NO MAX WIDTH */}
-        <main className="flex-1 px-3 pt-3 pb-8 w-full overflow-y-auto relative">
+        <main className="flex-1 px-4 pt-0 pb-8 w-full overflow-y-auto relative">
           {children}
 
           {/* 전역 로딩 팝업 (isPending이 끝날 때까지 기존 화면 유지) */}

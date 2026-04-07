@@ -213,8 +213,7 @@ export default async function Home() {
     <>
       <div className="space-y-3 w-full pb-3">
 
-        {/* ── 헤더 (문구 제거됨) ── */}
-        <div className="h-1" />
+        {/* ── KPI 영역 바로 시작 (상단 여백 제거) ── */}
 
         {/* ── KPI 6 카드 ── */}
         <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
@@ -398,7 +397,7 @@ export default async function Home() {
           <Card className="border-none shadow-sm overflow-hidden h-full">
             <CardHeader className="px-3 pt-1.5 pb-0">
               <CardTitle className="text-sm font-bold text-[#414344] flex items-center gap-1.5">
-                <AlertCircle className="h-4 w-4 text-[#eb5d49]" /> 최근 1개월 고객사 이슈 현황
+                <AlertCircle className="h-4 w-4 text-[#eb5d49]" /> 최근 1개월 서비스 이슈 현황
               </CardTitle>
             </CardHeader>
             <CardContent className="p-2">

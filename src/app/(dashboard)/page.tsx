@@ -213,16 +213,8 @@ export default async function Home() {
     <>
       <div className="space-y-3 w-full pb-3">
 
-        {/* ── 헤더 ── */}
-        <div className="flex items-center justify-between px-3">
-          <div className="flex flex-col gap-0.5">
-            <h1 className="text-xl font-extrabold tracking-tight text-[#414344] flex items-center gap-3">
-              DASHBOARD <span className="text-[#ff5c39]">INSIGHTS</span>
-            </h1>
-            <p className="text-slate-400 text-xs font-medium">데이터 기반 실시간 운영 지표 분석 리포트</p>
-          </div>
-          <MonthlyGoalModal year={currentYear} />
-        </div>
+        {/* ── 헤더 (문구 제거됨) ── */}
+        <div className="h-1" />
 
         {/* ── KPI 6 카드 ── */}
         <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
@@ -387,10 +379,15 @@ export default async function Home() {
           {/* 복합 차트 (매출 추이) */}
           <Card className="border-none shadow-sm h-full">
             <CardHeader className="px-3 pt-1.5 pb-0">
-              <CardTitle className="text-sm font-bold text-[#414344] flex items-center gap-1.5">
-                <TrendingUp className="h-4 w-4 text-[#8aa8e2]" /> {currentYear}년도 월별 매출 추이
-                <span className="ml-2 text-xs font-medium text-slate-400">■ 막대: 매출 ／ — 실선: 목표</span>
-              </CardTitle>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-sm font-bold text-[#414344] flex items-center gap-1.5">
+                  <TrendingUp className="h-4 w-4 text-[#8aa8e2]" /> {currentYear}년도 월별 매출 추이
+                  <span className="ml-2 text-xs font-medium text-slate-400">■ 막대: 매출 ／ — 실선: 목표</span>
+                </CardTitle>
+                <div className="scale-90 origin-right">
+                  <MonthlyGoalModal year={currentYear} />
+                </div>
+              </div>
             </CardHeader>
             <CardContent className="p-2">
               <DashboardComboChartClient data={comboBaseData} year={currentYear} />

@@ -132,12 +132,34 @@ export async function sendTeamsMessage(content: {
   if (content.buttons && content.buttons.length > 0) {
     allButtons.push(...content.buttons);
   }
+
   if (allButtons.length > 0) {
-    payload.attachments[0].content.actions = allButtons.map(btn => ({
-      "type": "Action.OpenUrl",
-      "title": btn.label,
-      "url": btn.url
-    }));
+    // 버튼을 본문 하단에 작은 텍스트 링크 형태로 배치 (글씨 크기 축소 요청 반영)
+    body.push({
+      "type": "Container",
+      "spacing": "Medium",
+      "separator": true,
+      "items": [
+        {
+          "type": "ColumnSet",
+          "columns": allButtons.map(btn => ({
+            "type": "Column",
+            "width": "auto",
+            "items": [
+              {
+                "type": "TextBlock",
+                "text": `[${btn.label}](${btn.url})`,
+                "size": "Small",
+                "weight": "Bolder",
+                "color": "Accent",
+                "wrap": true
+              }
+            ],
+            "spacing": "Medium"
+          }))
+        }
+      ]
+    });
   }
 
   try {

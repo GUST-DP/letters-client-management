@@ -45,7 +45,7 @@ export async function createIssue(formData: FormData) {
       const timestamp = `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2, '0')}`;
 
       sendTeamsMessage({
-        title: `🔔 새로운 이슈가 등록되었습니다.`,
+        title: `🔔 새로운 [서비스]이슈가 등록되었습니다.`,
         subtitle: timestamp,
         subtitles: [`📌 건명: ${formData.get('title') || "-"}`],
         buttonUrl: "https://letus-client-management.vercel.app/issues",

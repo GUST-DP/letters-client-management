@@ -49,7 +49,7 @@ export async function createClientOperationIssue(formData: FormData) {
       const timestamp = `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2, '0')}`;
 
       sendTeamsMessage({
-        title: `🔔 새로운 이슈가 등록되었습니다.`,
+        title: `🔔 새로운 [고객사]이슈가 등록되었습니다.`,
         subtitle: timestamp,
         buttonUrl: "https://letus-client-management.vercel.app/client-issues",
         buttonLabel: "고객사 이슈관리 바로가기",

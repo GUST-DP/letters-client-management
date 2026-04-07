@@ -120,7 +120,7 @@ export async function updateIssueResponse(formData: FormData) {
         subtitle: timestamp,
         subtitles: [`📌 건명: ${(issueData as any)?.title || "-"}`],
         buttonUrl: "https://letus-client-management.vercel.app/issues",
-        buttonLabel: "고객사 이슈관리 바로가기",
+        buttonLabel: "서비스 이슈관리 바로가기",
         buttons: response_file_url ? [{ label: "증빙파일 보기", url: response_file_url }] : [],
         sections: [
           { "name": "고객사", "value": (issueData as any)?.clients?.company_name || "알수없음" },

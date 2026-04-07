@@ -400,8 +400,17 @@ export default async function Home() {
                 <AlertCircle className="h-4 w-4 text-[#eb5d49]" /> 최근 1개월 서비스 이슈 현황
               </CardTitle>
             </CardHeader>
-            <CardContent className="p-2">
+            <CardContent className="p-2 flex flex-col h-full">
               <RecentIssueTable issues={recentSummaryList} clients={clientsData} />
+              <div className="mt-auto pt-3 px-1">
+                <TransitionLink 
+                  href="/client-issues"
+                  className="flex items-center justify-center w-full h-9 rounded-xl bg-slate-950 text-white text-xs font-black hover:bg-[#ff5c39] transition-all shadow-lg shadow-black/5 gap-2 group"
+                >
+                  고객사 이슈관리 바로가기
+                  <ArrowUpRight className="w-3.5 h-3.5 text-white/50 group-hover:text-white transition-colors" />
+                </TransitionLink>
+              </div>
             </CardContent>
           </Card>
         </div>

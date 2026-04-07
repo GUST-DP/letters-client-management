@@ -307,10 +307,10 @@ export function ClientDetailClient({
                   href={ensureAbsoluteUrl(client.approval_link)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-blue-50 text-blue-600 border border-blue-200 text-xs font-bold hover:bg-blue-100 transition-colors"
+                  className="group inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-[11px] font-black text-slate-600 shadow-sm hover:border-[#ff5c39] hover:text-[#ff5c39] hover:bg-[#ff5c39]/5 transition-all"
                 >
-                  <ExternalLink className="w-3 h-3" />
                   바로가기
+                  <ExternalLink className="w-3 h-3 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                 </a>
               ) : (
                 <span className="text-slate-300 font-normal text-sm">-</span>

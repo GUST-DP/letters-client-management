@@ -268,10 +268,11 @@ export const getColumns = (managers: any[], totalTaskCount: number): ColumnDef<C
         <Button 
           variant="outline" 
           size="sm" 
-          className="inline-flex items-center justify-center h-8 px-3 rounded-md text-slate-800 bg-white border border-slate-200 shadow-sm hover:bg-slate-50 hover:text-slate-900 transition-colors gap-1.5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+          className="group inline-flex items-center justify-center h-8 px-3 rounded-lg text-[11px] font-black text-slate-600 bg-white border border-slate-200 shadow-sm hover:border-[#ff5c39] hover:text-[#ff5c39] hover:bg-[#ff5c39]/5 transition-all gap-1.5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#ff5c39]"
           onClick={() => window.open(ensureAbsoluteUrl(link), '_blank')}
         >
           바로가기
+          <ExternalLink className="w-3 h-3 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
         </Button>
       ) : (
         <span className="text-gray-400 text-[11px]">-</span>

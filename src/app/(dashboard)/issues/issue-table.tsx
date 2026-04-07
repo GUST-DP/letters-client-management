@@ -275,10 +275,10 @@ export function IssueTable({ data, clients, teams, userEmail, userName, onRowCli
                           <TableCell 
                             key={cell.id}
                             className={cn(
-                              "py-2.5 px-4 border-r border-slate-100 last:border-r-0 align-middle overflow-hidden",
+                              "py-2.5 px-4 border-r border-slate-100 last:border-r-0 align-middle",
                               isSelected && "border-blue-100"
                             )}
-                            style={{ maxWidth: cell.column.getSize() }}
+                            style={{ width: cell.column.getSize(), minWidth: cell.column.getSize(), maxWidth: cell.column.getSize() }}
                           >
                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
                           </TableCell>

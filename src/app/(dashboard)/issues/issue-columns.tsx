@@ -70,14 +70,14 @@ export const getIssueColumns = (
     cell: ({ getValue }) => {
       const val = getValue() as string;
       return (
-        <div className="text-center truncate">
-          <Badge variant="outline" className="bg-slate-50 text-slate-600 font-medium whitespace-nowrap">
+        <div className="text-center flex items-center justify-center">
+          <Badge variant="outline" className="bg-slate-50 text-slate-600 font-medium whitespace-nowrap shrink-0">
             {val}
           </Badge>
         </div>
       );
     },
-    size: 120,
+    size: 150,
   },
   {
     accessorKey: "title",

@@ -134,37 +134,13 @@ export async function sendTeamsMessage(content: {
   }
 
   if (allButtons.length > 0) {
-    // 버튼을 본문 하단에 작은 박스 형태로 배치 (글씨 크기 축소 + 박스 디자인 유지 요청 반영)
-    body.push({
-      "type": "Container",
-      "spacing": "Medium",
-      "separator": true,
-      "items": [
-        {
-          "type": "ColumnSet",
-          "columns": allButtons.map(btn => ({
-            "type": "Column",
-            "width": "auto",
-            "style": "emphasis",
-            "selectAction": {
-              "type": "Action.OpenUrl",
-              "url": btn.url
-            },
-            "items": [
-              {
-                "type": "TextBlock",
-                "text": btn.label,
-                "size": "Small",
-                "weight": "Bolder",
-                "horizontalAlignment": "Center",
-                "wrap": true
-              }
-            ],
-            "spacing": "Small"
-          }))
-        }
-      ]
-    });
+    // 표준 Action 버튼으로 렌더링 (Teams에서 세련된 CTA 버튼 스타일 자동 적용)
+    payload.attachments[0].content.actions = allButtons.map(btn => ({
+      "type": "Action.OpenUrl",
+      "title": btn.label,
+      "url": btn.url,
+      "style": "positive"
+    }));
   }
 
   try {

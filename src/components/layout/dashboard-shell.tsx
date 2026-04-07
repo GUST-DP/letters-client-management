@@ -15,7 +15,8 @@ import {
   ChevronDown,
   AlertTriangle,
   ClipboardList,
-  FileText
+  FileText,
+  Menu
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -246,32 +247,28 @@ export function DashboardShell({ children, userEmail }: DashboardShellProps) {
           </div>
         </nav>
   
-        {/* Sidebar Footer */}
-        <div className="mt-auto p-2 pb-4 border-t border-[#ececec]/10 shrink-0">
-          <Button
-            variant="ghost"
-            className={cn(
-              "w-full flex items-center transition-all text-[#ececec]/80 hover:bg-[#ececec]/5 hover:text-white group h-9",
-              isCollapsed ? "justify-center px-0" : "justify-start px-2.5 gap-2.5"
-            )}
-            onClick={toggleSidebar}
-          >
-            {isCollapsed ? <ChevronRight className="w-5 h-5 transition-colors group-hover:text-[#ff5c39]" /> : (
-              <>
-                <ChevronLeft className="w-5 h-5 transition-colors group-hover:text-[#ff5c39]" />
-                <span className="text-[12px] font-bold">사이드바 접기</span>
-              </>
-            )}
-          </Button>
-        </div>
+        {/* Sidebar Footer - Empty or simple padding */}
+        <div className="h-4 bg-[#414344] shrink-0" />
       </aside>
   
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Top Header */}
-        <header className="h-[61px] bg-[#ff5c39] border-none flex items-center justify-between px-3 sticky top-0 z-40 shrink-0 shadow-md">
-          <div className="flex items-center gap-2">
-              <h2 className="text-xl font-black text-white tracking-tight pl-1">
+        <header className="h-[61px] bg-white border-b border-slate-200 flex items-center justify-between px-4 sticky top-0 z-40 shrink-0 shadow-sm">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="w-10 h-10 text-slate-500 hover:text-[#ff5c39] hover:bg-[#ff5c39]/5 transition-all rounded-full"
+                onClick={toggleSidebar}
+              >
+                <Menu className="w-6 h-6" />
+              </Button>
+              
+              <div className="w-[1.5px] h-5 bg-[#ff5c39]/30 rounded-full" />
+              
+              <h2 className="text-[18px] font-black text-slate-800 tracking-tight">
                 {pathname === "/" && "Dashboard"}
                 {pathname === "/clients" && "고객사 계약관리"}
                 {pathname === "/client-detail" && "고객사 세부정보"}
@@ -282,16 +279,17 @@ export function DashboardShell({ children, userEmail }: DashboardShellProps) {
                 {pathname === "/sales" && "매출 및 입금관리"}
                 {pathname.startsWith("/settings") && "기준관리"}
               </h2>
+            </div>
           </div>
           
           <div className="flex items-center gap-6">
             <div className="flex flex-col items-end">
-              <span className="text-[10px] text-white/80 font-bold tracking-widest uppercase">User Account</span>
-              <span className="text-sm font-extrabold text-white">{userEmail}</span>
+              <span className="text-[10px] text-slate-400 font-bold tracking-widest uppercase">User Account</span>
+              <span className="text-sm font-extrabold text-slate-700">{userEmail}</span>
             </div>
-            <div className="h-8 w-px bg-white/20" />
+            <div className="h-8 w-px bg-slate-200" />
             <form action="/auth/signout" method="post">
-              <Button variant="ghost" size="sm" className="text-white hover:text-[#ff5c39] hover:bg-white gap-2 transition-colors">
+              <Button variant="ghost" size="sm" className="text-slate-600 hover:text-white hover:bg-[#ff5c39] gap-2 transition-all border border-slate-200 hover:border-[#ff5c39] rounded-lg h-9 px-4">
                 <LogOut className="w-4 h-4" />
                 <span className="font-bold text-xs">로그아웃</span>
               </Button>

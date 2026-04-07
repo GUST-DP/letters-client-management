@@ -25,6 +25,7 @@ import {
 import { createIssue } from "./actions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { createClient } from "@/utils/supabase/client";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { SearchableSelect } from "@/components/ui/searchable-select";
@@ -87,32 +88,72 @@ export function AddIssueModal({ clients, teams, userEmail, userName }: AddIssueM
 
     setIsSubmitting(true);
     
-    const fd = new FormData();
-    fd.append('occurrence_date', occurrenceDate);
-    fd.append('client_id', clientId);
-    fd.append('issue_type', issueType);
-    fd.append('issue_content', issueContent);
-    fd.append('occurrence_subject', occurrenceSubject);
-    fd.append('root_cause', rootCause);
-    fd.append('title', title);
-    fd.append('manager_name', managerName);
-    fd.append('construction_team', constructionTeam);
-    fd.append('fu_required_team', fuRequiredTeam);
-    fd.append('author_name', userName);
-    if (file) fd.append('file', file);
+    try {
+      let file_url = null;
+      let file_name = null;
 
-    const result = await createIssue(fd);
+      // 클라이언트 측에서 Supabase Storage로 직접 업로드 (Vercel 페이로드 제한 우회)
+      if (file) {
+        // 파일 크기 제한 (예: 20MB)
+        if (file.size > 20 * 1024 * 1024) {
+          toast.error("파일 크기가 너무 큽니다. (최대 20MB)");
+          setIsSubmitting(false);
+          return;
+        }
 
-    if (result.error) {
-      toast.error(result.error);
-    } else {
-      toast.success("이슈가 등록되었습니다.");
-      setOpen(false);
-      resetForm();
-      router.refresh();
+        const supabase = createClient();
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Math.random().toString(36).substring(2)}_${Date.now()}.${fileExt}`;
+        const filePath = `issues/${fileName}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from('issue_attachments')
+          .upload(filePath, file);
+
+        if (uploadError) {
+          console.error('File upload error:', uploadError);
+          throw new Error('파일 업로드 중에 오류가 발생했습니다.');
+        }
+
+        const { data: { publicUrl } } = supabase.storage
+          .from('issue_attachments')
+          .getPublicUrl(filePath);
+
+        file_url = publicUrl;
+        file_name = file.name;
+      }
+      
+      const fd = new FormData();
+      fd.append('occurrence_date', occurrenceDate);
+      fd.append('client_id', clientId);
+      fd.append('issue_type', issueType);
+      fd.append('issue_content', issueContent);
+      fd.append('occurrence_subject', occurrenceSubject);
+      fd.append('root_cause', rootCause);
+      fd.append('title', title);
+      fd.append('manager_name', managerName);
+      fd.append('construction_team', constructionTeam);
+      fd.append('fu_required_team', fuRequiredTeam);
+      fd.append('author_name', userName);
+      if (file_url) fd.append('file_url', file_url);
+      if (file_name) fd.append('file_name', file_name);
+
+      const result = await createIssue(fd);
+
+      if (result.error) {
+        toast.error(result.error);
+      } else {
+        toast.success("이슈가 등록되었습니다.");
+        setOpen(false);
+        resetForm();
+        router.refresh();
+      }
+    } catch (error: any) {
+      console.error("Submit error:", error);
+      toast.error(error.message || "등록 중 오류가 발생했습니다.");
+    } finally {
+      setIsSubmitting(false);
     }
-    
-    setIsSubmitting(false);
   };
 
   const resetForm = () => {

@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { MessageSquarePlus, MessageSquareText, ShieldAlert, UserCheck, Users, X, Paperclip, FileText, ExternalLink } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { createClient } from "@/utils/supabase/client";
 
 interface IssueResponseFormProps {
   selectedIssue: any | null;
@@ -52,24 +53,65 @@ export function IssueResponseForm({ selectedIssue, userEmail, userName }: IssueR
 
     setIsSubmitting(true);
     
-    // FormData 방식으로 전환
-    const fd = new FormData();
-    fd.append('issueId', selectedIssue.id);
-    fd.append('action_taken', actionTaken);
-    fd.append('preventive_measure', preventiveMeasure);
-    fd.append('responder_name', responderName);
-    if (file) fd.append('file', file);
+    try {
+      let response_file_url = null;
+      let response_file_name = null;
 
-    const result = await updateIssueResponse(fd);
+      // 클라이언트 측에서 Supabase Storage로 직접 업로드 (Vercel 페이로드 제한 우회)
+      if (file) {
+        // 파일 크기 제한 (예: 20MB)
+        if (file.size > 20 * 1024 * 1024) {
+          toast.error("파일 크기가 너무 큽니다. (최대 20MB)");
+          setIsSubmitting(false);
+          return;
+        }
 
-    if (result.error) {
-      toast.error(result.error);
-    } else {
-      toast.success("조치 사항이 저장되었습니다.");
-      setIsEditing(false);
-      router.refresh();
+        const supabase = createClient();
+        const fileExt = file.name.split('.').pop();
+        const fileName = `res_${Math.random().toString(36).substring(2)}_${Date.now()}.${fileExt}`;
+        const filePath = `responses/${fileName}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from('issue_attachments')
+          .upload(filePath, file);
+
+        if (uploadError) {
+          console.error('Response file upload error:', uploadError);
+          throw new Error('증빙 파일 업로드 중에 오류가 발생했습니다.');
+        }
+
+        const { data: { publicUrl } } = supabase.storage
+          .from('issue_attachments')
+          .getPublicUrl(filePath);
+
+        response_file_url = publicUrl;
+        response_file_name = file.name;
+      }
+
+      // FormData 방식으로 전환
+      const fd = new FormData();
+      fd.append('issueId', selectedIssue.id);
+      fd.append('action_taken', actionTaken);
+      fd.append('preventive_measure', preventiveMeasure);
+      fd.append('responder_name', responderName);
+      if (response_file_url) fd.append('response_file_url', response_file_url);
+      if (response_file_name) fd.append('response_file_name', response_file_name);
+
+      const result = await updateIssueResponse(fd);
+
+      if (result.error) {
+        toast.error(result.error);
+      } else {
+        toast.success("조치 사항이 저장되었습니다.");
+        setIsEditing(false);
+        router.refresh();
+      }
+    } catch (error: any) {
+      console.error("Submit error:", error);
+      toast.error(error.message || "저장 중 오류가 발생했습니다.");
+    } finally {
+      setIsSubmitting(false);
     }
-    setIsSubmitting(false);
   };
 
   return (

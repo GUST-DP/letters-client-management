@@ -93,7 +93,7 @@ export function ClientIssueTable({
   userName, 
   onRowClick, 
   selectedId,
-  onDeleteSuccess
+  onDeleteSuccess,
 }: ClientIssueTableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [filterClient, setFilterClient] = useState("all");

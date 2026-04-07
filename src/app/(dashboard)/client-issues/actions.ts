@@ -15,34 +15,11 @@ export async function createClientOperationIssue(formData: FormData) {
   const responsible_party = formData.get("responsible_party") as string;
   const author_name = formData.get("author_name") as string;
   const author_email = formData.get("author_email") as string;
-  const file = formData.get("file") as File;
+  let file_url = formData.get("file_url") as string || null;
+  const file_name = formData.get("file_name") as string || null;
 
-  if (!client_id || !occurrence_date || !issue_category) {
-    return { error: "필수 항목을 모두 입력해주세요." };
-  }
+  // 서버 측 업로드 로직 제거 (클라이언트 직접 업로드 방식 적용)
 
-  let file_url = null;
-
-  if (file && file.size > 0) {
-    const fileExt = file.name.split(".").pop();
-    const fileName = `op_${Math.random().toString(36).substring(2)}_${Date.now()}.${fileExt}`;
-    const filePath = `operation_issues/${fileName}`;
-
-    const { error: uploadError } = await supabase.storage
-      .from("issue_attachments")
-      .upload(filePath, file);
-
-    if (uploadError) {
-      console.error("File upload error:", uploadError);
-      return { error: "파일 업로드 실패" };
-    }
-
-    const { data: { publicUrl } } = supabase.storage
-      .from("issue_attachments")
-      .getPublicUrl(filePath);
-
-    file_url = publicUrl;
-  }
 
   const { error } = await supabase.from("client_operation_issues").insert({
     client_id,
@@ -72,18 +49,18 @@ export async function createClientOperationIssue(formData: FormData) {
       const timestamp = `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2, '0')}`;
 
       sendTeamsMessage({
-        title: `🏢 [고객사 이슈] 새로운 이슈가 등록되었습니다.`,
-        subtitle: `${timestamp} | 등록자: ${author_name}`,
+        title: `🔔 새로운 이슈가 등록되었습니다.`,
+        subtitle: timestamp,
         buttonUrl: "https://letus-client-management.vercel.app/client-issues",
-        buttonLabel: "📋 고객사 이슈관리 바로가기",
-        buttons: file_url ? [{ label: "📎 첨부파일 보기", url: file_url }] : [],
+        buttonLabel: "고객사 이슈관리 바로가기",
+        buttons: file_url ? [{ label: "첨부파일 보기", url: file_url }] : [],
         sections: [
           { "name": "고객사", "value": clientData?.company_name || "알수없음" },
           { "name": "이슈유형", "value": issue_category },
           { "name": "책임주체", "value": responsible_party || "-" },
-          { "name": "건명", "value": title || "-" },
+          { "name": "등록자", "value": author_name },
         ],
-        lastSection: { "name": "이슈내용 상세", "value": issue_content },
+        lastSection: { "name": "이슈내용 요약", "value": issue_content },
       });
     } catch (err) {
       console.error("팀즈 알림 실패 (고객사 이슈 등록):", err);
@@ -101,27 +78,11 @@ export async function updateClientOperationIssue(formData: FormData) {
   const status = formData.get("status") as string;
   const action_taken = formData.get("action_taken") as string;
   const preventive_measure = formData.get("preventive_measure") as string;
-  const file = formData.get("file") as File;
+  let response_file_url = formData.get("response_file_url") as string || undefined;
+  const response_file_name = formData.get("response_file_name") as string || undefined;
 
-  let response_file_url = undefined;
+  // 서버 측 업로드 로직 제거 (클라이언트 직접 업로드 방식 적용)
 
-  if (file && file.size > 0) {
-    const fileExt = file.name.split(".").pop();
-    const fileName = `resp_op_${id}_${Date.now()}.${fileExt}`;
-    const filePath = `operation_responses/${fileName}`;
-
-    const { error: uploadError } = await supabase.storage
-      .from("issue_attachments")
-      .upload(filePath, file);
-
-    if (uploadError) return { error: "증빙 파일 업로드 실패" };
-
-    const { data: { publicUrl } } = supabase.storage
-      .from("issue_attachments")
-      .getPublicUrl(filePath);
-
-    response_file_url = publicUrl;
-  }
 
   const updateData: any = {
     status,
@@ -132,6 +93,7 @@ export async function updateClientOperationIssue(formData: FormData) {
 
   if (response_file_url) {
     updateData.response_file_url = response_file_url;
+    updateData.response_file_name = response_file_name;
   }
 
   const { error } = await supabase
@@ -154,15 +116,15 @@ export async function updateClientOperationIssue(formData: FormData) {
       const timestamp = `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2, '0')}`;
 
       sendTeamsMessage({
-        title: `✅ [고객사 이슈] 조치사항이 등록되었습니다.`,
-        subtitle: `${timestamp} | 상태: ${status}`,
+        title: `✅ 조치사항이 등록되었습니다.`,
+        subtitle: timestamp,
         buttonUrl: "https://letus-client-management.vercel.app/client-issues",
-        buttonLabel: "📋 고객사 이슈관리 바로가기",
-        buttons: response_file_url ? [{ label: "📎 증빙파일 보기", url: response_file_url }] : [],
+        buttonLabel: "고객사 이슈관리 바로가기",
+        buttons: response_file_url ? [{ label: "증빙파일 보기", url: response_file_url }] : [],
         sections: [
           { "name": "고객사", "value": (issueData as any)?.clients?.company_name || "알수없음" },
           { "name": "이슈유형", "value": (issueData as any)?.issue_category || "-" },
-          { "name": "건명", "value": (issueData as any)?.title || "-" },
+          { "name": "상태", "value": status },
         ],
         lastSections: [
           { "name": "조치내용", "value": action_taken, "color": "Good" },

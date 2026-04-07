@@ -127,6 +127,7 @@ export async function updateClientOperationIssue(formData: FormData) {
           { "name": "상태", "value": status },
         ],
         lastSections: [
+          { "name": "이슈내용 요약", "value": (issueData as any)?.issue_content || "-" },
           { "name": "조치내용", "value": action_taken, "color": "Good" },
           { "name": "재발방지 대책", "value": preventive_measure || "-", "color": "Warning" },
         ],

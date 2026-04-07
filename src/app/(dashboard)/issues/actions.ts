@@ -130,6 +130,7 @@ export async function updateIssueResponse(formData: FormData) {
           { "name": "답변등록자", "value": responder_name },
         ],
         lastSections: [
+          { "name": "이슈내용 요약", "value": (issueData as any)?.issue_content || "-" },
           { "name": "조치내용", "value": action_taken, "color": "Good" },
           { "name": "재발방지 대책", "value": preventive_measure || "-", "color": "Warning" },
         ],

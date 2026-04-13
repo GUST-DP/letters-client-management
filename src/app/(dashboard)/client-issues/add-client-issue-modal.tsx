@@ -30,17 +30,21 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 
 const ISSUE_CATEGORIES = [
-  "입고지연",
-  "바코드오부착",
+  "입출고 시간 미준수",
+  "바코드 오/미부착",
   "상품오맵핑",
   "주문오등록",
   "불용재고회수지연",
-  "입고누락",
-  "입고팔렛트기준미준수",
-  "기타",
+  "수작업 입/출고",
+  "이형 팔레트 입고",
+  "입고 계획 오/미등록",
+  "하자품입고",
+  "부족분",
+  "입고 높이 미준수",
+  "입고 후 패킹",
 ];
 
-const RESPONSIBLE_PARTIES = ["고객사", "레터스", "공동"];
+const RESPONSIBLE_PARTIES = ["배송/조립팀", "물류작업가", "고객", "시스템"];
 
 interface AddClientIssueModalProps {
   clients: { id: string; company_name: string }[];
@@ -227,11 +231,11 @@ export function AddClientIssueModal({
 
             <div className="space-y-1.5">
               <Label className="text-xs font-black text-slate-500 uppercase tracking-wider">
-                책임주체
+                발생주체
               </Label>
               <Select value={responsibleParty} onValueChange={(v) => v && setResponsibleParty(v)}>
                 <SelectTrigger className="h-10 border-slate-200">
-                  <SelectValue placeholder="책임주체 선택" />
+                  <SelectValue placeholder="발생주체 선택" />
                 </SelectTrigger>
                 <SelectContent>
                   {RESPONSIBLE_PARTIES.map((p) => (
@@ -324,7 +328,7 @@ export function ClientIssueDetailModal({
               <div className="h-9 flex items-center px-3 rounded-lg bg-slate-50 border border-slate-100 text-xs font-bold text-slate-700">{issue.issue_category}</div>
             </div>
             <div className="space-y-1">
-              <Label className="text-[10px] font-black text-slate-400 uppercase">책임주체</Label>
+              <Label className="text-[10px] font-black text-slate-400 uppercase">발생주체</Label>
               <div className="h-9 flex items-center px-3 rounded-lg bg-slate-50 border border-slate-100 text-xs font-bold text-slate-700">{issue.responsible_party || "-"}</div>
             </div>
             <div className="space-y-1">

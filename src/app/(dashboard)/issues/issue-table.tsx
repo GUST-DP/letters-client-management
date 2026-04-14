@@ -137,7 +137,7 @@ export function IssueTable({ data, clients, teams, userEmail, userName, onRowCli
     getPaginationRowModel: getPaginationRowModel(),
     initialState: {
       pagination: {
-        pageSize: 5,
+        pageSize: 10,
       },
     },
     state: {

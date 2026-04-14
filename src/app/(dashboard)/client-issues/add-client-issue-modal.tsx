@@ -67,7 +67,6 @@ export function AddClientIssueModal({
   const [clientId, setClientId] = useState(defaultClientId ?? "");
   const [issueCategory, setIssueCategory] = useState("");
   const [issueContent, setIssueContent] = useState("");
-  const [responsibleParty, setResponsibleParty] = useState("");
   const [file, setFile] = useState<File | null>(null);
 
   // 모달이 열릴 때마다 오늘 날짜로 동기화 (KST 등 현지 시간 기준)
@@ -90,7 +89,6 @@ export function AddClientIssueModal({
     setClientId(defaultClientId ?? "");
     setIssueCategory("");
     setIssueContent("");
-    setResponsibleParty("");
     setFile(null);
   };
 
@@ -143,7 +141,7 @@ export function AddClientIssueModal({
       fd.append("occurrence_date", occurrenceDate);
       fd.append("issue_category", issueCategory);
       fd.append("issue_content", issueContent);
-      fd.append("responsible_party", responsibleParty);
+      fd.append("responsible_party", "");
       fd.append("author_name", userName);
       fd.append("author_email", userEmail);
       if (file_url) fd.append("file_url", file_url);
@@ -215,35 +213,17 @@ export function AddClientIssueModal({
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-1.5">
-              <Label className="text-xs font-black text-slate-500 uppercase tracking-wider">
-                고객사 <span className="text-red-500">*</span>
-              </Label>
-              <SearchableSelect
-                options={clients.map((c) => ({ value: c.id, label: c.company_name }))}
-                value={clientId}
-                onValueChange={setClientId}
-                placeholder="고객사 선택"
-                className="h-10 w-full"
-              />
-            </div>
-
-            <div className="space-y-1.5">
-              <Label className="text-xs font-black text-slate-500 uppercase tracking-wider">
-                발생주체
-              </Label>
-              <Select value={responsibleParty} onValueChange={(v) => v && setResponsibleParty(v)}>
-                <SelectTrigger className="h-10 border-slate-200">
-                  <SelectValue placeholder="발생주체 선택" />
-                </SelectTrigger>
-                <SelectContent>
-                  {RESPONSIBLE_PARTIES.map((p) => (
-                    <SelectItem key={p} value={p}>{p}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+          <div className="space-y-1.5">
+            <Label className="text-xs font-black text-slate-500 uppercase tracking-wider">
+              고객사 <span className="text-red-500">*</span>
+            </Label>
+            <SearchableSelect
+              options={clients.map((c) => ({ value: c.id, label: c.company_name }))}
+              value={clientId}
+              onValueChange={setClientId}
+              placeholder="고객사 선택"
+              className="h-10 w-full"
+            />
           </div>
 
           <div className="space-y-1.5">

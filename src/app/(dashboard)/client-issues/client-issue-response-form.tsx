@@ -262,31 +262,31 @@ export function ClientIssueResponseForm({ selectedIssue, userEmail, userName }: 
           <table className="w-full border-collapse">
             <thead className="bg-slate-800">
               <tr className="border-b border-transparent">
-                <th className="px-6 py-3 text-left text-[13px] font-black text-slate-300 uppercase tracking-wider border-r border-slate-700/50 h-10">
-                  <div className="flex items-center justify-center gap-2">
-                    <MessageSquareText className="w-3.5 h-3.5 text-orange-400" />
-                    조치사항 (Action)
-                  </div>
-                </th>
-                <th className="px-6 py-3 text-left text-[13px] font-black text-slate-300 uppercase tracking-wider border-r border-slate-700/50 h-10">
-                  <div className="flex items-center justify-center gap-2">
-                    <ShieldAlert className="w-3.5 h-3.5 text-emerald-500" />
-                    재발방지 대책
-                  </div>
-                </th>
-                <th className="px-6 py-3 text-left text-[13px] font-black text-slate-300 uppercase tracking-wider border-r border-slate-700/50 w-32 h-10">
+                <th className="px-6 py-3 text-left text-[13px] font-black text-slate-300 uppercase tracking-wider border-r border-slate-700/50 w-36 h-12">
                   <div className="flex items-center justify-center gap-2">
                     <div className="w-3.5 h-3.5 rounded-full bg-slate-400" />
                     진행상태
                   </div>
                 </th>
-                <th className="px-6 py-3 text-left text-[13px] font-black text-slate-300 uppercase tracking-wider border-r border-slate-700/50 w-40 h-10">
+                <th className="px-6 py-3 text-left text-[13px] font-black text-slate-300 uppercase tracking-wider border-r border-slate-700/50 h-12">
+                  <div className="flex items-center justify-center gap-2">
+                    <MessageSquareText className="w-3.5 h-3.5 text-[#ff5c39]" />
+                    조치사항 (Action)
+                  </div>
+                </th>
+                <th className="px-6 py-3 text-left text-[13px] font-black text-slate-300 uppercase tracking-wider border-r border-slate-700/50 h-12">
+                  <div className="flex items-center justify-center gap-2">
+                    <ShieldAlert className="w-3.5 h-3.5 text-emerald-500" />
+                    재발방지 대책
+                  </div>
+                </th>
+                <th className="px-6 py-3 text-left text-[13px] font-black text-slate-300 uppercase tracking-wider border-r border-slate-700/50 w-40 h-12">
                   <div className="flex items-center justify-center gap-2">
                     <UserCheck className="w-3.5 h-3.5 text-slate-400" />
                     답변등록자
                   </div>
                 </th>
-                <th className="px-6 py-3 text-left text-[13px] font-black text-slate-300 uppercase tracking-wider w-44 h-10">
+                <th className="px-6 py-3 text-left text-[13px] font-black text-slate-300 uppercase tracking-wider w-56 h-12">
                   <div className="flex items-center justify-center gap-2">
                     <Paperclip className="w-3.5 h-3.5 text-blue-400" />
                     증빙파일
@@ -296,35 +296,17 @@ export function ClientIssueResponseForm({ selectedIssue, userEmail, userName }: 
             </thead>
             <tbody>
               <tr>
-                <td className="px-6 py-6 border-r border-slate-200 align-top max-w-sm">
-                  <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-wrap min-h-[60px]">
-                    {selectedIssue?.action_taken || (
-                      <span className="text-slate-300 italic">
-                        {selectedIssue ? "내용이 없습니다." : "이슈를 선택하면 표시됩니다."}
-                      </span>
-                    )}
-                  </p>
-                </td>
-                <td className="px-6 py-6 border-r border-slate-200 align-top max-w-sm bg-emerald-50/5">
-                  <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-wrap min-h-[60px]">
-                    {selectedIssue?.preventive_measure || (
-                      <span className="text-slate-300 italic">
-                        {selectedIssue ? "내용이 없습니다." : "이슈를 선택하면 표시됩니다."}
-                      </span>
-                    )}
-                  </p>
-                </td>
-                <td className="px-6 py-6 border-r border-slate-200 text-center w-32">
+                <td className="px-6 py-6 border-r border-slate-200 text-center w-36">
                   {selectedIssue && (() => {
                     const val = selectedIssue.status || "이슈등록";
                     const isCompleted = val === "조치등록" || val === "조치완료";
                     return (
-                      <Badge 
-                        variant="outline" 
+                      <Badge
+                        variant="outline"
                         className={cn(
-                          "font-bold text-[11px] whitespace-nowrap", 
-                          isCompleted 
-                            ? "bg-emerald-50 text-emerald-600 border-emerald-200" 
+                          "font-bold text-[11px] whitespace-nowrap",
+                          isCompleted
+                            ? "bg-emerald-50 text-emerald-600 border-emerald-200"
                             : "bg-rose-50 text-rose-600 border-rose-200"
                         )}
                       >
@@ -333,7 +315,25 @@ export function ClientIssueResponseForm({ selectedIssue, userEmail, userName }: 
                     );
                   })()}
                 </td>
-                <td className="px-6 py-6 align-top text-center border-r border-slate-200 w-40">
+                <td className="px-6 py-8 border-r border-slate-200 align-top">
+                  <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-wrap min-h-[60px]">
+                    {selectedIssue?.action_taken || (
+                      <span className="text-slate-300 italic">
+                        {selectedIssue ? "내용이 없습니다." : "이슈를 선택하면 표시됩니다."}
+                      </span>
+                    )}
+                  </p>
+                </td>
+                <td className="px-6 py-8 border-r border-slate-200 align-top bg-emerald-50/5">
+                  <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-wrap min-h-[60px]">
+                    {selectedIssue?.preventive_measure || (
+                      <span className="text-slate-300 italic">
+                        {selectedIssue ? "내용이 없습니다." : "이슈를 선택하면 표시됩니다."}
+                      </span>
+                    )}
+                  </p>
+                </td>
+                <td className="px-6 py-8 align-top text-center border-r border-slate-200 w-40">
                   <div className="inline-flex flex-col items-center">
                     <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center mb-2">
                       <UserCheck className="w-5 h-5 text-slate-400" />
@@ -341,28 +341,50 @@ export function ClientIssueResponseForm({ selectedIssue, userEmail, userName }: 
                     <span className="text-xs font-bold text-slate-600 bg-slate-50 px-3 py-1 rounded-full border border-slate-200">
                       {selectedIssue?.responder_name || "-"}
                     </span>
+                    {selectedIssue?.updated_at && selectedIssue.status === "조치등록" && (
+                      <span className="text-[10px] text-slate-400 mt-1 font-medium">
+                        {new Date(selectedIssue.updated_at).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', hour12: false })}
+                      </span>
+                    )}
                   </div>
                 </td>
-                <td className="px-6 py-6 align-top w-44">
-                  {selectedIssue?.response_file_url ? (
+                <td className="px-6 py-8 align-top w-56">
+                  {selectedIssue?.file_url && (
+                    <div className="w-full text-left mb-4">
+                      <p className="text-[10px] font-black text-slate-400 uppercase mb-2">이슈 원본 첨부파일</p>
+                      <a
+                        href={selectedIssue.file_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 p-2 bg-slate-50 rounded-lg text-xs font-bold text-blue-600 hover:text-blue-800 transition-colors w-full group overflow-hidden border border-slate-200 shadow-sm"
+                      >
+                        <Paperclip className="w-3.5 h-3.5 shrink-0" />
+                        <span className="truncate flex-1 text-left">{selectedIssue.file_name || "첨부파일 보기"}</span>
+                        <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity ml-auto shrink-0" />
+                      </a>
+                    </div>
+                  )}
+                  {selectedIssue?.response_file_url && (
                     <div className="w-full text-left">
-                      <a 
-                        href={selectedIssue.response_file_url} 
-                        target="_blank" 
+                      <p className="text-[10px] font-black text-slate-400 uppercase mb-2">조치 등록 증빙 파일</p>
+                      <a
+                        href={selectedIssue.response_file_url}
+                        target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center gap-2 p-2 bg-emerald-50 text-emerald-700 rounded-lg border border-emerald-100 hover:bg-emerald-100 transition-all w-full group overflow-hidden shadow-sm"
                       >
                         <Paperclip className="w-3.5 h-3.5 shrink-0" />
                         <span className="truncate flex-1 text-left text-xs font-bold">
-                          증빙 확인
+                          {selectedIssue.response_file_name || "첨부파일 보기"}
                         </span>
                         <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity ml-auto shrink-0" />
                       </a>
                     </div>
-                  ) : (
-                    <div className="flex flex-col items-center justify-center gap-2 h-full py-2 opacity-30">
-                      <Paperclip className="w-5 h-5 text-slate-300" />
-                      <span className="text-[10px] font-bold text-slate-400">파일 없음</span>
+                  )}
+                  {!selectedIssue?.file_url && !selectedIssue?.response_file_url && (
+                    <div className="flex flex-col items-center justify-center gap-2 h-full py-4 opacity-50">
+                      <Paperclip className="w-6 h-6 text-slate-300" />
+                      <span className="text-xs font-bold text-slate-400">첨부파일 없음</span>
                     </div>
                   )}
                 </td>

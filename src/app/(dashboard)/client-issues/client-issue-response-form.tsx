@@ -264,7 +264,7 @@ export function ClientIssueResponseForm({ selectedIssue, userEmail, userName }: 
                 <th className="px-6 py-3 text-left text-[13px] font-black text-slate-300 uppercase tracking-wider border-r border-slate-700/50 h-12">
                   <div className="flex items-center justify-center gap-2">
                     <MessageSquareText className="w-3.5 h-3.5 text-[#ff5c39]" />
-                    조치사항 (Action)
+                    조치사항
                   </div>
                 </th>
                 <th className="px-6 py-3 text-left text-[13px] font-black text-slate-300 uppercase tracking-wider border-r border-slate-700/50 h-12">

@@ -170,14 +170,7 @@ export function ClientIssueResponseForm({ selectedIssue, userEmail, userName }: 
         )}
       </div>
 
-      {!selectedIssue ? (
-        <div className="flex-1 flex flex-col items-center justify-center text-slate-400 gap-3 border-2 border-dashed border-slate-100 rounded-2xl bg-slate-50/30">
-          <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm">
-            <FileText className="w-8 h-8 text-slate-200" />
-          </div>
-          <p className="text-sm font-bold">목록에서 이슈를 선택하면 상세 내용을 확인하고 조치사항을 등록할 수 있습니다.</p>
-        </div>
-      ) : isEditing ? (
+      {isEditing ? (
         <form onSubmit={handleSubmit} className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">

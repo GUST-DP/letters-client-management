@@ -1,6 +1,7 @@
-﻿"use client";
+"use client";
 
 import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { 
   Table, 
   TableBody, 
@@ -55,6 +56,8 @@ export function ChecklistManager({ initialTasks, title, description }: Props) {
   const [isPending, startTransition] = useTransition();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editForm, setEditForm] = useState<Partial<Task>>({});
+  const [isDeleting, setIsDeleting] = useState(false);
+  const router = useRouter();
   
   // 추가 모달 관련 상태
   const [isAddOpen, setIsAddOpen] = useState(false);
@@ -102,16 +105,19 @@ export function ChecklistManager({ initialTasks, title, description }: Props) {
   };
 
   const handleDelete = async (id: string, name: string) => {
-    if (!confirm(`[${name}] 항목을 정말 삭제하시겠습니까?\n삭제 후에는 복구할 수 없으며, 이후 등록되는 고객사에게는 이 항목이 생성되지 않습니다.`)) return;
-
-    startTransition(async () => {
+    if (!confirm(`[${name}] 항목을 정말 삭제하시겠습니까?\n삭제 후에는 복구할 수 없습니다.`)) return;
+    setIsDeleting(true);
+    try {
       const result = await deleteTaskAction(id);
       if (result.error) {
         toast.error(result.error);
       } else {
         toast.success("항목이 삭제되었습니다.");
+        router.refresh();
       }
-    });
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   const handleAdd = async () => {
@@ -127,13 +133,8 @@ export function ChecklistManager({ initialTasks, title, description }: Props) {
       } else {
         toast.success("새로운 체크리스트 항목이 추가되었습니다.");
         setIsAddOpen(false);
-        setNewForm({
-          category: "",
-          task_name: "",
-          target: "",
-          description: "",
-          is_input: false,
-        });
+        setNewForm({ category: "", task_name: "", target: "", description: "", is_input: false });
+        router.refresh();
       }
     });
   };
@@ -266,6 +267,7 @@ export function ChecklistManager({ initialTasks, title, description }: Props) {
                           size="icon" 
                           className="h-8 w-8 text-rose-300 hover:text-rose-600 hover:bg-rose-50 rounded-lg"
                           onClick={() => handleDelete(task.id, task.task_name)}
+                          disabled={isDeleting}
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </Button>

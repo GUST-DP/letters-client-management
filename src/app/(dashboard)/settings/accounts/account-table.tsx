@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
@@ -117,12 +117,12 @@ export function AccountTable({
                 className="border-b border-slate-100 transition-all hover:bg-slate-50/50 group"
               >
                 {/* # 순번 */}
-                <td className="py-2.5 px-4 border-r border-slate-100 align-middle text-center text-slate-400 font-bold">
+                <td className="py-1.5 px-4 border-r border-slate-100 align-middle text-center text-slate-400 font-bold">
                   {i + 1}
                 </td>
 
                 {/* 이름 */}
-                <td className="py-2.5 px-4 border-r border-slate-100 align-middle text-center">
+                <td className="py-1.5 px-4 border-r border-slate-100 align-middle text-center">
                   {isEditing ? (
                     <input
                       value={form.full_name ?? ""}
@@ -136,12 +136,12 @@ export function AccountTable({
                 </td>
 
                 {/* 이메일 */}
-                <td className="py-2.5 px-4 border-r border-slate-100 align-middle">
+                <td className="py-1.5 px-4 border-r border-slate-100 align-middle">
                   <span className="font-mono text-slate-500 font-medium">{p.email}</span>
                 </td>
 
                 {/* 팀명 */}
-                <td className="py-2.5 px-4 border-r border-slate-100 align-middle text-center">
+                <td className="py-1.5 px-4 border-r border-slate-100 align-middle text-center">
                   {isEditing ? (
                     <input
                       value={form.team ?? ""}
@@ -155,7 +155,7 @@ export function AccountTable({
                 </td>
 
                 {/* 권한 */}
-                <td className="py-2.5 px-4 border-r border-slate-100 align-middle text-center">
+                <td className="py-1.5 px-4 border-r border-slate-100 align-middle text-center">
                   {isEditing ? (
                     <select
                       value={form.role ?? ""}
@@ -184,7 +184,7 @@ export function AccountTable({
                 </td>
 
                 {/* 메뉴 권한 (가로 나열) */}
-                <td className="py-2.5 px-4 border-r border-slate-100 align-middle">
+                <td className="py-1.5 px-4 border-r border-slate-100 align-middle">
                   {isEditing ? (
                     <div className="flex flex-wrap gap-1.5">
                       {ALL_MENUS.map(m => {
@@ -216,7 +216,7 @@ export function AccountTable({
                 </td>
 
                 {/* 버튼 */}
-                <td className="py-2.5 px-4 text-center align-middle">
+                <td className="py-1.5 px-4 text-center align-middle">
                   {isEditing ? (
                     <div className="flex items-center justify-center gap-1.5">
                       <button

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
@@ -169,10 +169,10 @@ export function ChecklistManager({ initialTasks, title, description }: Props) {
           <TableBody>
             {initialTasks.map((task, index) => (
               <TableRow key={task.id} className="border-b border-slate-100 transition-all hover:bg-slate-50/50 group">
-                <TableCell className="py-2.5 px-4 border-r border-slate-100 text-center text-slate-400 font-bold">
+                <TableCell className="py-1.5 px-4 border-r border-slate-100 text-center text-slate-400 font-bold">
                   {index + 1}
                 </TableCell>
-                <TableCell className="py-2.5 px-4 border-r border-slate-100 text-center align-middle">
+                <TableCell className="py-1.5 px-4 border-r border-slate-100 text-center align-middle">
                   {editingId === task.id ? (
                     <Input 
                       value={editForm.category || ""} 
@@ -183,7 +183,7 @@ export function ChecklistManager({ initialTasks, title, description }: Props) {
                     <span className="text-blue-600 font-bold">{task.category}</span>
                   )}
                 </TableCell>
-                <TableCell className="py-3.5 px-4 border-r border-slate-100 align-middle">
+                <TableCell className="py-1.5 px-4 border-r border-slate-100 align-middle">
                   {editingId === task.id ? (
                     <Input 
                       value={editForm.task_name || ""} 
@@ -194,7 +194,7 @@ export function ChecklistManager({ initialTasks, title, description }: Props) {
                     <span className="text-slate-900 font-bold">{task.task_name}</span>
                   )}
                 </TableCell>
-                <TableCell className="py-3.5 px-4 border-r border-slate-100 text-center align-middle">
+                <TableCell className="py-1.5 px-4 border-r border-slate-100 text-center align-middle">
                   {editingId === task.id ? (
                     <Input 
                       value={editForm.target || ""} 
@@ -206,7 +206,7 @@ export function ChecklistManager({ initialTasks, title, description }: Props) {
                     <span className="bg-slate-100 px-2 py-0.5 rounded text-slate-600 font-bold text-[10px]">{task.target || "-"}</span>
                   )}
                 </TableCell>
-                <TableCell className="py-3.5 px-4 border-r border-slate-100 align-middle">
+                <TableCell className="py-1.5 px-4 border-r border-slate-100 align-middle">
                   {editingId === task.id ? (
                     <Input 
                       value={editForm.description || ""} 
@@ -217,7 +217,7 @@ export function ChecklistManager({ initialTasks, title, description }: Props) {
                     <span className="text-slate-500 font-medium line-clamp-1">{task.description || "-"}</span>
                   )}
                 </TableCell>
-                <TableCell className="py-3.5 px-4 border-r border-slate-100 text-center align-middle">
+                <TableCell className="py-1.5 px-4 border-r border-slate-100 text-center align-middle">
                   <div className="flex justify-center">
                     {editingId === task.id ? (
                       <Checkbox 
@@ -230,7 +230,7 @@ export function ChecklistManager({ initialTasks, title, description }: Props) {
                     )}
                   </div>
                 </TableCell>
-                <TableCell className="py-3.5 px-4 align-middle">
+                <TableCell className="py-1.5 px-4 align-middle">
                   <div className="flex items-center justify-center gap-1.5">
                     {editingId === task.id ? (
                       <>

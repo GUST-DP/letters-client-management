@@ -185,7 +185,7 @@ export function AddIssueModal({ clients, teams, userEmail, userName }: AddIssueM
 
   return (
     <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) resetForm(); }}>
-      <DialogTrigger className={cn(buttonVariants({ size: "sm", variant: "default" }), "bg-[#414344] text-white hover:bg-[#ff5c39] transition-colors gap-1.5 h-8 px-3 rounded-lg text-sm cursor-pointer")}>
+      <DialogTrigger className={cn(buttonVariants({ size: "sm", variant: "default" }), "bg-[#ff5c39] text-white hover:bg-[#e04f32] transition-colors gap-1.5 h-8 px-3 rounded-lg text-sm cursor-pointer shadow-lg shadow-[#ff5c39]/20")}>
         <Plus className="w-4 h-4" />
         이슈등록
       </DialogTrigger>

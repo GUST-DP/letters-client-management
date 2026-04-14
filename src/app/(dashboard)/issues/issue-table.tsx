@@ -244,7 +244,7 @@ export function IssueTable({ data, clients, teams, userEmail, userName, onRowCli
                   {headerGroup.headers.map((header) => (
                     <TableHead 
                       key={header.id}
-                      className="h-12 text-center font-black text-slate-300 border-r border-slate-700/50 last:border-r-0 text-[14px] uppercase tracking-wider px-4"
+                      className="h-12 text-center font-black text-slate-300 border-r border-slate-700/50 last:border-r-0 text-[12px] uppercase tracking-wider px-4 whitespace-nowrap"
                       style={{ 
                         width: header.getSize(), 
                         minWidth: header.getSize(), 

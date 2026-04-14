@@ -53,7 +53,7 @@ export function CostCenterManager({ initialData, title, description }: Props) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState("");
   
-  // 추가 모달 관련 상태
+  // 추�? 모달 관???�태
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [newName, setNewName] = useState("");
 
@@ -76,28 +76,28 @@ export function CostCenterManager({ initialData, title, description }: Props) {
       if (result.error) {
         toast.error(result.error);
       } else {
-        toast.success("코스트센터 정보가 수정되었습니다.");
+        toast.success("코스?�센???�보가 ?�정?�었?�니??");
         setEditingId(null);
       }
     });
   };
 
   const handleDelete = async (id: string, name: string) => {
-    if (!confirm(`'${name}' 코스트센터를 삭제하시겠습니까?\n이 코스트센터를 사용하는 고객사가 있을 경우 삭제가 실패할 수 있습니다.`)) return;
+    if (!confirm(`'${name}' 코스?�센?��? ??��?�시겠습?�까?\n??코스?�센?��? ?�용?�는 고객?��? ?�을 경우 ??��가 ?�패?????�습?�다.`)) return;
 
     startTransition(async () => {
       const result = await deleteCostCenterAction(id);
       if (result.error) {
         toast.error(result.error);
       } else {
-        toast.success("코스트센터가 삭제되었습니다.");
+        toast.success("코스?�센?��? ??��?�었?�니??");
       }
     });
   };
 
   const handleAdd = async () => {
     if (!newName.trim()) {
-      toast.error("코스트센터 명칭을 입력해주세요.");
+      toast.error("코스?�센??명칭???�력?�주?�요.");
       return;
     }
 
@@ -109,7 +109,7 @@ export function CostCenterManager({ initialData, title, description }: Props) {
       if (result.error) {
         toast.error(result.error);
       } else {
-        toast.success("새로운 코스트센터가 추가되었습니다.");
+        toast.success("?�로??코스?�센?��? 추�??�었?�니??");
         setIsAddOpen(false);
         setNewName("");
       }
@@ -119,7 +119,7 @@ export function CostCenterManager({ initialData, title, description }: Props) {
   return (
     <div className="space-y-3">
       <div className="rounded-2xl border border-slate-200 overflow-hidden shadow-xl bg-white animate-in fade-in slide-in-from-bottom-2 duration-500">
-        {/* 통합 헤더 영역 */}
+        {/* ?�합 ?�더 ?�역 */}
         <div className="px-3 py-3 flex justify-between items-center border-b border-slate-100 bg-slate-50/30">
           <div>
             <h2 className="text-xl font-black text-slate-900 tracking-tight">{title}</h2>
@@ -127,17 +127,17 @@ export function CostCenterManager({ initialData, title, description }: Props) {
           </div>
           <Button onClick={() => setIsAddOpen(true)} className="gap-2 bg-[#414344] text-white hover:bg-[#414344]/90 shadow-md">
             <Plus className="w-4 h-4" />
-            {title.replace(" 관리", "")} 추가
+            {title.replace(" 관�?, "")} 추�?
           </Button>
         </div>
 
         <Table className="text-xs">
           <TableHeader className="bg-slate-800">
             <TableRow className="hover:bg-transparent border-none">
-              <TableHead className="w-[60px] font-black text-slate-300 border-r border-slate-700/50 text-center h-10 text-[13px] uppercase tracking-wider px-4">#</TableHead>
-              <TableHead className="font-black text-slate-300 border-r border-slate-700/50 h-10 text-[13px] uppercase tracking-wider px-4">코스트센터 명칭</TableHead>
-              <TableHead className="w-[200px] font-black text-slate-300 border-r border-slate-700/50 text-center h-10 text-[13px] uppercase tracking-wider px-4">등록일</TableHead>
-              <TableHead className="w-[120px] font-black text-slate-300 text-center h-10 text-[13px] uppercase tracking-wider px-4">관리</TableHead>
+              <TableHead className="w-[60px] font-black text-slate-300 border-r border-slate-700/50 text-center h-10 text-[12px] uppercase tracking-wider px-4">#</TableHead>
+              <TableHead className="font-black text-slate-300 border-r border-slate-700/50 h-10 text-[12px] uppercase tracking-wider px-4">코스?�센??명칭</TableHead>
+              <TableHead className="w-[200px] font-black text-slate-300 border-r border-slate-700/50 text-center h-10 text-[12px] uppercase tracking-wider px-4">?�록??/TableHead>
+              <TableHead className="w-[120px] font-black text-slate-300 text-center h-10 text-[12px] uppercase tracking-wider px-4">관�?/TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -210,7 +210,7 @@ export function CostCenterManager({ initialData, title, description }: Props) {
             {initialData.length === 0 && (
               <TableRow>
                 <TableCell colSpan={4} className="h-48 text-center text-slate-400 font-bold">
-                  등록된 코스트센터가 없습니다.
+                  ?�록??코스?�센?��? ?�습?�다.
                 </TableCell>
               </TableRow>
             )}
@@ -218,13 +218,13 @@ export function CostCenterManager({ initialData, title, description }: Props) {
         </Table>
       </div>
 
-      {/* 코스트센터 추가 다이얼로그 */}
+      {/* 코스?�센??추�? ?�이?�로�?*/}
       <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>새 코스트센터 추가</DialogTitle>
+            <DialogTitle>??코스?�센??추�?</DialogTitle>
             <DialogDescription>
-              시스템에 등록할 새로운 코스트센터 명칭을 입력하세요.
+              ?�스?�에 ?�록???�로??코스?�센??명칭???�력?�세??
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
@@ -235,14 +235,14 @@ export function CostCenterManager({ initialData, title, description }: Props) {
                 value={newName}
                 onChange={(e) => setNewName(e.target.value)}
                 className="col-span-3"
-                placeholder="코스트센터 이름 입력"
+                placeholder="코스?�센???�름 ?�력"
               />
             </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsAddOpen(false)}>취소</Button>
             <Button onClick={handleAdd} disabled={isPending} className="bg-[#414344] text-white hover:bg-[#414344]/90">
-              {isPending ? "추가 중..." : "추가하기"}
+              {isPending ? "추�? �?.." : "추�??�기"}
             </Button>
           </DialogFooter>
         </DialogContent>

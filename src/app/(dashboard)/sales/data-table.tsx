@@ -58,7 +58,7 @@ export function DataTable<TData, TValue>({
                 return (
                   <TableHead 
                     key={header.id}
-                    className="h-12 text-center font-black text-slate-300 border-r border-slate-700/50 last:border-r-0 text-[13px] uppercase tracking-wider px-4 font-black"
+                    className="h-12 text-center font-black text-slate-300 border-r border-slate-700/50 last:border-r-0 text-[12px] uppercase tracking-wider px-4 font-black"
                   >
                     {header.isPlaceholder
                       ? null
@@ -93,7 +93,7 @@ export function DataTable<TData, TValue>({
           ) : (
             <TableRow>
               <TableCell colSpan={columns.length} className="h-32 text-center font-bold text-slate-400">
-                조회된 매출 데이터가 없습니다.
+                조회??매출 ?�이?��? ?�습?�다.
               </TableCell>
             </TableRow>
           )}

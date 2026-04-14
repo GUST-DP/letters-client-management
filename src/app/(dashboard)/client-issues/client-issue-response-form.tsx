@@ -36,11 +36,11 @@ interface ClientIssueResponseFormProps {
   userName: string;
 }
 
-const STATUS_OPTIONS = ["이슈등록", "조치등록"];
+const STATUS_OPTIONS = ["?�슈?�록", "조치?�록"];
 
 const STATUS_COLORS: Record<string, string> = {
-  "이슈등록": "bg-rose-50 text-rose-600 border-rose-200",
-  "조치등록": "bg-emerald-50 text-emerald-600 border-emerald-200",
+  "?�슈?�록": "bg-rose-50 text-rose-600 border-rose-200",
+  "조치?�록": "bg-emerald-50 text-emerald-600 border-emerald-200",
 };
 
 export function ClientIssueResponseForm({ selectedIssue, userEmail, userName }: ClientIssueResponseFormProps) {
@@ -72,7 +72,7 @@ export function ClientIssueResponseForm({ selectedIssue, userEmail, userName }: 
     e.preventDefault();
     if (!selectedIssue) return;
     if (!actionTaken) {
-      toast.error("조치내용을 입력해주세요.");
+      toast.error("조치?�용???�력?�주?�요.");
       return;
     }
 
@@ -82,11 +82,11 @@ export function ClientIssueResponseForm({ selectedIssue, userEmail, userName }: 
       let response_file_url = null;
       let response_file_name = null;
 
-      // 클라이언트 측에서 Supabase Storage로 직접 업로드 (Vercel 페이로드 제한 우회)
+      // ?�라?�언??측에??Supabase Storage�?직접 ?�로??(Vercel ?�이로드 ?�한 ?�회)
       if (file) {
-        // 파일 크기 제한 (예: 20MB)
+        // ?�일 ?�기 ?�한 (?? 20MB)
         if (file.size > 20 * 1024 * 1024) {
-          toast.error("파일 크기가 너무 큽니다. (최대 20MB)");
+          toast.error("?�일 ?�기가 ?�무 ?�니?? (최�? 20MB)");
           setIsSubmitting(false);
           return;
         }
@@ -102,7 +102,7 @@ export function ClientIssueResponseForm({ selectedIssue, userEmail, userName }: 
 
         if (uploadError) {
           console.error("Upload error:", uploadError);
-          throw new Error("파일 업로드 중에 오류가 발생했습니다.");
+          throw new Error("?�일 ?�로??중에 ?�류가 발생?�습?�다.");
         }
 
         const { data: { publicUrl } } = supabase.storage
@@ -115,8 +115,7 @@ export function ClientIssueResponseForm({ selectedIssue, userEmail, userName }: 
 
       const fd = new FormData();
       fd.append('id', selectedIssue.id);
-      fd.append('status', '조치등록'); // 조치 내용 저장 시 무조건 '조치등록'으로 변경
-      fd.append('action_taken', actionTaken);
+      fd.append('status', '조치?�록'); // 조치 ?�용 ?�????무조�?'조치?�록'?�로 변�?      fd.append('action_taken', actionTaken);
       fd.append('preventive_measure', preventiveMeasure);
       fd.append('responder_name', responderName);
       if (response_file_url) fd.append('response_file_url', response_file_url);
@@ -127,13 +126,13 @@ export function ClientIssueResponseForm({ selectedIssue, userEmail, userName }: 
       if (result && result.error) {
         toast.error(result.error);
       } else {
-        toast.success("조치 사항이 저장되었습니다.");
+        toast.success("조치 ?�항???�?�되?�습?�다.");
         setIsEditing(false);
         router.refresh();
       }
     } catch (error: any) {
       console.error("Submit error:", error);
-      toast.error(error.message || "저장 중 오류가 발생했습니다.");
+      toast.error(error.message || "?�??�??�류가 발생?�습?�다.");
     } finally {
       setIsSubmitting(false);
     }
@@ -141,11 +140,11 @@ export function ClientIssueResponseForm({ selectedIssue, userEmail, userName }: 
 
   return (
     <div className="bg-white p-3 rounded-3xl border border-slate-200 shadow-xl min-h-[460px] flex flex-col">
-      {/* 헤더 */}
+      {/* ?�더 */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
           <div className="w-2 h-6 bg-[#ff5c39] rounded-full" />
-          <h2 className="text-base font-black text-slate-800 tracking-tight">상세 조치 내역</h2>
+          <h2 className="text-base font-black text-slate-800 tracking-tight">?�세 조치 ?�역</h2>
         </div>
         
         {selectedIssue && (
@@ -155,7 +154,7 @@ export function ClientIssueResponseForm({ selectedIssue, userEmail, userName }: 
               className="bg-[#ff5c39] hover:bg-[#e04f32] text-white font-black px-6 gap-2 rounded-xl shadow-lg shadow-[#ff5c39]/20 transition-all active:scale-95"
             >
               <MessageSquarePlus className="w-4 h-4" />
-              조치사항 등록/수정
+              조치?�항 ?�록/?�정
             </Button>
           ) : (
             <Button 
@@ -176,11 +175,11 @@ export function ClientIssueResponseForm({ selectedIssue, userEmail, userName }: 
             <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
               <div className="bg-slate-800 px-4 py-2 flex items-center gap-2">
                 <MessageSquareText className="w-3.5 h-3.5 text-[#ff5c39]" />
-                <span className="text-white text-[11px] font-black uppercase tracking-wider">조치사항 입력</span>
+                <span className="text-white text-[11px] font-black uppercase tracking-wider">조치?�항 ?�력</span>
               </div>
               <div className="p-4">
                 <Textarea 
-                  placeholder="실제 조치된 상세 내용을 입력하세요." 
+                  placeholder="?�제 조치???�세 ?�용???�력?�세??" 
                   value={actionTaken} 
                   onChange={e => setActionTaken(e.target.value)} 
                   className="min-h-[140px] text-sm border-slate-100 focus:ring-[#ff5c39]/20 resize-none font-medium"
@@ -190,11 +189,11 @@ export function ClientIssueResponseForm({ selectedIssue, userEmail, userName }: 
             <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
               <div className="bg-slate-800 px-4 py-2 flex items-center gap-2">
                 <ShieldAlert className="w-3.5 h-3.5 text-emerald-400" />
-                <span className="text-white text-[11px] font-black uppercase tracking-wider">재발방지 대책 입력</span>
+                <span className="text-white text-[11px] font-black uppercase tracking-wider">?�발방�? ?��??�력</span>
               </div>
               <div className="p-4">
                 <Textarea 
-                  placeholder="향후 동일 이슈 방지를 위한 대책을 입력하세요." 
+                  placeholder="?�후 ?�일 ?�슈 방�?�??�한 ?�책을 ?�력?�세??" 
                   value={preventiveMeasure} 
                   onChange={e => setPreventiveMeasure(e.target.value)} 
                   className="min-h-[140px] text-sm border-slate-100 focus:ring-emerald-500/20 resize-none font-medium"
@@ -206,7 +205,7 @@ export function ClientIssueResponseForm({ selectedIssue, userEmail, userName }: 
           <div className="bg-slate-50 p-4 border border-slate-100 rounded-xl flex items-center justify-between shadow-inner-sm">
             <div className="flex items-center gap-6">
                <div className="flex flex-col gap-1">
-                 <Label className="text-[11px] font-black text-slate-500 uppercase tracking-widest pl-1">답변등록자</Label>
+                 <Label className="text-[11px] font-black text-slate-500 uppercase tracking-widest pl-1">?��??�록??/Label>
                  <Input 
                    value={responderName} 
                    onChange={e => setResponderName(e.target.value)} 
@@ -218,10 +217,10 @@ export function ClientIssueResponseForm({ selectedIssue, userEmail, userName }: 
                
                <div className="flex flex-col gap-1">
                  <div className="flex items-center gap-2">
-                   <Label className="text-[11px] font-black text-slate-500 uppercase tracking-widest pl-1">조치 증빙 첨부</Label>
+                   <Label className="text-[11px] font-black text-slate-500 uppercase tracking-widest pl-1">조치 증빙 첨�?</Label>
                    {selectedIssue?.response_file_url && (
                      <a href={selectedIssue.response_file_url} target="_blank" rel="noopener noreferrer" className="text-[10px] text-blue-600 hover:underline flex items-center gap-1 font-bold">
-                       <ExternalLink className="w-3 h-3 shrink-0" /> 기존 파일 보기
+                       <ExternalLink className="w-3 h-3 shrink-0" /> 기존 ?�일 보기
                      </a>
                    )}
                  </div>
@@ -245,44 +244,42 @@ export function ClientIssueResponseForm({ selectedIssue, userEmail, userName }: 
                disabled={isSubmitting}
                className="bg-slate-900 hover:bg-black text-white font-extrabold px-10 h-11 shadow-xl rounded-xl transition-all active:scale-95"
              >
-               {isSubmitting ? "저장 중..." : "조치 내용 저장하기"}
+               {isSubmitting ? "?�??�?.." : "조치 ?�용 ?�?�하�?}
              </Button>
           </div>
         </form>
       ) : (
-        /* 조회 모드: 표 형식 노출 (이슈 미선택 시에도 표 구조 유지) */
+        /* 조회 모드: ???�식 ?�출 (?�슈 미선???�에????구조 ?��?) */
         <div className="border border-slate-200 rounded-2xl overflow-hidden animate-in fade-in duration-300">
           <table className="w-full border-collapse">
             <thead className="bg-slate-800">
               <tr className="border-b border-transparent">
-                <th className="px-6 py-3 text-left text-[13px] font-black text-slate-300 uppercase tracking-wider border-r border-slate-700/50 w-36 h-12">
+                <th className="px-6 py-3 text-left text-[12px] font-black text-slate-300 uppercase tracking-wider border-r border-slate-700/50 w-36 h-12">
                   <div className="flex items-center justify-center gap-2">
                     <div className="w-3.5 h-3.5 rounded-full bg-slate-400" />
-                    진행상태
+                    진행?�태
                   </div>
                 </th>
-                <th className="px-6 py-3 text-left text-[13px] font-black text-slate-300 uppercase tracking-wider border-r border-slate-700/50 h-12">
+                <th className="px-6 py-3 text-left text-[12px] font-black text-slate-300 uppercase tracking-wider border-r border-slate-700/50 h-12">
                   <div className="flex items-center justify-center gap-2">
                     <MessageSquareText className="w-3.5 h-3.5 text-[#ff5c39]" />
-                    조치사항
+                    조치?�항
                   </div>
                 </th>
-                <th className="px-6 py-3 text-left text-[13px] font-black text-slate-300 uppercase tracking-wider border-r border-slate-700/50 h-12">
+                <th className="px-6 py-3 text-left text-[12px] font-black text-slate-300 uppercase tracking-wider border-r border-slate-700/50 h-12">
                   <div className="flex items-center justify-center gap-2">
                     <ShieldAlert className="w-3.5 h-3.5 text-emerald-500" />
-                    재발방지 대책
-                  </div>
+                    ?�발방�? ?��?                  </div>
                 </th>
-                <th className="px-6 py-3 text-left text-[13px] font-black text-slate-300 uppercase tracking-wider border-r border-slate-700/50 w-40 h-12">
+                <th className="px-6 py-3 text-left text-[12px] font-black text-slate-300 uppercase tracking-wider border-r border-slate-700/50 w-40 h-12">
                   <div className="flex items-center justify-center gap-2">
                     <UserCheck className="w-3.5 h-3.5 text-slate-400" />
-                    답변등록자
-                  </div>
+                    ?��??�록??                  </div>
                 </th>
-                <th className="px-6 py-3 text-left text-[13px] font-black text-slate-300 uppercase tracking-wider w-56 h-12">
+                <th className="px-6 py-3 text-left text-[12px] font-black text-slate-300 uppercase tracking-wider w-56 h-12">
                   <div className="flex items-center justify-center gap-2">
                     <Paperclip className="w-3.5 h-3.5 text-blue-400" />
-                    증빙파일
+                    증빙?�일
                   </div>
                 </th>
               </tr>
@@ -291,8 +288,8 @@ export function ClientIssueResponseForm({ selectedIssue, userEmail, userName }: 
               <tr>
                 <td className="px-6 py-6 border-r border-slate-200 text-center w-36">
                   {selectedIssue && (() => {
-                    const val = selectedIssue.status || "이슈등록";
-                    const isCompleted = val === "조치등록" || val === "조치완료";
+                    const val = selectedIssue.status || "?�슈?�록";
+                    const isCompleted = val === "조치?�록" || val === "조치?�료";
                     return (
                       <Badge
                         variant="outline"
@@ -303,7 +300,7 @@ export function ClientIssueResponseForm({ selectedIssue, userEmail, userName }: 
                             : "bg-rose-50 text-rose-600 border-rose-200"
                         )}
                       >
-                        {isCompleted ? "조치등록" : "이슈등록"}
+                        {isCompleted ? "조치?�록" : "?�슈?�록"}
                       </Badge>
                     );
                   })()}
@@ -312,7 +309,7 @@ export function ClientIssueResponseForm({ selectedIssue, userEmail, userName }: 
                   <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-wrap min-h-[60px]">
                     {selectedIssue?.action_taken || (
                       <span className="text-slate-300 italic">
-                        {selectedIssue ? "내용이 없습니다." : "이슈를 선택하면 표시됩니다."}
+                        {selectedIssue ? "?�용???�습?�다." : "?�슈�??�택?�면 ?�시?�니??"}
                       </span>
                     )}
                   </p>
@@ -321,7 +318,7 @@ export function ClientIssueResponseForm({ selectedIssue, userEmail, userName }: 
                   <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-wrap min-h-[60px]">
                     {selectedIssue?.preventive_measure || (
                       <span className="text-slate-300 italic">
-                        {selectedIssue ? "내용이 없습니다." : "이슈를 선택하면 표시됩니다."}
+                        {selectedIssue ? "?�용???�습?�다." : "?�슈�??�택?�면 ?�시?�니??"}
                       </span>
                     )}
                   </p>
@@ -334,7 +331,7 @@ export function ClientIssueResponseForm({ selectedIssue, userEmail, userName }: 
                     <span className="text-xs font-bold text-slate-600 bg-slate-50 px-3 py-1 rounded-full border border-slate-200">
                       {selectedIssue?.responder_name || "-"}
                     </span>
-                    {selectedIssue?.updated_at && selectedIssue.status === "조치등록" && (
+                    {selectedIssue?.updated_at && selectedIssue.status === "조치?�록" && (
                       <span className="text-[10px] text-slate-400 mt-1 font-medium">
                         {new Date(selectedIssue.updated_at).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', hour12: false })}
                       </span>
@@ -344,7 +341,7 @@ export function ClientIssueResponseForm({ selectedIssue, userEmail, userName }: 
                 <td className="px-6 py-8 align-top w-56">
                   {selectedIssue?.file_url && (
                     <div className="w-full text-left mb-4">
-                      <p className="text-[10px] font-black text-slate-400 uppercase mb-2">이슈 원본 첨부파일</p>
+                      <p className="text-[10px] font-black text-slate-400 uppercase mb-2">?�슈 ?�본 첨�??�일</p>
                       <a
                         href={selectedIssue.file_url}
                         target="_blank"
@@ -352,14 +349,14 @@ export function ClientIssueResponseForm({ selectedIssue, userEmail, userName }: 
                         className="flex items-center gap-2 p-2 bg-slate-50 rounded-lg text-xs font-bold text-blue-600 hover:text-blue-800 transition-colors w-full group overflow-hidden border border-slate-200 shadow-sm"
                       >
                         <Paperclip className="w-3.5 h-3.5 shrink-0" />
-                        <span className="truncate flex-1 text-left">{selectedIssue.file_name || "첨부파일 보기"}</span>
+                        <span className="truncate flex-1 text-left">{selectedIssue.file_name || "첨�??�일 보기"}</span>
                         <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity ml-auto shrink-0" />
                       </a>
                     </div>
                   )}
                   {selectedIssue?.response_file_url && (
                     <div className="w-full text-left">
-                      <p className="text-[10px] font-black text-slate-400 uppercase mb-2">조치 등록 증빙 파일</p>
+                      <p className="text-[10px] font-black text-slate-400 uppercase mb-2">조치 ?�록 증빙 ?�일</p>
                       <a
                         href={selectedIssue.response_file_url}
                         target="_blank"
@@ -368,7 +365,7 @@ export function ClientIssueResponseForm({ selectedIssue, userEmail, userName }: 
                       >
                         <Paperclip className="w-3.5 h-3.5 shrink-0" />
                         <span className="truncate flex-1 text-left text-xs font-bold">
-                          {selectedIssue.response_file_name || "첨부파일 보기"}
+                          {selectedIssue.response_file_name || "첨�??�일 보기"}
                         </span>
                         <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity ml-auto shrink-0" />
                       </a>
@@ -377,7 +374,7 @@ export function ClientIssueResponseForm({ selectedIssue, userEmail, userName }: 
                   {!selectedIssue?.file_url && !selectedIssue?.response_file_url && (
                     <div className="flex flex-col items-center justify-center gap-2 h-full py-4 opacity-50">
                       <Paperclip className="w-6 h-6 text-slate-300" />
-                      <span className="text-xs font-bold text-slate-400">첨부파일 없음</span>
+                      <span className="text-xs font-bold text-slate-400">첨�??�일 ?�음</span>
                     </div>
                   )}
                 </td>

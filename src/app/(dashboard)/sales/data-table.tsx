@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 
 import {
   ColumnDef,
@@ -58,7 +58,7 @@ export function DataTable<TData, TValue>({
                 return (
                   <TableHead 
                     key={header.id}
-                    className="h-12 text-center font-black text-slate-300 border-r border-slate-700/50 last:border-r-0 text-[12px] uppercase tracking-wider px-4 font-black"
+                    className="h-8 text-center font-black text-slate-300 border-r border-slate-700/50 last:border-r-0 text-[12px] uppercase tracking-wider px-4 font-black"
                   >
                     {header.isPlaceholder
                       ? null
@@ -83,7 +83,7 @@ export function DataTable<TData, TValue>({
                 {row.getVisibleCells().map((cell) => (
                   <TableCell 
                     key={cell.id}
-                    className="py-1.5 px-4 border-r border-slate-100 last:border-r-0 align-middle text-xs"
+                    className="py-1 px-4 border-r border-slate-100 last:border-r-0 align-middle text-xs"
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
@@ -93,7 +93,7 @@ export function DataTable<TData, TValue>({
           ) : (
             <TableRow>
               <TableCell colSpan={columns.length} className="h-32 text-center font-bold text-slate-400">
-                조회??매출 ?�이?��? ?�습?�다.
+                조회??매출 ?�이?��? ?�습?�다.
               </TableCell>
             </TableRow>
           )}
@@ -101,7 +101,7 @@ export function DataTable<TData, TValue>({
         {totals && data.length > 0 && (
           <tfoot className="bg-slate-50/50 border-t-2 border-slate-200">
             <TableRow className="hover:bg-transparent">
-              <TableCell colSpan={3} className="text-center font-black text-slate-700 h-12 uppercase tracking-tighter text-[10px]">TOTAL SUMMARY</TableCell>
+              <TableCell colSpan={3} className="text-center font-black text-slate-700 h-8 uppercase tracking-tighter text-[10px]">TOTAL SUMMARY</TableCell>
               <TableCell className="text-right font-black text-blue-600 text-[13px] border-r border-slate-200/50">
                 {new Intl.NumberFormat("ko-KR").format(totals.total_amount)}
               </TableCell>

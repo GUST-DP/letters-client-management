@@ -48,7 +48,7 @@ const ISSUE_TYPES = [
 
 const SUBJECTS = [
   "배송/조립팀",
-  "물류작업가",
+  "물류작업자",
   "고객",
   "시스템",
 ];

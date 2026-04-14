@@ -44,7 +44,7 @@ const ISSUE_CATEGORIES = [
   "입고 후 패킹",
 ];
 
-const RESPONSIBLE_PARTIES = ["배송/조립팀", "물류작업가", "고객", "시스템"];
+const RESPONSIBLE_PARTIES = ["배송/조립팀", "물류작업자", "고객", "시스템"];
 
 interface AddClientIssueModalProps {
   clients: { id: string; company_name: string }[];

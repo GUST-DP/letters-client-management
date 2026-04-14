@@ -134,19 +134,19 @@ export function CostCenterManager({ initialData, title, description }: Props) {
         <Table className="text-xs">
           <TableHeader className="bg-slate-800">
             <TableRow className="hover:bg-transparent border-none">
-              <TableHead className="w-[60px] font-black text-slate-300 border-r border-slate-700/50 text-center h-10 text-[12px] uppercase tracking-wider px-4">#</TableHead>
-              <TableHead className="font-black text-slate-300 border-r border-slate-700/50 h-10 text-[12px] uppercase tracking-wider px-4">코스?�센??명칭</TableHead>
-              <TableHead className="w-[200px] font-black text-slate-300 border-r border-slate-700/50 text-center h-10 text-[12px] uppercase tracking-wider px-4">?�록??/TableHead>
-              <TableHead className="w-[120px] font-black text-slate-300 text-center h-10 text-[12px] uppercase tracking-wider px-4">관�?/TableHead>
+              <TableHead className="w-[60px] font-black text-slate-300 border-r border-slate-700/50 text-center h-7 text-[12px] uppercase tracking-wider px-3">#</TableHead>
+              <TableHead className="font-black text-slate-300 border-r border-slate-700/50 h-7 text-[12px] uppercase tracking-wider px-3">코스?�센??명칭</TableHead>
+              <TableHead className="w-[200px] font-black text-slate-300 border-r border-slate-700/50 text-center h-7 text-[12px] uppercase tracking-wider px-3">?�록??/TableHead>
+              <TableHead className="w-[120px] font-black text-slate-300 text-center h-7 text-[12px] uppercase tracking-wider px-3">관�?/TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {initialData.map((item, index) => (
               <TableRow key={item.id} className="border-b border-slate-100 transition-all hover:bg-slate-50/50 group">
-                <TableCell className="py-1.5 px-4 border-r border-slate-100 text-center text-slate-400 font-bold">
+                <TableCell className="py-0.5 px-3 border-r border-slate-100 text-center text-slate-400 font-bold">
                   {index + 1}
                 </TableCell>
-                <TableCell className="py-1 px-4 border-r border-slate-100 align-middle">
+                <TableCell className="py-0.5 px-3 border-r border-slate-100 align-middle">
                   {editingId === item.id ? (
                     <Input 
                       value={editName} 
@@ -158,17 +158,17 @@ export function CostCenterManager({ initialData, title, description }: Props) {
                     <span className="text-slate-900 font-bold">{item.name}</span>
                   )}
                 </TableCell>
-                <TableCell className="py-1 px-4 border-r border-slate-100 text-center align-middle text-slate-500 font-medium">
+                <TableCell className="py-0.5 px-3 border-r border-slate-100 text-center align-middle text-slate-500 font-medium">
                   {new Date(item.created_at).toLocaleDateString()}
                 </TableCell>
-                <TableCell className="py-1 px-4 align-middle">
+                <TableCell className="py-0.5 px-3 align-middle">
                   <div className="flex items-center justify-center gap-1.5">
                     {editingId === item.id ? (
                       <>
                         <Button 
                           variant="ghost" 
                           size="icon" 
-                          className="h-8 w-8 text-emerald-600 hover:bg-emerald-50 rounded-lg"
+                          className="h-6 w-6 text-emerald-600 hover:bg-emerald-50 rounded-lg"
                           onClick={handleUpdate}
                           disabled={isPending}
                         >
@@ -177,7 +177,7 @@ export function CostCenterManager({ initialData, title, description }: Props) {
                         <Button 
                           variant="ghost" 
                           size="icon" 
-                          className="h-8 w-8 text-slate-300 hover:bg-slate-50 rounded-lg"
+                          className="h-6 w-6 text-slate-300 hover:bg-slate-50 rounded-lg"
                           onClick={handleEditCancel}
                         >
                           <X className="w-4 h-4" />
@@ -188,7 +188,7 @@ export function CostCenterManager({ initialData, title, description }: Props) {
                         <Button 
                           variant="ghost" 
                           size="icon" 
-                          className="h-8 w-8 text-blue-400 hover:bg-blue-50 rounded-lg"
+                          className="h-6 w-6 text-blue-400 hover:bg-blue-50 rounded-lg"
                           onClick={() => handleEditStart(item)}
                         >
                           <Pencil className="w-3.5 h-3.5" />
@@ -196,7 +196,7 @@ export function CostCenterManager({ initialData, title, description }: Props) {
                         <Button 
                           variant="ghost" 
                           size="icon" 
-                          className="h-8 w-8 text-rose-300 hover:text-rose-600 hover:bg-rose-50 rounded-lg"
+                          className="h-6 w-6 text-rose-300 hover:text-rose-600 hover:bg-rose-50 rounded-lg"
                           onClick={() => handleDelete(item.id, item.name)}
                         >
                           <Trash2 className="w-3.5 h-3.5" />

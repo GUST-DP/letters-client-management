@@ -5,13 +5,12 @@ import * as React from "react"
 import { cn } from "@/lib/utils"
 
 // ─────────────────────────────────────────────
-// 고객사 계약관리 기준 통일 행높이 (inline style)
-// CSS 클래스로는 td/tr에 max-height가 무시되므로
-// inline style + line-height 조합으로 강제 적용
+// 고객사 계약관리 기준 통일 행높이
+// 핵심: td 내부를 fixed-height div로 감싸서 강제 클리핑
+// → CSS height/max-height가 tr/td에서 무시되는 브라우저 동작 우회
 // ─────────────────────────────────────────────
-const ROW_HEIGHT = 30          // 데이터 행 높이 (px)
-const HEADER_HEIGHT = 28       // 헤더 행 높이 (px)
-const CELL_FONT = "11px"       // 셀 폰트 크기
+const ROW_H = 30       // 데이터 행 높이 (px)
+const HEAD_H = 28      // 헤더 행 높이 (px)
 
 function Table({ className, ...props }: React.ComponentProps<"table">) {
   return (
@@ -28,18 +27,13 @@ function Table({ className, ...props }: React.ComponentProps<"table">) {
   )
 }
 
-// sticky 헤더 (틀고정) 적용
+// sticky 헤더 (틀고정)
 function TableHeader({ className, style, ...props }: React.ComponentProps<"thead">) {
   return (
     <thead
       data-slot="table-header"
       className={cn("[&_tr]:border-b", className)}
-      style={{
-        position: "sticky",
-        top: 0,
-        zIndex: 10,
-        ...style,
-      }}
+      style={{ position: "sticky", top: 0, zIndex: 10, ...style }}
       {...props}
     />
   )
@@ -59,10 +53,7 @@ function TableFooter({ className, ...props }: React.ComponentProps<"tfoot">) {
   return (
     <tfoot
       data-slot="table-footer"
-      className={cn(
-        "border-t bg-muted/50 font-medium [&>tr]:last:border-b-0",
-        className
-      )}
+      className={cn("border-t bg-muted/50 font-medium [&>tr]:last:border-b-0", className)}
       {...props}
     />
   )
@@ -76,60 +67,83 @@ function TableRow({ className, style, ...props }: React.ComponentProps<"tr">) {
         "border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted",
         className
       )}
-      style={{
-        height: `${ROW_HEIGHT}px`,
-        ...style,
-      }}
       {...props}
     />
   )
 }
 
-function TableHead({ className, style, ...props }: React.ComponentProps<"th">) {
+function TableHead({ className, style, children, ...props }: React.ComponentProps<"th">) {
   return (
     <th
       data-slot="table-head"
       className={cn(
-        "px-3 text-center align-middle font-black whitespace-nowrap text-foreground border-r border-slate-700/40 last:border-r-0 [&:has([role=checkbox])]:pr-0 uppercase tracking-wider",
+        "text-center align-middle font-black whitespace-nowrap border-r border-slate-700/40 last:border-r-0 uppercase tracking-wider [&:has([role=checkbox])]:pr-0",
         className
       )}
       style={{
-        height: `${HEADER_HEIGHT}px`,
+        padding: 0,
+        height: `${HEAD_H}px`,
         fontSize: "11px",
-        lineHeight: `${HEADER_HEIGHT}px`,
-        padding: "0 12px",
         ...style,
       }}
       {...props}
-    />
+    >
+      {/* 내부 wrapper로 높이 강제 고정 */}
+      <div
+        style={{
+          height: `${HEAD_H}px`,
+          lineHeight: `${HEAD_H}px`,
+          padding: "0 10px",
+          overflow: "hidden",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          fontSize: "11px",
+          whiteSpace: "nowrap",
+        }}
+      >
+        {children}
+      </div>
+    </th>
   )
 }
 
-function TableCell({ className, style, ...props }: React.ComponentProps<"td">) {
+function TableCell({ className, style, children, ...props }: React.ComponentProps<"td">) {
   return (
     <td
       data-slot="table-cell"
       className={cn(
-        "px-3 align-middle whitespace-nowrap border-r border-slate-100 last:border-r-0 [&:has([role=checkbox])]:pr-0",
+        "align-middle border-r border-slate-100 last:border-r-0 [&:has([role=checkbox])]:pr-0",
         className
       )}
       style={{
-        height: `${ROW_HEIGHT}px`,
-        fontSize: CELL_FONT,
-        lineHeight: `${ROW_HEIGHT}px`,
-        padding: "0 12px",
-        overflow: "hidden",
+        padding: 0,
+        height: `${ROW_H}px`,
+        fontSize: "11px",
         ...style,
       }}
       {...props}
-    />
+    >
+      {/* 내부 wrapper로 높이 강제 고정 — 어떤 내부 요소도 이 높이를 초과 불가 */}
+      <div
+        style={{
+          height: `${ROW_H}px`,
+          lineHeight: `${ROW_H}px`,
+          padding: "0 10px",
+          overflow: "hidden",
+          display: "flex",
+          alignItems: "center",
+          fontSize: "11px",
+          whiteSpace: "nowrap",
+        }}
+      >
+        {children}
+      </div>
+    </td>
   )
 }
 
-function TableCaption({
-  className,
-  ...props
-}: React.ComponentProps<"caption">) {
+function TableCaption({ className, ...props }: React.ComponentProps<"caption">) {
   return (
     <caption
       data-slot="table-caption"

@@ -132,39 +132,47 @@
 
 /* ============================================================
    전역 테이블 행 높이 통일 (고객사 계약관리 기준)
-   모든 대시보드 테이블에 동일하게 적용
+   - height/max-height는 tr/td에서 브라우저가 무시하므로
+     font-size + line-height + padding 조합으로 물리적 높이 제어
    ============================================================ */
-@layer components {
-  /* 데이터 행 높이 */
-  table tbody tr,
-  table tbody tr td {
-    height: 28px !important;
-    max-height: 28px !important;
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
-    line-height: 1 !important;
-    vertical-align: middle;
-  }
 
-  /* 헤더 행 높이 */
-  table thead tr,
-  table thead tr th {
-    height: 24px !important;
-    max-height: 24px !important;
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
-    line-height: 1 !important;
-    vertical-align: middle;
-  }
+/* 헤더 행 */
+table thead tr th,
+table thead tr td {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  font-size: 11px !important;
+  line-height: 24px !important;
+  white-space: nowrap;
+  vertical-align: middle;
+}
 
-  /* 셀 내부 버튼/select/input 높이 제한 */
-  table tbody tr td button:not(.exception),
-  table tbody tr td a:not(.exception),
-  table tbody tr td [role="combobox"]:not(.exception) {
-    height: 22px !important;
-    min-height: unset !important;
-    line-height: 1 !important;
-    padding-top: 2px !important;
-    padding-bottom: 2px !important;
-  }
+/* 데이터 행 */
+table tbody tr td {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  font-size: 11px !important;
+  line-height: 28px !important;
+  vertical-align: middle;
+  overflow: hidden;
+}
+
+/* 셀 내부 버튼/select 크기 제한 */
+table tbody td button,
+table tbody td a[href],
+table tbody td [role="combobox"] {
+  height: 22px !important;
+  min-height: 22px !important;
+  max-height: 22px !important;
+  font-size: 11px !important;
+  line-height: 22px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+}
+
+/* 셀 내 span/text는 줄바꿈 금지 */
+table tbody td span {
+  white-space: nowrap;
 }

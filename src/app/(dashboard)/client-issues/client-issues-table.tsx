@@ -276,11 +276,11 @@ export function ClientIssueTable({
       {/* 테이블 영역 */}
       <div className="rounded-2xl border border-slate-200 overflow-hidden shadow-xl bg-white">
         <div className="overflow-x-auto">
-          <table className="w-full border-collapse text-[13px] min-w-max">
-            <thead className="bg-slate-800">
-              <tr>
+          <table className="w-full border-collapse text-[11px] min-w-max">
+            <thead className="bg-slate-800" style={{position:"sticky",top:0,zIndex:10}}>
+              <tr style={{height:"28px"}}>
                 {["No", "발생일", "진행상태", "고객사", "이슈유형", "이슈내용(요약)", "첨부", "책임주체", "등록자"].map(h => (
-                  <th key={h} className="h-5 px-4 text-center font-black text-slate-300 border-r border-slate-700/50 last:border-r-0 text-[12px] uppercase tracking-wider whitespace-nowrap">
+                  <th key={h} style={{height:"28px",fontSize:"11px",lineHeight:"28px",padding:"0 12px",whiteSpace:"nowrap"}} className="text-center font-black text-slate-300 border-r border-slate-700/50 last:border-r-0 uppercase tracking-wider">
                     {h}
                   </th>
                 ))}
@@ -308,11 +308,12 @@ export function ClientIssueTable({
                         "border-b border-slate-100 transition-colors cursor-pointer group animate-in fade-in duration-300",
                         isSelected ? "bg-orange-50/80 hover:bg-orange-50" : "hover:bg-slate-50/50"
                       )}
+                      style={{height:"30px"}}
                       onClick={() => onRowClick?.(item)}
                     >
-                      <td className="py-0 px-4 border-r border-slate-100 text-center text-slate-400">{idx + 1}</td>
-                      <td className="py-0 px-4 border-r border-slate-100 text-center font-bold text-slate-700 whitespace-nowrap">{item.occurrence_date}</td>
-                      <td className="py-0 px-4 border-r border-slate-100 text-center">
+                      <td style={{height:"30px",fontSize:"11px",lineHeight:"30px",padding:"0 10px",overflow:"hidden"}} className="border-r border-slate-100 text-center text-slate-400">{idx + 1}</td>
+                      <td style={{height:"30px",fontSize:"11px",lineHeight:"30px",padding:"0 10px",overflow:"hidden",whiteSpace:"nowrap"}} className="border-r border-slate-100 text-center font-bold text-slate-700">{item.occurrence_date}</td>
+                      <td style={{height:"30px",fontSize:"11px",lineHeight:"30px",padding:"0 10px",overflow:"hidden"}} className="border-r border-slate-100 text-center">
                         {(() => {
                           const val = item.status || "이슈등록";
                           const isCompleted = val === "조치등록" || val === "조치완료";
@@ -332,38 +333,38 @@ export function ClientIssueTable({
                           );
                         })()}
                       </td>
-                      <td className="py-0 px-4 border-r border-slate-100 font-bold text-slate-800 whitespace-nowrap">{item.clients?.company_name || "-"}</td>
-                      <td className="py-0 px-4 border-r border-slate-100 text-center">
+                      <td style={{height:"30px",fontSize:"11px",lineHeight:"30px",padding:"0 10px",overflow:"hidden",whiteSpace:"nowrap"}} className="border-r border-slate-100 font-bold text-slate-800">{item.clients?.company_name || "-"}</td>
+                      <td style={{height:"30px",fontSize:"11px",lineHeight:"30px",padding:"0 10px",overflow:"hidden"}} className="border-r border-slate-100 text-center">
                         <Badge variant="outline" className={cn("font-bold text-[11px] whitespace-nowrap", CATEGORY_COLORS[item.issue_category] || "bg-gray-50 text-gray-500")}>
                           {item.issue_category}
                         </Badge>
                       </td>
-                      <td className="py-0 px-4 border-r border-slate-100">
+                      <td style={{height:"30px",fontSize:"11px",lineHeight:"30px",padding:"0 10px",overflow:"hidden"}} className="border-r border-slate-100">
                         <button 
                           onClick={(e) => {
                             e.stopPropagation();
                             handleOpenDetail(item);
                           }}
-                          className="w-full text-blue-600 hover:text-blue-800 hover:underline text-[13px] font-bold truncate text-left flex items-center gap-1 group"
+                          className="w-full text-blue-600 hover:text-blue-800 hover:underline text-[11px] font-bold truncate text-left flex items-center gap-1 group"
                           title="상세 보기"
                         >
-                          <span className="text-[11.5px] group-hover:scale-110 transition-transform shrink-0">🔍</span>
+                          <span className="group-hover:scale-110 transition-transform shrink-0">🔍</span>
                           <span className="truncate">{item.title || item.issue_content?.substring(0, 30)}</span>
                         </button>
                       </td>
-                      <td className="py-0 px-4 border-r border-slate-100 text-center">
+                      <td style={{height:"30px",fontSize:"11px",lineHeight:"30px",padding:"0 10px",overflow:"hidden"}} className="border-r border-slate-100 text-center">
                         {item.file_url ? (
-                          <div className="flex justify-center">
-                            <div className="w-7 h-7 rounded-lg bg-orange-50 flex items-center justify-center text-orange-600 border border-orange-100">
-                               <Paperclip className="w-3.5 h-3.5" />
+                          <div className="flex justify-center items-center h-full">
+                            <div className="w-5 h-5 rounded bg-orange-50 flex items-center justify-center text-orange-600 border border-orange-100">
+                               <Paperclip className="w-3 h-3" />
                             </div>
                           </div>
                         ) : (
                           <span className="text-slate-200">-</span>
                         )}
                       </td>
-                      <td className="py-0 px-4 border-r border-slate-100 text-center text-slate-600 font-bold whitespace-nowrap">{item.responsible_party || "-"}</td>
-                      <td className="py-0 px-4 text-center text-slate-500 whitespace-nowrap font-medium">{item.author_name || "-"}</td>
+                      <td style={{height:"30px",fontSize:"11px",lineHeight:"30px",padding:"0 10px",overflow:"hidden",whiteSpace:"nowrap"}} className="border-r border-slate-100 text-center text-slate-600 font-bold">{item.responsible_party || "-"}</td>
+                      <td style={{height:"30px",fontSize:"11px",lineHeight:"30px",padding:"0 10px",overflow:"hidden",whiteSpace:"nowrap"}} className="text-center text-slate-500 font-medium">{item.author_name || "-"}</td>
                     </tr>
                   )
                 })
@@ -371,9 +372,9 @@ export function ClientIssueTable({
               {/* 하이라이트를 위해 공백 행 유지 (약간의 높이 확보) */}
               {filteredData.length > 0 && filteredData.length < 5 &&
                 Array.from({ length: 5 - filteredData.length }).map((_, i) => (
-                  <tr key={`empty-${i}`} className="border-b border-slate-50 last:border-0 hover:bg-transparent">
+                  <tr key={`empty-${i}`} style={{height:"30px"}} className="border-b border-slate-50 last:border-0 hover:bg-transparent">
                     {Array.from({ length: 9 }).map((_, j) => (
-                      <td key={j} className="py-0 px-4 border-r border-slate-50 last:border-r-0 h-[28px]">&nbsp;</td>
+                      <td key={j} style={{height:"30px",padding:"0 10px"}} className="border-r border-slate-50 last:border-r-0">&nbsp;</td>
                     ))}
                   </tr>
                 ))

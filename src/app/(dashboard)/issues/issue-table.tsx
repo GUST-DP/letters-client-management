@@ -237,14 +237,14 @@ export function IssueTable({ data, clients, teams, userEmail, userName, onRowCli
       <div className="space-y-2">
         <div className="rounded-2xl border border-slate-200 overflow-hidden shadow-xl bg-white animate-in fade-in slide-in-from-bottom-2 duration-500">
         <div className="overflow-x-auto">
-          <Table className="text-[13px] min-w-max border-collapse">
+          <Table className="text-[11px] min-w-max border-collapse">
             <TableHeader className="bg-slate-800">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id} className="hover:bg-transparent border-none">
                   {headerGroup.headers.map((header) => (
                     <TableHead 
                       key={header.id}
-                      className="h-5 text-center font-black text-slate-300 border-r border-slate-700/50 last:border-r-0 text-[12px] uppercase tracking-wider px-4 whitespace-nowrap"
+                      className="text-center font-black text-slate-300 border-r border-slate-700/50 last:border-r-0 uppercase tracking-wider whitespace-nowrap"
                       style={{ 
                         width: header.getSize(), 
                         minWidth: header.getSize(), 

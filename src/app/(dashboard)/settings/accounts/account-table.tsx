@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
@@ -97,12 +97,12 @@ export function AccountTable({
       </div>
       <table className="w-full text-xs border-collapse">
         <thead>
-          <tr className="bg-slate-800 border-none h-5">
-            <th className="px-3 text-center font-black text-slate-300 text-[13px] uppercase tracking-wider border-r border-slate-700/50 w-16">#</th>
-            <th className="px-3 text-center font-black text-slate-300 text-[13px] uppercase tracking-wider border-r border-slate-700/50 w-32">이름</th>
+          <tr className="bg-slate-800 border-none" style={{height:"28px"}}>
+            <th className="px-3 text-center font-black text-slate-300 uppercase tracking-wider border-r border-slate-700/50 w-16" style={{height:"28px",fontSize:"11px",lineHeight:"28px",padding:"0 12px"}}>#</th>
+            <th className="px-3 text-center font-black text-slate-300 uppercase tracking-wider border-r border-slate-700/50 w-32" style={{height:"28px",fontSize:"11px",lineHeight:"28px",padding:"0 12px"}}>이름</th>
             <th className="px-3 text-center font-black text-slate-300 text-[13px] uppercase tracking-wider border-r border-slate-700/50">이메일</th>
-            <th className="px-3 text-center font-black text-slate-300 text-[13px] uppercase tracking-wider border-r border-slate-700/50 w-32">팀명</th>
-            <th className="px-3 text-center font-black text-slate-300 text-[13px] uppercase tracking-wider border-r border-slate-700/50 w-44">권한</th>
+            <th className="px-3 text-center font-black text-slate-300 uppercase tracking-wider border-r border-slate-700/50 w-32" style={{height:"28px",fontSize:"11px",lineHeight:"28px",padding:"0 12px"}}>팀명</th>
+            <th className="px-3 text-center font-black text-slate-300 uppercase tracking-wider border-r border-slate-700/50 w-44" style={{height:"28px",fontSize:"11px",lineHeight:"28px",padding:"0 12px"}}>권한</th>
             <th className="px-3 text-center font-black text-slate-300 text-[13px] uppercase tracking-wider border-r border-slate-700/50">메뉴 권한</th>
             <th className="px-3 text-center font-black text-slate-300 text-[13px] uppercase tracking-wider w-32">관리</th>
           </tr>
@@ -117,12 +117,12 @@ export function AccountTable({
                 className="border-b border-slate-100 transition-all hover:bg-slate-50/50 group"
               >
                 {/* # 순번 */}
-                <td className="py-0 px-3 border-r border-slate-100 align-middle text-center text-slate-400 font-bold">
+                <td className="border-r border-slate-100 align-middle text-center text-slate-400 font-bold" style={{height:"30px",fontSize:"11px",lineHeight:"30px",padding:"0 12px",overflow:"hidden"}}>
                   {i + 1}
                 </td>
 
                 {/* 이름 */}
-                <td className="py-0 px-3 border-r border-slate-100 align-middle text-center">
+                <td className="border-r border-slate-100 align-middle text-center" style={{height:"30px",fontSize:"11px",lineHeight:"30px",padding:"0 12px",overflow:"hidden"}}>
                   {isEditing ? (
                     <input
                       value={form.full_name ?? ""}
@@ -136,12 +136,12 @@ export function AccountTable({
                 </td>
 
                 {/* 이메일 */}
-                <td className="py-0 px-3 border-r border-slate-100 align-middle">
+                <td className="border-r border-slate-100 align-middle" style={{height:"30px",fontSize:"11px",lineHeight:"30px",padding:"0 12px",overflow:"hidden"}}>
                   <span className="font-mono text-slate-500 font-medium">{p.email}</span>
                 </td>
 
                 {/* 팀명 */}
-                <td className="py-0 px-3 border-r border-slate-100 align-middle text-center">
+                <td className="border-r border-slate-100 align-middle text-center" style={{height:"30px",fontSize:"11px",lineHeight:"30px",padding:"0 12px",overflow:"hidden"}}>
                   {isEditing ? (
                     <input
                       value={form.team ?? ""}
@@ -155,7 +155,7 @@ export function AccountTable({
                 </td>
 
                 {/* 권한 */}
-                <td className="py-0 px-3 border-r border-slate-100 align-middle text-center">
+                <td className="border-r border-slate-100 align-middle text-center" style={{height:"30px",fontSize:"11px",lineHeight:"30px",padding:"0 12px",overflow:"hidden"}}>
                   {isEditing ? (
                     <select
                       value={form.role ?? ""}
@@ -184,7 +184,7 @@ export function AccountTable({
                 </td>
 
                 {/* 메뉴 권한 (가로 나열) */}
-                <td className="py-0 px-3 border-r border-slate-100 align-middle">
+                <td className="border-r border-slate-100 align-middle" style={{height:"30px",fontSize:"11px",lineHeight:"30px",padding:"0 12px",overflow:"hidden"}}>
                   {isEditing ? (
                     <div className="flex flex-wrap gap-1.5">
                       {ALL_MENUS.map(m => {
@@ -216,7 +216,7 @@ export function AccountTable({
                 </td>
 
                 {/* 버튼 */}
-                <td className="py-0 px-3 text-center align-middle">
+                <td className="text-center align-middle" style={{height:"30px",fontSize:"11px",lineHeight:"30px",padding:"0 12px",overflow:"hidden"}}>
                   {isEditing ? (
                     <div className="flex items-center justify-center gap-1.5">
                       <button
@@ -260,3 +260,4 @@ export function AccountTable({
     </div>
   );
 }
+

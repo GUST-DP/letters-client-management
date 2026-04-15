@@ -4,6 +4,15 @@ import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
+// ─────────────────────────────────────────────
+// 고객사 계약관리 기준 통일 행높이 (inline style)
+// CSS 클래스로는 td/tr에 max-height가 무시되므로
+// inline style + line-height 조합으로 강제 적용
+// ─────────────────────────────────────────────
+const ROW_HEIGHT = 30          // 데이터 행 높이 (px)
+const HEADER_HEIGHT = 28       // 헤더 행 높이 (px)
+const CELL_FONT = "11px"       // 셀 폰트 크기
+
 function Table({ className, ...props }: React.ComponentProps<"table">) {
   return (
     <div
@@ -12,18 +21,25 @@ function Table({ className, ...props }: React.ComponentProps<"table">) {
     >
       <table
         data-slot="table"
-        className={cn("w-full caption-bottom text-xs", className)}
+        className={cn("w-full caption-bottom border-collapse", className)}
         {...props}
       />
     </div>
   )
 }
 
-function TableHeader({ className, ...props }: React.ComponentProps<"thead">) {
+// sticky 헤더 (틀고정) 적용
+function TableHeader({ className, style, ...props }: React.ComponentProps<"thead">) {
   return (
     <thead
       data-slot="table-header"
-      className={cn("[&_tr]:border-b bg-[#e1ebe0]", className)}
+      className={cn("[&_tr]:border-b", className)}
+      style={{
+        position: "sticky",
+        top: 0,
+        zIndex: 10,
+        ...style,
+      }}
       {...props}
     />
   )
@@ -52,40 +68,59 @@ function TableFooter({ className, ...props }: React.ComponentProps<"tfoot">) {
   )
 }
 
-function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
+function TableRow({ className, style, ...props }: React.ComponentProps<"tr">) {
   return (
     <tr
       data-slot="table-row"
       className={cn(
-        "border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted h-5 leading-none",
+        "border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted",
         className
       )}
+      style={{
+        height: `${ROW_HEIGHT}px`,
+        ...style,
+      }}
       {...props}
     />
   )
 }
 
-function TableHead({ className, ...props }: React.ComponentProps<"th">) {
+function TableHead({ className, style, ...props }: React.ComponentProps<"th">) {
   return (
     <th
       data-slot="table-head"
       className={cn(
-        "h-5 px-2 py-0 text-center align-middle font-bold whitespace-nowrap text-foreground text-sm border-r border-slate-200 last:border-r-0 [&:has([role=checkbox])]:pr-0 leading-none",
+        "px-3 text-center align-middle font-black whitespace-nowrap text-foreground border-r border-slate-700/40 last:border-r-0 [&:has([role=checkbox])]:pr-0 uppercase tracking-wider",
         className
       )}
+      style={{
+        height: `${HEADER_HEIGHT}px`,
+        fontSize: "11px",
+        lineHeight: `${HEADER_HEIGHT}px`,
+        padding: "0 12px",
+        ...style,
+      }}
       {...props}
     />
   )
 }
 
-function TableCell({ className, ...props }: React.ComponentProps<"td">) {
+function TableCell({ className, style, ...props }: React.ComponentProps<"td">) {
   return (
     <td
       data-slot="table-cell"
       className={cn(
-        "py-0 px-2 align-middle whitespace-nowrap text-xs border-r border-slate-200 last:border-r-0 [&:has([role=checkbox])]:pr-0 leading-none",
+        "px-3 align-middle whitespace-nowrap border-r border-slate-100 last:border-r-0 [&:has([role=checkbox])]:pr-0",
         className
       )}
+      style={{
+        height: `${ROW_HEIGHT}px`,
+        fontSize: CELL_FONT,
+        lineHeight: `${ROW_HEIGHT}px`,
+        padding: "0 12px",
+        overflow: "hidden",
+        ...style,
+      }}
       {...props}
     />
   )

@@ -93,7 +93,7 @@ export function DataTable<TData, TValue>({
           ) : (
             <TableRow>
               <TableCell colSpan={columns.length} className="h-32 text-center font-bold text-slate-400">
-                조회??매출 ?�이?��? ?�습?�다.
+                조회된 매출 데이터가 없습니다.
               </TableCell>
             </TableRow>
           )}

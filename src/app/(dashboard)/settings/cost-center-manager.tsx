@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useTransition } from "react";
 import { 
@@ -127,17 +127,17 @@ export function CostCenterManager({ initialData, title, description }: Props) {
           </div>
           <Button onClick={() => setIsAddOpen(true)} className="gap-2 bg-[#414344] text-white hover:bg-[#414344]/90 shadow-md">
             <Plus className="w-4 h-4" />
-            {title.replace(" 관�?, "")} 추�?
+            {title.replace(" 관리", "")} 추가
           </Button>
         </div>
 
         <Table className="text-xs">
           <TableHeader className="bg-slate-800">
             <TableRow className="hover:bg-transparent border-none">
-              <TableHead className="w-[60px] font-black text-slate-300 border-r border-slate-700/50 text-center h-5 text-[12px] uppercase tracking-wider px-3">#</TableHead>
-              <TableHead className="font-black text-slate-300 border-r border-slate-700/50 h-5 text-[12px] uppercase tracking-wider px-3">코스?�센??명칭</TableHead>
-              <TableHead className="w-[200px] font-black text-slate-300 border-r border-slate-700/50 text-center h-5 text-[12px] uppercase tracking-wider px-3">?�록??/TableHead>
-              <TableHead className="w-[120px] font-black text-slate-300 text-center h-5 text-[12px] uppercase tracking-wider px-3">관�?/TableHead>
+              <TableHead className="w-[60px] font-black text-slate-300 border-r border-slate-700/50 text-center text-[12px] uppercase tracking-wider px-3">#</TableHead>
+              <TableHead className="font-black text-slate-300 border-r border-slate-700/50 text-[12px] uppercase tracking-wider px-3">코스트센터 명칭</TableHead>
+              <TableHead className="w-[200px] font-black text-slate-300 border-r border-slate-700/50 text-center text-[12px] uppercase tracking-wider px-3">등록일</TableHead>
+              <TableHead className="w-[120px] font-black text-slate-300 text-center text-[12px] uppercase tracking-wider px-3">관리</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -151,7 +151,7 @@ export function CostCenterManager({ initialData, title, description }: Props) {
                     <Input 
                       value={editName} 
                       onChange={(e) => setEditName(e.target.value)}
-                      className="h-9 font-bold border-slate-200 rounded-lg text-xs"
+                      className="h-5 font-bold border-slate-200 rounded-lg text-xs"
                       autoFocus
                     />
                   ) : (

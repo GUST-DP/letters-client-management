@@ -53,7 +53,6 @@ export async function createClientOperationIssue(formData: FormData) {
         sections: [
           { "name": "고객사", "value": clientData?.company_name || "알수없음" },
           { "name": "이슈유형", "value": issue_category },
-          { "name": "책임주체", "value": responsible_party || "-" },
           { "name": "등록자", "value": author_name },
         ],
         lastSection: { "name": "이슈내용 요약", "value": issue_content },

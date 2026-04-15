@@ -126,17 +126,17 @@ export function ServiceTypeManager({ initialData, title, description }: Props) {
           </div>
           <Button onClick={() => setIsAddOpen(true)} className="gap-2 bg-[#414344] text-white hover:bg-[#414344]/90 shadow-md">
             <Plus className="w-4 h-4" />
-            {title.replace(" 관�?, "")} 추�?
+            {title.replace(" 관리", "")} 추가
           </Button>
         </div>
 
         <Table className="text-xs">
           <TableHeader className="bg-slate-800">
             <TableRow className="hover:bg-transparent border-none">
-              <TableHead className="w-[60px] font-black text-slate-300 border-r border-slate-700/50 text-center h-5 text-[12px] uppercase tracking-wider px-3">#</TableHead>
-              <TableHead className="font-black text-slate-300 border-r border-slate-700/50 h-5 text-[12px] uppercase tracking-wider px-3">?�비???�태 명칭</TableHead>
-              <TableHead className="w-[200px] font-black text-slate-300 border-r border-slate-700/50 text-center h-5 text-[12px] uppercase tracking-wider px-3">?�록??/TableHead>
-              <TableHead className="w-[120px] font-black text-slate-300 text-center h-5 text-[12px] uppercase tracking-wider px-3">관�?/TableHead>
+              <TableHead className="w-[60px] font-black text-slate-300 border-r border-slate-700/50 text-center text-[12px] uppercase tracking-wider px-3">#</TableHead>
+              <TableHead className="font-black text-slate-300 border-r border-slate-700/50 text-[12px] uppercase tracking-wider px-3">서비스형태 명칭</TableHead>
+              <TableHead className="w-[200px] font-black text-slate-300 border-r border-slate-700/50 text-center text-[12px] uppercase tracking-wider px-3">등록일</TableHead>
+              <TableHead className="w-[120px] font-black text-slate-300 text-center text-[12px] uppercase tracking-wider px-3">관리</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -150,7 +150,7 @@ export function ServiceTypeManager({ initialData, title, description }: Props) {
                     <Input 
                       value={editName} 
                       onChange={(e) => setEditName(e.target.value)}
-                      className="h-7 font-bold border-slate-200 rounded-lg text-xs"
+                      className="h-5 font-bold border-slate-200 rounded-lg text-xs"
                       autoFocus
                     />
                   ) : (
@@ -234,14 +234,14 @@ export function ServiceTypeManager({ initialData, title, description }: Props) {
                 value={newName}
                 onChange={(e) => setNewName(e.target.value)}
                 className="col-span-3"
-                placeholder={`${title.replace(" 관�?, "")} ?�름 ?�력`}
+                placeholder={`${title.replace(" 관리", "")} 이름 입력`}
               />
             </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsAddOpen(false)}>취소</Button>
             <Button onClick={handleAdd} disabled={isPending} className="bg-[#414344] text-white hover:bg-[#414344]/90">
-              {isPending ? "추�? �?.." : "추�??�기"}
+              {isPending ? "추�? �?.." : "추가하기"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -249,3 +249,4 @@ export function ServiceTypeManager({ initialData, title, description }: Props) {
     </div>
   );
 }
+

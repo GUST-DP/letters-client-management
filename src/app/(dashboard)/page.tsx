@@ -33,28 +33,49 @@ export default async function Home() {
     .select("*, client_onboarding(sales_start_date, contract_date)");
   const { data: issuesRaw } = await supabase
     .from("client_issues")
-    .select("*, clients(company_name)");
+    .select("id, status");
+  const { data: opIssuesRaw } = await supabase
+    .from("client_operation_issues")
+    .select("id, status");
 
   const salesData = salesRaw ?? [];
   const clientsData = clientsRaw ?? [];
   const issuesData = issuesRaw ?? [];
-  const issueCount = issuesData.length;
-  const completedIssueCount = issuesData.filter(i => i.status === "조치등록" || i.status === "조치완료").length;
+  const opIssuesData = opIssuesRaw ?? [];
+
+  // 서비스 이슈 건수 (client_issues)
+  const serviceIssueCount = issuesData.length;
+  // 고객사 이슈 건수 (client_operation_issues)
+  const clientIssueCount = opIssuesData.length;
+  // 전체 이슈 건수
+  const issueCount = serviceIssueCount + clientIssueCount;
+  const completedIssueCount = [
+    ...issuesData.filter(i => i.status === "조치등록" || i.status === "조치완료"),
+    ...opIssuesData.filter(i => i.status === "조치등록" || i.status === "조치완료"),
+  ].length;
 
   // ── 이슈 통계 고도화 (신규)
   const thirtyDaysAgo = new Date();
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
   const thirtyDaysAgoStr = thirtyDaysAgo.toISOString().split('T')[0];
 
-  // 최근 1개월(30일) 이슈 필터링
-  const recentMonthIssues = issuesData.filter(i => i.occurrence_date >= thirtyDaysAgoStr);
-  const recentSummaryList = [...recentMonthIssues]
-    .sort((a, b) => b.occurrence_date.localeCompare(a.occurrence_date))
-    .slice(0, 5);
+  // 최근 1개월(30일) 서비스 이슈 필터링 (RecentIssueTable용)
+  const { data: recentIssuesRaw } = await supabase
+    .from("client_issues")
+    .select("*, clients(company_name)")
+    .gte("occurrence_date", thirtyDaysAgoStr)
+    .order("occurrence_date", { ascending: false })
+    .limit(5);
+  const recentSummaryList = recentIssuesRaw ?? [];
 
-  // 1. 고객사별 이슈 건수 TOP 5
+  // 1. 고객사별 이슈 건수 TOP 5 (service issues only)
   const issueByClient: Record<string, number> = {};
-  issuesData.forEach(i => {
+  // 서비스 이슈용 별도 조회 (차트용)
+  const { data: issuesForChart } = await supabase
+    .from("client_issues")
+    .select("*, clients(company_name)");
+  const issuesForChartData = issuesForChart ?? [];
+  issuesForChartData.forEach(i => {
     const name = i.clients?.company_name || "알 수 없음";
     issueByClient[name] = (issueByClient[name] || 0) + 1;
   });
@@ -65,7 +86,7 @@ export default async function Home() {
 
   // 2. 이슈유형별 분포
   const issueByType: Record<string, number> = {};
-  issuesData.forEach(i => {
+  issuesForChartData.forEach(i => {
     const type = i.issue_type || "기타";
     issueByType[type] = (issueByType[type] || 0) + 1;
   });
@@ -75,7 +96,7 @@ export default async function Home() {
 
   // 3. 발생주체별 분포
   const issueBySubject: Record<string, number> = {};
-  issuesData.forEach(i => {
+  issuesForChartData.forEach(i => {
     const subject = i.occurrence_subject || "기타";
     issueBySubject[subject] = (issueBySubject[subject] || 0) + 1;
   });
@@ -344,28 +365,28 @@ export default async function Home() {
             </CardContent>
           </Card>
 
-          {/* 서비스 이슈관리 */}
+          {/* 이슈등록 현황 */}
           <Card className="border-none shadow-sm bg-[#414344] text-white overflow-hidden">
             <CardHeader className="p-2 pb-0">
               <CardTitle className="text-[13px] font-bold text-white flex items-center gap-1">
-                <AlertCircle className="h-3.5 w-3.5 text-white" /> 고객사 이슈현황
+                <AlertCircle className="h-3.5 w-3.5 text-white" /> 이슈등록 현황
               </CardTitle>
             </CardHeader>
             <CardContent className="p-2 flex flex-col justify-center items-center h-full">
-              <div className="text-[28px] font-black tracking-tight leading-none mb-2 text-white flex items-baseline justify-center">
-                <span className="text-[11px] font-bold text-white mr-1.5 shrink-0">전체 이슈등록 건</span>
+              <div className="text-[28px] font-black tracking-tight leading-none mb-1 text-white flex items-baseline justify-center">
                 {issueCount}
-                <span className="text-[10px] font-bold text-white ml-0.5 shrink-0">건</span>
+                <span className="text-[11px] font-bold text-white ml-0.5 shrink-0">건</span>
               </div>
+              <div className="text-[9px] font-bold text-[#ff5c39] mb-2">전체 이슈</div>
               <div className="flex justify-center gap-3">
                 <div className="text-center">
-                  <div className="text-[9px] text-white font-medium">이슈등록</div>
-                  <div className="text-[13px] font-black text-[#ff5c39]">{issueCount}</div>
+                  <div className="text-[9px] text-white/70 font-medium">고객사 이슈</div>
+                  <div className="text-[13px] font-black text-[#ff5c39]">{clientIssueCount}건</div>
                 </div>
                 <div className="h-5 w-px bg-white/20 my-auto" />
                 <div className="text-center">
-                  <div className="text-[9px] text-white font-medium">조치등록</div>
-                  <div className="text-[13px] font-black text-white">{completedIssueCount}</div>
+                  <div className="text-[9px] text-white/70 font-medium">서비스 이슈</div>
+                  <div className="text-[13px] font-black text-white">{serviceIssueCount}건</div>
                 </div>
               </div>
             </CardContent>

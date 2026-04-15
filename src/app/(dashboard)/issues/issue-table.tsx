@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useMemo } from "react";
 import {
@@ -244,7 +244,7 @@ export function IssueTable({ data, clients, teams, userEmail, userName, onRowCli
                   {headerGroup.headers.map((header) => (
                     <TableHead 
                       key={header.id}
-                      className="h-8 text-center font-black text-slate-300 border-r border-slate-700/50 last:border-r-0 text-[12px] uppercase tracking-wider px-4 whitespace-nowrap"
+                      className="h-5 text-center font-black text-slate-300 border-r border-slate-700/50 last:border-r-0 text-[12px] uppercase tracking-wider px-4 whitespace-nowrap"
                       style={{ 
                         width: header.getSize(), 
                         minWidth: header.getSize(), 
@@ -275,7 +275,7 @@ export function IssueTable({ data, clients, teams, userEmail, userName, onRowCli
                           <TableCell 
                             key={cell.id}
                             className={cn(
-                              "py-1 px-4 border-r border-slate-100 last:border-r-0 align-middle",
+                              "py-0 px-4 border-r border-slate-100 last:border-r-0 align-middle",
                               isSelected && "border-blue-100"
                             )}
                             style={{ width: cell.column.getSize(), minWidth: cell.column.getSize(), maxWidth: cell.column.getSize() }}
@@ -291,7 +291,7 @@ export function IssueTable({ data, clients, teams, userEmail, userName, onRowCli
                     Array.from({ length: 5 - table.getRowModel().rows.length }).map((_, i) => (
                       <TableRow key={`empty-${i}`} className="border-b border-slate-50 last:border-0 hover:bg-transparent">
                         {columns.map((_, colIdx) => (
-                          <TableCell key={`empty-cell-${i}-${colIdx}`} className="py-1 px-4 border-r border-slate-50 last:border-r-0 h-[45px]">
+                          <TableCell key={`empty-cell-${i}-${colIdx}`} className="py-0 px-4 border-r border-slate-50 last:border-r-0 h-[28px]">
                             &nbsp;
                           </TableCell>
                         ))}

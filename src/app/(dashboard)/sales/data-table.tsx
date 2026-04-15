@@ -1,4 +1,4 @@
-﻿"use client"
+"use client"
 
 import {
   ColumnDef,
@@ -58,7 +58,7 @@ export function DataTable<TData, TValue>({
                 return (
                   <TableHead 
                     key={header.id}
-                    className="h-8 text-center font-black text-slate-300 border-r border-slate-700/50 last:border-r-0 text-[12px] uppercase tracking-wider px-4 font-black"
+                    className="h-5 text-center font-black text-slate-300 border-r border-slate-700/50 last:border-r-0 text-[12px] uppercase tracking-wider px-4 font-black"
                   >
                     {header.isPlaceholder
                       ? null
@@ -83,7 +83,7 @@ export function DataTable<TData, TValue>({
                 {row.getVisibleCells().map((cell) => (
                   <TableCell 
                     key={cell.id}
-                    className="py-1 px-4 border-r border-slate-100 last:border-r-0 align-middle text-xs"
+                    className="py-0 px-4 border-r border-slate-100 last:border-r-0 align-middle text-xs"
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>

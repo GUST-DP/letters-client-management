@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
@@ -97,7 +97,7 @@ export function AccountTable({
       </div>
       <table className="w-full text-xs border-collapse">
         <thead>
-          <tr className="bg-slate-800 border-none h-7">
+          <tr className="bg-slate-800 border-none h-5">
             <th className="px-3 text-center font-black text-slate-300 text-[13px] uppercase tracking-wider border-r border-slate-700/50 w-16">#</th>
             <th className="px-3 text-center font-black text-slate-300 text-[13px] uppercase tracking-wider border-r border-slate-700/50 w-32">이름</th>
             <th className="px-3 text-center font-black text-slate-300 text-[13px] uppercase tracking-wider border-r border-slate-700/50">이메일</th>
@@ -117,12 +117,12 @@ export function AccountTable({
                 className="border-b border-slate-100 transition-all hover:bg-slate-50/50 group"
               >
                 {/* # 순번 */}
-                <td className="py-0.5 px-3 border-r border-slate-100 align-middle text-center text-slate-400 font-bold">
+                <td className="py-0 px-3 border-r border-slate-100 align-middle text-center text-slate-400 font-bold">
                   {i + 1}
                 </td>
 
                 {/* 이름 */}
-                <td className="py-0.5 px-3 border-r border-slate-100 align-middle text-center">
+                <td className="py-0 px-3 border-r border-slate-100 align-middle text-center">
                   {isEditing ? (
                     <input
                       value={form.full_name ?? ""}
@@ -136,12 +136,12 @@ export function AccountTable({
                 </td>
 
                 {/* 이메일 */}
-                <td className="py-0.5 px-3 border-r border-slate-100 align-middle">
+                <td className="py-0 px-3 border-r border-slate-100 align-middle">
                   <span className="font-mono text-slate-500 font-medium">{p.email}</span>
                 </td>
 
                 {/* 팀명 */}
-                <td className="py-0.5 px-3 border-r border-slate-100 align-middle text-center">
+                <td className="py-0 px-3 border-r border-slate-100 align-middle text-center">
                   {isEditing ? (
                     <input
                       value={form.team ?? ""}
@@ -155,7 +155,7 @@ export function AccountTable({
                 </td>
 
                 {/* 권한 */}
-                <td className="py-0.5 px-3 border-r border-slate-100 align-middle text-center">
+                <td className="py-0 px-3 border-r border-slate-100 align-middle text-center">
                   {isEditing ? (
                     <select
                       value={form.role ?? ""}
@@ -184,7 +184,7 @@ export function AccountTable({
                 </td>
 
                 {/* 메뉴 권한 (가로 나열) */}
-                <td className="py-0.5 px-3 border-r border-slate-100 align-middle">
+                <td className="py-0 px-3 border-r border-slate-100 align-middle">
                   {isEditing ? (
                     <div className="flex flex-wrap gap-1.5">
                       {ALL_MENUS.map(m => {
@@ -216,7 +216,7 @@ export function AccountTable({
                 </td>
 
                 {/* 버튼 */}
-                <td className="py-0.5 px-3 text-center align-middle">
+                <td className="py-0 px-3 text-center align-middle">
                   {isEditing ? (
                     <div className="flex items-center justify-center gap-1.5">
                       <button
@@ -239,7 +239,7 @@ export function AccountTable({
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="h-6 w-6 p-0 hover:bg-blue-50 rounded-lg transition-all"
+                      className="h-5 w-5 p-0 hover:bg-blue-50 rounded-lg transition-all"
                       onClick={() => startEdit(p)}
                     >
                       <Pencil className="w-3.5 h-3.5 text-slate-300 group-hover:text-blue-500" />

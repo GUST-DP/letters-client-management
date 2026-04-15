@@ -123,7 +123,7 @@ function ManagerCell({
       onValueChange={handleManagerChange}
       disabled={isPending}
     >
-      <SelectTrigger className="w-[105px] h-8 text-xs">
+      <SelectTrigger className="w-[105px] h-6 text-xs">
         <SelectValue placeholder="미배정">
           {displayName}
         </SelectValue>
@@ -170,7 +170,7 @@ export const getColumns = (managers: any[], totalTaskCount: number): ColumnDef<C
       <TransitionLink 
         href={`/clients/${row.original.id}`} 
         onClick={(e) => e.stopPropagation()}
-        className="inline-flex items-center justify-center h-8 px-3 rounded-md text-slate-800 bg-white border border-slate-200 shadow-sm hover:bg-slate-50 hover:text-slate-900 transition-colors gap-1.5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+        className="inline-flex items-center justify-center h-6 px-3 rounded-md text-slate-800 bg-white border border-slate-200 shadow-sm hover:bg-slate-50 hover:text-slate-900 transition-colors gap-1.5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
       >
         {row.getValue("company_name") as string}
         <ExternalLink className="w-3 h-3 text-slate-400" />
@@ -189,7 +189,7 @@ export const getColumns = (managers: any[], totalTaskCount: number): ColumnDef<C
       return (
         <TransitionLink 
           href={`/clients/${row.original.id}/onboarding`}
-          className={`inline-flex items-center justify-center h-8 px-3 rounded-md bg-white border border-slate-200 shadow-sm transition-colors gap-1.5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring whitespace-nowrap ${
+          className={`inline-flex items-center justify-center h-6 px-3 rounded-md bg-white border border-slate-200 shadow-sm transition-colors gap-1.5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring whitespace-nowrap ${
             isAllDone 
               ? 'text-green-700 hover:bg-green-50 hover:border-green-200' 
               : 'text-rose-600 hover:bg-rose-50 hover:border-rose-200'
@@ -268,7 +268,7 @@ export const getColumns = (managers: any[], totalTaskCount: number): ColumnDef<C
         <Button 
           variant="outline" 
           size="sm" 
-          className="group inline-flex items-center justify-center h-8 px-3 rounded-lg text-[11px] font-black text-slate-600 bg-white border border-slate-200 shadow-sm hover:border-[#ff5c39] hover:text-[#ff5c39] hover:bg-[#ff5c39]/5 transition-all gap-1.5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#ff5c39]"
+          className="group inline-flex items-center justify-center h-6 px-3 rounded-lg text-[11px] font-black text-slate-600 bg-white border border-slate-200 shadow-sm hover:border-[#ff5c39] hover:text-[#ff5c39] hover:bg-[#ff5c39]/5 transition-all gap-1.5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#ff5c39]"
           onClick={() => window.open(ensureAbsoluteUrl(link), '_blank')}
         >
           바로가기

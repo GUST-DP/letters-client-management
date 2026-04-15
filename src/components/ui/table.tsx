@@ -1,4 +1,4 @@
-﻿"use client"
+"use client"
 
 import * as React from "react"
 
@@ -57,7 +57,7 @@ function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
     <tr
       data-slot="table-row"
       className={cn(
-        "border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted",
+        "border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted h-5 leading-none",
         className
       )}
       {...props}
@@ -70,7 +70,7 @@ function TableHead({ className, ...props }: React.ComponentProps<"th">) {
     <th
       data-slot="table-head"
       className={cn(
-        "h-7 px-2 py-0 text-center align-middle font-bold whitespace-nowrap text-foreground text-sm border-r border-slate-200 last:border-r-0 [&:has([role=checkbox])]:pr-0",
+        "h-5 px-2 py-0 text-center align-middle font-bold whitespace-nowrap text-foreground text-sm border-r border-slate-200 last:border-r-0 [&:has([role=checkbox])]:pr-0 leading-none",
         className
       )}
       {...props}
@@ -83,7 +83,7 @@ function TableCell({ className, ...props }: React.ComponentProps<"td">) {
     <td
       data-slot="table-cell"
       className={cn(
-        "py-1 px-2 align-middle whitespace-nowrap text-xs border-r border-slate-200 last:border-r-0 [&:has([role=checkbox])]:pr-0",
+        "py-0 px-2 align-middle whitespace-nowrap text-xs border-r border-slate-200 last:border-r-0 [&:has([role=checkbox])]:pr-0 leading-none",
         className
       )}
       {...props}

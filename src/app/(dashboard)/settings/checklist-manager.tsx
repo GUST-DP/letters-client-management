@@ -157,22 +157,22 @@ export function ChecklistManager({ initialTasks, title, description }: Props) {
         <Table className="text-xs">
           <TableHeader className="bg-slate-800">
             <TableRow className="hover:bg-transparent border-none">
-              <TableHead className="w-[60px] font-black text-slate-300 border-r border-slate-700/50 text-center h-6 text-[12px] uppercase tracking-wider px-3">#</TableHead>
-              <TableHead className="w-[150px] font-black text-slate-300 border-r border-slate-700/50 text-center h-6 text-[12px] uppercase tracking-wider px-3">카테고리</TableHead>
-              <TableHead className="w-[200px] font-black text-slate-300 border-r border-slate-700/50 h-6 text-[12px] uppercase tracking-wider px-3">점검 항목명</TableHead>
-              <TableHead className="w-[120px] font-black text-slate-300 border-r border-slate-700/50 text-center h-6 text-[12px] uppercase tracking-wider px-3">대상/값</TableHead>
-              <TableHead className="font-black text-slate-300 border-r border-slate-700/50 h-6 text-[12px] uppercase tracking-wider px-3">세부 내용 / 기준</TableHead>
-              <TableHead className="w-[100px] font-black text-slate-300 border-r border-slate-700/50 text-center h-6 text-[12px] uppercase tracking-wider px-3">수기입력</TableHead>
-              <TableHead className="w-[120px] font-black text-slate-300 text-center h-6 text-[12px] uppercase tracking-wider px-3">관리</TableHead>
+              <TableHead className="w-[60px] font-black text-slate-300 border-r border-slate-700/50 text-center h-5 text-[12px] uppercase tracking-wider px-3">#</TableHead>
+              <TableHead className="w-[150px] font-black text-slate-300 border-r border-slate-700/50 text-center h-5 text-[12px] uppercase tracking-wider px-3">카테고리</TableHead>
+              <TableHead className="w-[200px] font-black text-slate-300 border-r border-slate-700/50 h-5 text-[12px] uppercase tracking-wider px-3">점검 항목명</TableHead>
+              <TableHead className="w-[120px] font-black text-slate-300 border-r border-slate-700/50 text-center h-5 text-[12px] uppercase tracking-wider px-3">대상/값</TableHead>
+              <TableHead className="font-black text-slate-300 border-r border-slate-700/50 h-5 text-[12px] uppercase tracking-wider px-3">세부 내용 / 기준</TableHead>
+              <TableHead className="w-[100px] font-black text-slate-300 border-r border-slate-700/50 text-center h-5 text-[12px] uppercase tracking-wider px-3">수기입력</TableHead>
+              <TableHead className="w-[120px] font-black text-slate-300 text-center h-5 text-[12px] uppercase tracking-wider px-3">관리</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {initialTasks.map((task, index) => (
               <TableRow key={task.id} className="border-b border-slate-100 transition-all hover:bg-slate-50/50 group">
-                <TableCell className="py-0.5 px-3 border-r border-slate-100 text-center text-slate-400 font-bold">
+                <TableCell className="py-0 px-3 border-r border-slate-100 text-center text-slate-400 font-bold">
                   {index + 1}
                 </TableCell>
-                <TableCell className="py-0.5 px-3 border-r border-slate-100 text-center align-middle">
+                <TableCell className="py-0 px-3 border-r border-slate-100 text-center align-middle">
                   {editingId === task.id ? (
                     <Input 
                       value={editForm.category || ""} 
@@ -183,7 +183,7 @@ export function ChecklistManager({ initialTasks, title, description }: Props) {
                     <span className="text-blue-600 font-bold">{task.category}</span>
                   )}
                 </TableCell>
-                <TableCell className="py-0.5 px-3 border-r border-slate-100 align-middle">
+                <TableCell className="py-0 px-3 border-r border-slate-100 align-middle">
                   {editingId === task.id ? (
                     <Input 
                       value={editForm.task_name || ""} 
@@ -194,7 +194,7 @@ export function ChecklistManager({ initialTasks, title, description }: Props) {
                     <span className="text-slate-900 font-bold">{task.task_name}</span>
                   )}
                 </TableCell>
-                <TableCell className="py-0.5 px-3 border-r border-slate-100 text-center align-middle">
+                <TableCell className="py-0 px-3 border-r border-slate-100 text-center align-middle">
                   {editingId === task.id ? (
                     <Input 
                       value={editForm.target || ""} 
@@ -206,7 +206,7 @@ export function ChecklistManager({ initialTasks, title, description }: Props) {
                     <span className="bg-slate-100 px-2 py-0.5 rounded text-slate-600 font-bold text-[10px]">{task.target || "-"}</span>
                   )}
                 </TableCell>
-                <TableCell className="py-0.5 px-3 border-r border-slate-100 align-middle">
+                <TableCell className="py-0 px-3 border-r border-slate-100 align-middle">
                   {editingId === task.id ? (
                     <Input 
                       value={editForm.description || ""} 
@@ -217,7 +217,7 @@ export function ChecklistManager({ initialTasks, title, description }: Props) {
                     <span className="text-slate-500 font-medium line-clamp-1">{task.description || "-"}</span>
                   )}
                 </TableCell>
-                <TableCell className="py-0.5 px-3 border-r border-slate-100 text-center align-middle">
+                <TableCell className="py-0 px-3 border-r border-slate-100 text-center align-middle">
                   <div className="flex justify-center">
                     {editingId === task.id ? (
                       <Checkbox 
@@ -230,14 +230,14 @@ export function ChecklistManager({ initialTasks, title, description }: Props) {
                     )}
                   </div>
                 </TableCell>
-                <TableCell className="py-0.5 px-3 align-middle">
+                <TableCell className="py-0 px-3 align-middle">
                   <div className="flex items-center justify-center gap-1.5">
                     {editingId === task.id ? (
                       <>
                         <Button 
                           variant="ghost" 
                           size="icon" 
-                          className="h-6 w-6 text-emerald-600 hover:bg-emerald-50 rounded-lg"
+                          className="h-5 w-5 text-emerald-600 hover:bg-emerald-50 rounded-lg"
                           onClick= {handleUpdate}
                           disabled={isPending}
                         >
@@ -246,7 +246,7 @@ export function ChecklistManager({ initialTasks, title, description }: Props) {
                         <Button 
                           variant="ghost" 
                           size="icon" 
-                          className="h-6 w-6 text-slate-300 hover:bg-slate-50 rounded-lg"
+                          className="h-5 w-5 text-slate-300 hover:bg-slate-50 rounded-lg"
                           onClick={handleEditCancel}
                         >
                           <X className="w-4 h-4" />
@@ -257,7 +257,7 @@ export function ChecklistManager({ initialTasks, title, description }: Props) {
                         <Button 
                           variant="ghost" 
                           size="icon" 
-                          className="h-6 w-6 text-blue-400 hover:bg-blue-50 rounded-lg"
+                          className="h-5 w-5 text-blue-400 hover:bg-blue-50 rounded-lg"
                           onClick={() => handleEditStart(task)}
                         >
                           <Pencil className="w-3.5 h-3.5" />
@@ -265,7 +265,7 @@ export function ChecklistManager({ initialTasks, title, description }: Props) {
                         <Button 
                           variant="ghost" 
                           size="icon" 
-                          className="h-6 w-6 text-rose-300 hover:text-rose-600 hover:bg-rose-50 rounded-lg"
+                          className="h-5 w-5 text-rose-300 hover:text-rose-600 hover:bg-rose-50 rounded-lg"
                           onClick={() => handleDelete(task.id, task.task_name)}
                           disabled={isDeleting}
                         >

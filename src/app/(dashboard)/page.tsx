@@ -380,13 +380,13 @@ export default async function Home() {
               <div className="text-[9px] font-bold text-[#ff5c39] mb-2">전체 이슈</div>
               <div className="flex justify-center gap-3">
                 <div className="text-center">
-                  <div className="text-[9px] text-white/70 font-medium">고객사 이슈</div>
-                  <div className="text-[13px] font-black text-[#ff5c39]">{clientIssueCount}건</div>
+                  <div className="text-[9px] text-white/70 font-medium">이슈등록</div>
+                  <div className="text-[13px] font-black text-[#ff5c39]">{issueCount}개</div>
                 </div>
                 <div className="h-5 w-px bg-white/20 my-auto" />
                 <div className="text-center">
-                  <div className="text-[9px] text-white/70 font-medium">서비스 이슈</div>
-                  <div className="text-[13px] font-black text-white">{serviceIssueCount}건</div>
+                  <div className="text-[9px] text-white/70 font-medium">조치등록</div>
+                  <div className="text-[13px] font-black text-white">{completedIssueCount}개</div>
                 </div>
               </div>
             </CardContent>

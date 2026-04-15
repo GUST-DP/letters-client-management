@@ -53,7 +53,7 @@ export function CostCenterManager({ initialData, title, description }: Props) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState("");
   
-  // 추�? 모달 관???�태
+  // 추가 모달 관련 상태
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [newName, setNewName] = useState("");
 
@@ -76,28 +76,28 @@ export function CostCenterManager({ initialData, title, description }: Props) {
       if (result.error) {
         toast.error(result.error);
       } else {
-        toast.success("코스?�센???�보가 ?�정?�었?�니??");
+        toast.success("코스트센터 정보가 수정되었습니다.");
         setEditingId(null);
       }
     });
   };
 
   const handleDelete = async (id: string, name: string) => {
-    if (!confirm(`'${name}' 코스?�센?��? ??��?�시겠습?�까?\n??코스?�센?��? ?�용?�는 고객?��? ?�을 경우 ??��가 ?�패?????�습?�다.`)) return;
+    if (!confirm(`'${name}' 코스트센터를 삭제하시겠습니까?\n이 코스트센터를 사용하는 고객사가 있을 경우 삭제가 실패할 수 있습니다.`)) return;
 
     startTransition(async () => {
       const result = await deleteCostCenterAction(id);
       if (result.error) {
         toast.error(result.error);
       } else {
-        toast.success("코스?�센?��? ??��?�었?�니??");
+        toast.success("코스트센터가 삭제되었습니다.");
       }
     });
   };
 
   const handleAdd = async () => {
     if (!newName.trim()) {
-      toast.error("코스?�센??명칭???�력?�주?�요.");
+      toast.error("코스트센터 명칭을 입력해주세요.");
       return;
     }
 
@@ -109,7 +109,7 @@ export function CostCenterManager({ initialData, title, description }: Props) {
       if (result.error) {
         toast.error(result.error);
       } else {
-        toast.success("?�로??코스?�센?��? 추�??�었?�니??");
+        toast.success("새로운 코스트센터가 추가되었습니다.");
         setIsAddOpen(false);
         setNewName("");
       }
@@ -119,7 +119,7 @@ export function CostCenterManager({ initialData, title, description }: Props) {
   return (
     <div className="space-y-3">
       <div className="rounded-2xl border border-slate-200 overflow-hidden shadow-xl bg-white animate-in fade-in slide-in-from-bottom-2 duration-500">
-        {/* ?�합 ?�더 ?�역 */}
+        {/* 통합 헤더 영역 */}
         <div className="px-3 py-3 flex justify-between items-center border-b border-slate-100 bg-slate-50/30">
           <div>
             <h2 className="text-xl font-black text-slate-900 tracking-tight">{title}</h2>
@@ -134,41 +134,41 @@ export function CostCenterManager({ initialData, title, description }: Props) {
         <Table className="text-xs">
           <TableHeader className="bg-slate-800">
             <TableRow className="hover:bg-transparent border-none">
-              <TableHead className="w-[60px] font-black text-slate-300 border-r border-slate-700/50 text-center text-[12px] uppercase tracking-wider px-3">#</TableHead>
-              <TableHead className="font-black text-slate-300 border-r border-slate-700/50 text-[12px] uppercase tracking-wider px-3">코스트센터 명칭</TableHead>
-              <TableHead className="w-[200px] font-black text-slate-300 border-r border-slate-700/50 text-center text-[12px] uppercase tracking-wider px-3">등록일</TableHead>
-              <TableHead className="w-[120px] font-black text-slate-300 text-center text-[12px] uppercase tracking-wider px-3">관리</TableHead>
+              <TableHead className="w-[60px] font-black text-slate-300 border-r border-slate-700/50 text-center h-10 text-[13px] uppercase tracking-wider px-4">#</TableHead>
+              <TableHead className="font-black text-slate-300 border-r border-slate-700/50 h-10 text-[13px] uppercase tracking-wider px-4">코스트센터 명칭</TableHead>
+              <TableHead className="w-[200px] font-black text-slate-300 border-r border-slate-700/50 text-center h-10 text-[13px] uppercase tracking-wider px-4">등록일</TableHead>
+              <TableHead className="w-[120px] font-black text-slate-300 text-center h-10 text-[13px] uppercase tracking-wider px-4">관리</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {initialData.map((item, index) => (
               <TableRow key={item.id} className="border-b border-slate-100 transition-all hover:bg-slate-50/50 group">
-                <TableCell className="py-0 px-3 border-r border-slate-100 text-center text-slate-400 font-bold">
+                <TableCell className="py-3.5 px-4 border-r border-slate-100 text-center text-slate-400 font-bold">
                   {index + 1}
                 </TableCell>
-                <TableCell className="py-0 px-3 border-r border-slate-100 align-middle">
+                <TableCell className="py-2 px-4 border-r border-slate-100 align-middle">
                   {editingId === item.id ? (
                     <Input 
                       value={editName} 
                       onChange={(e) => setEditName(e.target.value)}
-                      className="h-5 font-bold border-slate-200 rounded-lg text-xs"
+                      className="h-9 font-bold border-slate-200 rounded-lg text-xs"
                       autoFocus
                     />
                   ) : (
                     <span className="text-slate-900 font-bold">{item.name}</span>
                   )}
                 </TableCell>
-                <TableCell className="py-0 px-3 border-r border-slate-100 text-center align-middle text-slate-500 font-medium">
+                <TableCell className="py-2 px-4 border-r border-slate-100 text-center align-middle text-slate-500 font-medium">
                   {new Date(item.created_at).toLocaleDateString()}
                 </TableCell>
-                <TableCell className="py-0 px-3 align-middle">
+                <TableCell className="py-2 px-4 align-middle">
                   <div className="flex items-center justify-center gap-1.5">
                     {editingId === item.id ? (
                       <>
                         <Button 
                           variant="ghost" 
                           size="icon" 
-                          className="h-5 w-5 text-emerald-600 hover:bg-emerald-50 rounded-lg"
+                          className="h-8 w-8 text-emerald-600 hover:bg-emerald-50 rounded-lg"
                           onClick={handleUpdate}
                           disabled={isPending}
                         >
@@ -177,7 +177,7 @@ export function CostCenterManager({ initialData, title, description }: Props) {
                         <Button 
                           variant="ghost" 
                           size="icon" 
-                          className="h-5 w-5 text-slate-300 hover:bg-slate-50 rounded-lg"
+                          className="h-8 w-8 text-slate-300 hover:bg-slate-50 rounded-lg"
                           onClick={handleEditCancel}
                         >
                           <X className="w-4 h-4" />
@@ -188,7 +188,7 @@ export function CostCenterManager({ initialData, title, description }: Props) {
                         <Button 
                           variant="ghost" 
                           size="icon" 
-                          className="h-5 w-5 text-blue-400 hover:bg-blue-50 rounded-lg"
+                          className="h-8 w-8 text-blue-400 hover:bg-blue-50 rounded-lg"
                           onClick={() => handleEditStart(item)}
                         >
                           <Pencil className="w-3.5 h-3.5" />
@@ -196,7 +196,7 @@ export function CostCenterManager({ initialData, title, description }: Props) {
                         <Button 
                           variant="ghost" 
                           size="icon" 
-                          className="h-5 w-5 text-rose-300 hover:text-rose-600 hover:bg-rose-50 rounded-lg"
+                          className="h-8 w-8 text-rose-300 hover:text-rose-600 hover:bg-rose-50 rounded-lg"
                           onClick={() => handleDelete(item.id, item.name)}
                         >
                           <Trash2 className="w-3.5 h-3.5" />
@@ -210,7 +210,7 @@ export function CostCenterManager({ initialData, title, description }: Props) {
             {initialData.length === 0 && (
               <TableRow>
                 <TableCell colSpan={4} className="h-48 text-center text-slate-400 font-bold">
-                  ?�록??코스?�센?��? ?�습?�다.
+                  등록된 코스트센터가 없습니다.
                 </TableCell>
               </TableRow>
             )}
@@ -218,13 +218,13 @@ export function CostCenterManager({ initialData, title, description }: Props) {
         </Table>
       </div>
 
-      {/* 코스?�센??추�? ?�이?�로�?*/}
+      {/* 코스트센터 추가 다이얼로그 */}
       <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>??코스?�센??추�?</DialogTitle>
+            <DialogTitle>새 코스트센터 추가</DialogTitle>
             <DialogDescription>
-              ?�스?�에 ?�록???�로??코스?�센??명칭???�력?�세??
+              시스템에 등록할 새로운 코스트센터 명칭을 입력하세요.
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
@@ -235,14 +235,14 @@ export function CostCenterManager({ initialData, title, description }: Props) {
                 value={newName}
                 onChange={(e) => setNewName(e.target.value)}
                 className="col-span-3"
-                placeholder="코스?�센???�름 ?�력"
+                placeholder="코스트센터 이름 입력"
               />
             </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsAddOpen(false)}>취소</Button>
             <Button onClick={handleAdd} disabled={isPending} className="bg-[#414344] text-white hover:bg-[#414344]/90">
-              {isPending ? "추�? �?.." : "추�??�기"}
+              {isPending ? "추가 중..." : "추가하기"}
             </Button>
           </DialogFooter>
         </DialogContent>

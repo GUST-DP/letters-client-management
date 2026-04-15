@@ -45,14 +45,13 @@ export default async function Home() {
 
   // 서비스 이슈 건수 (client_issues)
   const serviceIssueCount = issuesData.length;
+  const serviceCompletedCount = issuesData.filter(i => i.status === "조치등록" || i.status === "조치완료").length;
   // 고객사 이슈 건수 (client_operation_issues)
   const clientIssueCount = opIssuesData.length;
+  const clientCompletedCount = opIssuesData.filter(i => i.status === "조치등록" || i.status === "조치완료").length;
   // 전체 이슈 건수
   const issueCount = serviceIssueCount + clientIssueCount;
-  const completedIssueCount = [
-    ...issuesData.filter(i => i.status === "조치등록" || i.status === "조치완료"),
-    ...opIssuesData.filter(i => i.status === "조치등록" || i.status === "조치완료"),
-  ].length;
+  const completedIssueCount = serviceCompletedCount + clientCompletedCount;
 
   // ── 이슈 통계 고도화 (신규)
   const thirtyDaysAgo = new Date();
@@ -377,16 +376,23 @@ export default async function Home() {
                 {issueCount}
                 <span className="text-[11px] font-bold text-white ml-0.5 shrink-0">건</span>
               </div>
-              <div className="text-[9px] font-bold text-[#ff5c39] mb-2">전체 이슈</div>
-              <div className="flex justify-center gap-3">
-                <div className="text-center">
-                  <div className="text-[9px] text-white/70 font-medium">이슈등록</div>
-                  <div className="text-[13px] font-black text-[#ff5c39]">{issueCount}개</div>
+              <div className="text-[9px] font-bold text-[#ff5c39] mb-1.5">전체 이슈</div>
+              <div className="w-full grid grid-cols-2 gap-1.5">
+                <div className="bg-white/10 rounded-lg px-2 py-1.5 text-center">
+                  <div className="text-[8px] text-white/60 font-medium mb-0.5">고객사 이슈등록</div>
+                  <div className="text-[13px] font-black text-[#ff5c39] leading-none">{clientIssueCount}<span className="text-[9px] ml-0.5">개</span></div>
                 </div>
-                <div className="h-5 w-px bg-white/20 my-auto" />
-                <div className="text-center">
-                  <div className="text-[9px] text-white/70 font-medium">조치등록</div>
-                  <div className="text-[13px] font-black text-white">{completedIssueCount}개</div>
+                <div className="bg-white/10 rounded-lg px-2 py-1.5 text-center">
+                  <div className="text-[8px] text-white/60 font-medium mb-0.5">고객사 조치등록</div>
+                  <div className="text-[13px] font-black text-emerald-400 leading-none">{clientCompletedCount}<span className="text-[9px] ml-0.5">개</span></div>
+                </div>
+                <div className="bg-white/10 rounded-lg px-2 py-1.5 text-center">
+                  <div className="text-[8px] text-white/60 font-medium mb-0.5">서비스 이슈등록</div>
+                  <div className="text-[13px] font-black text-[#ff5c39] leading-none">{serviceIssueCount}<span className="text-[9px] ml-0.5">개</span></div>
+                </div>
+                <div className="bg-white/10 rounded-lg px-2 py-1.5 text-center">
+                  <div className="text-[8px] text-white/60 font-medium mb-0.5">서비스 조치등록</div>
+                  <div className="text-[13px] font-black text-emerald-400 leading-none">{serviceCompletedCount}<span className="text-[9px] ml-0.5">개</span></div>
                 </div>
               </div>
             </CardContent>

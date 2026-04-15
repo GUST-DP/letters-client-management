@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
@@ -154,131 +154,80 @@ export function ChecklistManager({ initialTasks, title, description }: Props) {
           </Button>
         </div>
 
-        <Table className="text-xs">
-          <TableHeader className="bg-slate-800">
-            <TableRow className="hover:bg-transparent border-none">
-              <TableHead className="w-[60px] font-black text-slate-300 border-r border-slate-700/50 text-center h-5 text-[12px] uppercase tracking-wider px-3">#</TableHead>
-              <TableHead className="w-[150px] font-black text-slate-300 border-r border-slate-700/50 text-center h-5 text-[12px] uppercase tracking-wider px-3">카테고리</TableHead>
-              <TableHead className="w-[200px] font-black text-slate-300 border-r border-slate-700/50 h-5 text-[12px] uppercase tracking-wider px-3">점검 항목명</TableHead>
-              <TableHead className="w-[120px] font-black text-slate-300 border-r border-slate-700/50 text-center h-5 text-[12px] uppercase tracking-wider px-3">대상/값</TableHead>
-              <TableHead className="font-black text-slate-300 border-r border-slate-700/50 h-5 text-[12px] uppercase tracking-wider px-3">세부 내용 / 기준</TableHead>
-              <TableHead className="w-[100px] font-black text-slate-300 border-r border-slate-700/50 text-center h-5 text-[12px] uppercase tracking-wider px-3">수기입력</TableHead>
-              <TableHead className="w-[120px] font-black text-slate-300 text-center h-5 text-[12px] uppercase tracking-wider px-3">관리</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {initialTasks.map((task, index) => (
-              <TableRow key={task.id} className="border-b border-slate-100 transition-all hover:bg-slate-50/50 group">
-                <TableCell className="py-0 px-3 border-r border-slate-100 text-center text-slate-400 font-bold">
-                  {index + 1}
-                </TableCell>
-                <TableCell className="py-0 px-3 border-r border-slate-100 text-center align-middle">
-                  {editingId === task.id ? (
-                    <Input 
-                      value={editForm.category || ""} 
-                      onChange={(e) => setEditForm({ ...editForm, category: e.target.value })}
-                      className="h-6 text-xs text-center font-bold border-slate-200 rounded-lg"
-                    />
-                  ) : (
-                    <span className="text-blue-600 font-bold">{task.category}</span>
-                  )}
-                </TableCell>
-                <TableCell className="py-0 px-3 border-r border-slate-100 align-middle">
-                  {editingId === task.id ? (
-                    <Input 
-                      value={editForm.task_name || ""} 
-                      onChange={(e) => setEditForm({ ...editForm, task_name: e.target.value })}
-                      className="h-6 text-xs font-bold border-slate-200 rounded-lg"
-                    />
-                  ) : (
-                    <span className="text-slate-900 font-bold">{task.task_name}</span>
-                  )}
-                </TableCell>
-                <TableCell className="py-0 px-3 border-r border-slate-100 text-center align-middle">
-                  {editingId === task.id ? (
-                    <Input 
-                      value={editForm.target || ""} 
-                      onChange={(e) => setEditForm({ ...editForm, target: e.target.value })}
-                      className="h-6 text-xs text-center border-slate-200 rounded-lg"
-                      placeholder="대상..."
-                    />
-                  ) : (
-                    <span className="bg-slate-100 px-2 py-0.5 rounded text-slate-600 font-bold text-[10px]">{task.target || "-"}</span>
-                  )}
-                </TableCell>
-                <TableCell className="py-0 px-3 border-r border-slate-100 align-middle">
-                  {editingId === task.id ? (
-                    <Input 
-                      value={editForm.description || ""} 
-                      onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
-                      className="h-6 text-xs border-slate-200 rounded-lg"
-                    />
-                  ) : (
-                    <span className="text-slate-500 font-medium line-clamp-1">{task.description || "-"}</span>
-                  )}
-                </TableCell>
-                <TableCell className="py-0 px-3 border-r border-slate-100 text-center align-middle">
-                  <div className="flex justify-center">
+        <div className="rounded-xl overflow-hidden border border-slate-200">
+          <table className="w-full border-collapse" style={{tableLayout:"fixed"}}>
+            <thead style={{position:"sticky", top:0, zIndex:10, backgroundColor:"#1e293b"}}>
+              <tr style={{height:"28px"}}>
+                <th style={{width:"60px", height:"28px", padding:"0 10px", fontSize:"11px", lineHeight:"28px", color:"#cbd5e1", fontWeight:900, textAlign:"center", borderRight:"1px solid rgba(100,116,139,0.3)", letterSpacing:"0.05em", textTransform:"uppercase", whiteSpace:"nowrap"}}>#</th>
+                <th style={{width:"150px", height:"28px", padding:"0 10px", fontSize:"11px", lineHeight:"28px", color:"#cbd5e1", fontWeight:900, textAlign:"center", borderRight:"1px solid rgba(100,116,139,0.3)", letterSpacing:"0.05em", textTransform:"uppercase", whiteSpace:"nowrap"}}>카테고리</th>
+                <th style={{width:"200px", height:"28px", padding:"0 10px", fontSize:"11px", lineHeight:"28px", color:"#cbd5e1", fontWeight:900, textAlign:"left", borderRight:"1px solid rgba(100,116,139,0.3)", letterSpacing:"0.05em", textTransform:"uppercase", whiteSpace:"nowrap"}}>점검 항목명</th>
+                <th style={{width:"120px", height:"28px", padding:"0 10px", fontSize:"11px", lineHeight:"28px", color:"#cbd5e1", fontWeight:900, textAlign:"center", borderRight:"1px solid rgba(100,116,139,0.3)", letterSpacing:"0.05em", textTransform:"uppercase", whiteSpace:"nowrap"}}>대상/값</th>
+                <th style={{height:"28px", padding:"0 10px", fontSize:"11px", lineHeight:"28px", color:"#cbd5e1", fontWeight:900, textAlign:"left", borderRight:"1px solid rgba(100,116,139,0.3)", letterSpacing:"0.05em", textTransform:"uppercase", whiteSpace:"nowrap"}}>세부 내용 / 기준</th>
+                <th style={{width:"100px", height:"28px", padding:"0 10px", fontSize:"11px", lineHeight:"28px", color:"#cbd5e1", fontWeight:900, textAlign:"center", borderRight:"1px solid rgba(100,116,139,0.3)", letterSpacing:"0.05em", textTransform:"uppercase", whiteSpace:"nowrap"}}>수기입력</th>
+                <th style={{width:"120px", height:"28px", padding:"0 10px", fontSize:"11px", lineHeight:"28px", color:"#cbd5e1", fontWeight:900, textAlign:"center", letterSpacing:"0.05em", textTransform:"uppercase", whiteSpace:"nowrap"}}>관리</th>
+              </tr>
+            </thead>
+            <tbody>
+              {initialTasks.map((task, index) => (
+                <tr key={task.id} style={{height:"30px", borderBottom:"1px solid #f1f5f9"}} className="hover:bg-slate-50/50 group transition-colors">
+                  <td style={{height:"30px", padding:"0 10px", fontSize:"11px", lineHeight:"30px", overflow:"hidden", textAlign:"center", color:"#94a3b8", fontWeight:700, borderRight:"1px solid #f1f5f9", whiteSpace:"nowrap"}}>{index + 1}</td>
+                  <td style={{height:"30px", padding:"0 10px", fontSize:"11px", lineHeight:"30px", overflow:"hidden", textAlign:"center", borderRight:"1px solid #f1f5f9", whiteSpace:"nowrap"}}>
                     {editingId === task.id ? (
-                      <Checkbox 
-                        checked={editForm.is_input} 
-                        onCheckedChange={(val) => setEditForm({ ...editForm, is_input: !!val })}
-                        className="rounded-md"
-                      />
+                      <Input value={editForm.category || ""} onChange={(e) => setEditForm({ ...editForm, category: e.target.value })} className="h-6 text-xs text-center font-bold border-slate-200 rounded-lg" />
                     ) : (
-                      <div className={`w-2.5 h-2.5 rounded-full ring-4 ring-offset-1 ${task.is_input ? 'bg-emerald-500 ring-emerald-100' : 'bg-slate-200 ring-slate-50'}`} />
+                      <span style={{color:"#2563eb", fontWeight:700}}>{task.category}</span>
                     )}
-                  </div>
-                </TableCell>
-                <TableCell className="py-0 px-3 align-middle">
-                  <div className="flex items-center justify-center gap-1.5">
+                  </td>
+                  <td style={{height:"30px", padding:"0 10px", fontSize:"11px", lineHeight:"30px", overflow:"hidden", borderRight:"1px solid #f1f5f9", whiteSpace:"nowrap"}}>
                     {editingId === task.id ? (
-                      <>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          className="h-5 w-5 text-emerald-600 hover:bg-emerald-50 rounded-lg"
-                          onClick= {handleUpdate}
-                          disabled={isPending}
-                        >
-                          <Save className="w-4 h-4" />
-                        </Button>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          className="h-5 w-5 text-slate-300 hover:bg-slate-50 rounded-lg"
-                          onClick={handleEditCancel}
-                        >
-                          <X className="w-4 h-4" />
-                        </Button>
-                      </>
+                      <Input value={editForm.task_name || ""} onChange={(e) => setEditForm({ ...editForm, task_name: e.target.value })} className="h-6 text-xs font-bold border-slate-200 rounded-lg" />
                     ) : (
-                      <>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          className="h-5 w-5 text-blue-400 hover:bg-blue-50 rounded-lg"
-                          onClick={() => handleEditStart(task)}
-                        >
-                          <Pencil className="w-3.5 h-3.5" />
-                        </Button>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          className="h-5 w-5 text-rose-300 hover:text-rose-600 hover:bg-rose-50 rounded-lg"
-                          onClick={() => handleDelete(task.id, task.task_name)}
-                          disabled={isDeleting}
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </Button>
-                      </>
+                      <span style={{color:"#0f172a", fontWeight:700}}>{task.task_name}</span>
                     )}
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+                  </td>
+                  <td style={{height:"30px", padding:"0 10px", fontSize:"11px", lineHeight:"30px", overflow:"hidden", textAlign:"center", borderRight:"1px solid #f1f5f9", whiteSpace:"nowrap"}}>
+                    {editingId === task.id ? (
+                      <Input value={editForm.target || ""} onChange={(e) => setEditForm({ ...editForm, target: e.target.value })} className="h-6 text-xs text-center border-slate-200 rounded-lg" placeholder="대상..." />
+                    ) : (
+                      <span style={{background:"#f1f5f9", padding:"1px 8px", borderRadius:"4px", color:"#475569", fontWeight:700, fontSize:"10px"}}>{task.target || "-"}</span>
+                    )}
+                  </td>
+                  <td style={{height:"30px", padding:"0 10px", fontSize:"11px", lineHeight:"30px", overflow:"hidden", borderRight:"1px solid #f1f5f9", whiteSpace:"nowrap"}}>
+                    {editingId === task.id ? (
+                      <Input value={editForm.description || ""} onChange={(e) => setEditForm({ ...editForm, description: e.target.value })} className="h-6 text-xs border-slate-200 rounded-lg" />
+                    ) : (
+                      <span style={{color:"#64748b"}}>{task.description || "-"}</span>
+                    )}
+                  </td>
+                  <td style={{height:"30px", padding:"0 10px", lineHeight:"30px", overflow:"hidden", textAlign:"center", borderRight:"1px solid #f1f5f9"}}>
+                    <div style={{display:"flex", justifyContent:"center", alignItems:"center", height:"100%"}}>
+                      {editingId === task.id ? (
+                        <Checkbox checked={editForm.is_input} onCheckedChange={(val) => setEditForm({ ...editForm, is_input: !!val })} className="rounded-md" />
+                      ) : (
+                        <div className={`w-2.5 h-2.5 rounded-full ring-4 ring-offset-1 ${task.is_input ? 'bg-emerald-500 ring-emerald-100' : 'bg-slate-200 ring-slate-50'}`} />
+                      )}
+                    </div>
+                  </td>
+                  <td style={{height:"30px", padding:"0 10px", lineHeight:"30px", overflow:"hidden", textAlign:"center"}}>
+                    <div style={{display:"flex", alignItems:"center", justifyContent:"center", gap:"4px", height:"100%"}}>
+                      {editingId === task.id ? (
+                        <>
+                          <Button variant="ghost" size="icon" className="h-5 w-5 text-emerald-600 hover:bg-emerald-50 rounded-lg" onClick={handleUpdate} disabled={isPending}><Save className="w-3.5 h-3.5" /></Button>
+                          <Button variant="ghost" size="icon" className="h-5 w-5 text-slate-300 hover:bg-slate-50 rounded-lg" onClick={handleEditCancel}><X className="w-3.5 h-3.5" /></Button>
+                        </>
+                      ) : (
+                        <>
+                          <Button variant="ghost" size="icon" className="h-5 w-5 text-blue-400 hover:bg-blue-50 rounded-lg" onClick={() => handleEditStart(task)}><Pencil className="w-3.5 h-3.5" /></Button>
+                          <Button variant="ghost" size="icon" className="h-5 w-5 text-rose-300 hover:text-rose-600 hover:bg-rose-50 rounded-lg" onClick={() => handleDelete(task.id, task.task_name)} disabled={isDeleting}><Trash2 className="w-3.5 h-3.5" /></Button>
+                        </>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* 항목 추가 다이얼로그 */}

@@ -22,7 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { cn } from "@/lib/utils";
+import { cn, parseFiles } from "@/lib/utils";
 import { SearchableSelect } from "@/components/ui/searchable-select";
 import { createClientOperationIssue } from "./actions";
 import { toast } from "sonner";
@@ -67,7 +67,7 @@ export function AddClientIssueModal({
   const [clientId, setClientId] = useState(defaultClientId ?? "");
   const [issueCategory, setIssueCategory] = useState("");
   const [issueContent, setIssueContent] = useState("");
-  const [file, setFile] = useState<File | null>(null);
+  const [files, setFiles] = useState<File[]>([]);
 
   // 모달이 열릴 때마다 오늘 날짜로 동기화 (KST 등 현지 시간 기준)
   useEffect(() => {
@@ -89,7 +89,7 @@ export function AddClientIssueModal({
     setClientId(defaultClientId ?? "");
     setIssueCategory("");
     setIssueContent("");
-    setFile(null);
+    setFiles([]);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -102,38 +102,36 @@ export function AddClientIssueModal({
     setIsSubmitting(true);
     
     try {
-      let file_url = null;
-      let file_name = null;
+      let file_urls: string[] = [];
+      let file_names: string[] = [];
 
-      // 클라이언트 측에서 Supabase Storage로 직접 업로드 (Vercel 페이로드 제한 우회)
-      if (file) {
-        // 파일 크기 제한 (예: 20MB)
-        if (file.size > 20 * 1024 * 1024) {
-          toast.error("파일 크기가 너무 큽니다. (최대 20MB)");
-          setIsSubmitting(false);
-          return;
-        }
-
+      if (files.length > 0) {
         const supabase = createClient();
-        const fileExt = file.name.split(".").pop();
-        const fileName = `op_${Math.random().toString(36).substring(2)}_${Date.now()}.${fileExt}`;
-        const filePath = `operation_issues/${fileName}`;
+        
+        await Promise.all(files.map(async (f) => {
+          if (f.size > 20 * 1024 * 1024) {
+             throw new Error(`파일 크기가 너무 큽니다. (최대 20MB): ${f.name}`);
+          }
+          const fileExt = f.name.split(".").pop();
+          const fileName = `op_${Math.random().toString(36).substring(2)}_${Date.now()}.${fileExt}`;
+          const filePath = `operation_issues/${fileName}`;
 
-        const { error: uploadError } = await supabase.storage
-          .from("issue_attachments")
-          .upload(filePath, file);
+          const { error: uploadError } = await supabase.storage
+            .from("issue_attachments")
+            .upload(filePath, f);
 
-        if (uploadError) {
-          console.error("Upload error:", uploadError);
-          throw new Error("파일 업로드 중에 오류가 발생했습니다.");
-        }
+          if (uploadError) {
+            console.error("Upload error:", uploadError);
+            throw new Error(`파일 업로드 중에 오류가 발생했습니다: ${f.name}`);
+          }
 
-        const { data: { publicUrl } } = supabase.storage
-          .from("issue_attachments")
-          .getPublicUrl(filePath);
+          const { data: { publicUrl } } = supabase.storage
+            .from("issue_attachments")
+            .getPublicUrl(filePath);
 
-        file_url = publicUrl;
-        file_name = file.name;
+          file_urls.push(publicUrl);
+          file_names.push(f.name);
+        }));
       }
 
       const fd = new FormData();
@@ -144,8 +142,8 @@ export function AddClientIssueModal({
       fd.append("responsible_party", "");
       fd.append("author_name", userName);
       fd.append("author_email", userEmail);
-      if (file_url) fd.append("file_url", file_url);
-      if (file_name) fd.append("file_name", file_name);
+      if (file_urls.length > 0) fd.append("file_url", JSON.stringify(file_urls));
+      if (file_names.length > 0) fd.append("file_name", JSON.stringify(file_names));
 
       const result = await createClientOperationIssue(fd);
 
@@ -243,11 +241,34 @@ export function AddClientIssueModal({
             <Label className="text-xs font-black text-slate-500 uppercase tracking-wider">
               첨부파일
             </Label>
-            <Input
-              type="file"
-              onChange={(e) => setFile(e.target.files?.[0] || null)}
-              className="h-10 border-slate-200 text-xs file:text-[10px] file:font-black file:bg-slate-100 file:border-0 file:rounded-md file:mr-2 file:px-2 file:py-1 cursor-pointer"
-            />
+            <div className="flex flex-col gap-2">
+              <input
+                type="file"
+                multiple
+                onChange={(e) => {
+                   const selected = Array.from(e.target.files || []);
+                   setFiles(prev => {
+                       const merged = [...prev, ...selected];
+                       if (merged.length > 3) {
+                           toast.error("첨부파일은 최대 3개까지만 가능합니다.");
+                           return merged.slice(0, 3);
+                       }
+                       return merged;
+                   });
+                   // 동일 파일 재선택을 위해 value 초기화
+                   e.target.value = '';
+                }}
+                className="w-full h-10 border border-slate-200 rounded-md text-xs file:text-[10px] file:font-black file:bg-slate-100 file:border-0 file:rounded-md file:mr-2 file:px-2 file:py-1 cursor-pointer bg-white px-3 py-2"
+              />
+              {files.length > 0 && (
+                <div className="flex items-center gap-2 bg-slate-50 px-2 py-1.5 rounded-md border border-slate-100">
+                   <p className="text-[10px] font-bold text-slate-500">📎 {files.length}개의 파일 선택됨</p>
+                   <Button type="button" variant="ghost" size="sm" onClick={() => setFiles([])} className="h-5 px-2 text-[10px] text-white bg-slate-300 hover:bg-slate-400 hover:text-white rounded ml-auto font-black">
+                     전체 삭제
+                   </Button>
+                </div>
+              )}
+            </div>
           </div>
 
           <DialogFooter className="pt-2 border-t border-slate-100">
@@ -335,17 +356,21 @@ export function ClientIssueDetailModal({
             {issue.file_url && (
               <div className="space-y-1 col-span-2">
                 <Label className="text-[10px] font-black text-slate-400 uppercase tracking-wider">이슈 첨부파일</Label>
-                <div className="h-9 flex items-center px-3 rounded-lg bg-slate-50 border border-slate-100 overflow-hidden">
-                  <a 
-                    href={issue.file_url} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 text-xs font-bold text-blue-600 hover:text-blue-800 transition-colors w-full group"
-                  >
-                    <Paperclip className="w-3.5 h-3.5 shrink-0" />
-                    <span className="truncate">{issue.file_name || "첨부파일 보기"}</span>
-                    <ExternalLink className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity ml-auto shrink-0 hidden sm:block" />
-                  </a>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                  {parseFiles(issue.file_url, issue.file_name).map((f, i) => (
+                    <div key={i} className="h-9 flex items-center px-3 rounded-lg bg-slate-50 border border-slate-100 overflow-hidden">
+                      <a 
+                        href={f.url} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 text-xs font-bold text-blue-600 hover:text-blue-800 transition-colors w-full group"
+                      >
+                        <Paperclip className="w-3.5 h-3.5 shrink-0" />
+                        <span className="truncate">{f.name}</span>
+                        <ExternalLink className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity ml-auto shrink-0 hidden sm:block" />
+                      </a>
+                    </div>
+                  ))}
                 </div>
               </div>
             )}
@@ -391,17 +416,21 @@ export function ClientIssueDetailModal({
               {issue.response_file_url && (
                 <div className="space-y-1.5">
                   <Label className="text-[10px] font-black text-slate-400 uppercase tracking-wider pl-3.5">조치 증빙 첨부파일</Label>
-                  <div className="h-9 flex items-center px-3 rounded-lg bg-emerald-50 border border-emerald-100 overflow-hidden mx-3.5">
-                    <a 
-                      href={issue.response_file_url} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-2 text-xs font-bold text-emerald-600 hover:text-emerald-800 transition-colors w-full group"
-                    >
-                      <Paperclip className="w-3.5 h-3.5 shrink-0" />
-                      <span className="truncate">{issue.response_file_name || "증빙 파일 보기"}</span>
-                      <ExternalLink className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity ml-auto shrink-0" />
-                    </a>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 mx-3.5">
+                    {parseFiles(issue.response_file_url, issue.response_file_name).map((f, i) => (
+                      <div key={i} className="h-9 flex items-center px-3 rounded-lg bg-emerald-50 border border-emerald-100 overflow-hidden">
+                        <a 
+                          href={f.url} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 text-xs font-bold text-emerald-600 hover:text-emerald-800 transition-colors w-full group"
+                        >
+                          <Paperclip className="w-3.5 h-3.5 shrink-0" />
+                          <span className="truncate">{f.name}</span>
+                          <ExternalLink className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity ml-auto shrink-0" />
+                        </a>
+                      </div>
+                    ))}
                   </div>
                 </div>
               )}

@@ -38,7 +38,7 @@ import {
   Send,
 } from "lucide-react";
 import Link from "next/link";
-import { cn, ensureAbsoluteUrl } from "@/lib/utils";
+import { cn, ensureAbsoluteUrl, parseFiles } from "@/lib/utils";
 import { TransitionLink } from "@/components/ui/transition-link";
 import { upsertClientContact, deleteClientContact } from "./actions-contacts";
 import { addClientNote, deleteClientNote } from "./actions-notes";
@@ -734,15 +734,38 @@ export function ClientDetailClient({
               </div>
               {selectedOpIssue.file_url && (
                 <div>
-                  <p className="text-[11px] font-black text-slate-400 uppercase mb-1">첨부파일</p>
-                  <a
-                    href={selectedOpIssue.file_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 text-blue-600 hover:text-blue-800 font-bold text-xs bg-slate-50 px-4 py-2 rounded-xl border border-slate-100 shadow-sm transition-all w-full"
-                  >
-                    📎 {selectedOpIssue.file_name || "첨부파일 보기"}
-                  </a>
+                  <p className="text-[11px] font-black text-slate-400 uppercase mb-1">이슈 첨부파일</p>
+                  <div className="flex flex-col gap-2">
+                    {parseFiles(selectedOpIssue.file_url, selectedOpIssue.file_name).map((f: any, i: number) => (
+                      <a
+                        key={i}
+                        href={f.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 text-blue-600 hover:text-blue-800 font-bold text-xs bg-slate-50 px-4 py-2 rounded-xl border border-slate-100 shadow-sm transition-all w-full truncate"
+                      >
+                        📎 <span className="truncate">{f.name}</span>
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {selectedOpIssue.response_file_url && (
+                <div>
+                  <p className="text-[11px] font-black text-emerald-500 uppercase mb-1">조치 증빙 첨부파일</p>
+                  <div className="flex flex-col gap-2">
+                    {parseFiles(selectedOpIssue.response_file_url, selectedOpIssue.response_file_name).map((f: any, i: number) => (
+                      <a
+                        key={i}
+                        href={f.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 text-emerald-600 hover:text-emerald-800 font-bold text-xs bg-emerald-50 px-4 py-2 rounded-xl border border-emerald-100 shadow-sm transition-all w-full truncate"
+                      >
+                        📎 <span className="truncate">{f.name}</span>
+                      </a>
+                    ))}
+                  </div>
                 </div>
               )}
               {selectedOpIssue.action_taken && (

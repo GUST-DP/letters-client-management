@@ -41,7 +41,7 @@ import {
   ChevronUp,
   Paperclip,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, parseFiles } from "@/lib/utils";
 import {
   Dialog,
   DialogContent,
@@ -355,8 +355,9 @@ export function ClientIssueTable({
                       <td style={{height:"30px",fontSize:"11px",lineHeight:"30px",padding:"0 10px",overflow:"hidden"}} className="border-r border-slate-100 text-center">
                         {item.file_url ? (
                           <div className="flex justify-center items-center h-full">
-                            <div className="w-5 h-5 rounded bg-orange-50 flex items-center justify-center text-orange-600 border border-orange-100">
+                            <div className="px-1.5 h-5 rounded bg-orange-50 flex items-center justify-center gap-1 text-orange-600 border border-orange-100 text-[10px] font-bold">
                                <Paperclip className="w-3 h-3" />
+                               {parseFiles(item.file_url, undefined).length > 1 && <span>{parseFiles(item.file_url, undefined).length}</span>}
                             </div>
                           </div>
                         ) : (

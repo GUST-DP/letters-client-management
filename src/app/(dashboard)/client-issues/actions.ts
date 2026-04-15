@@ -3,6 +3,7 @@
 import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
 import { sendTeamsMessage, getKSTTimestamp } from "@/lib/teams";
+import { parseFiles } from "@/lib/utils";
 
 export async function createClientOperationIssue(formData: FormData) {
   const supabase = await createClient();
@@ -49,7 +50,7 @@ export async function createClientOperationIssue(formData: FormData) {
         subtitle: timestamp,
         buttonUrl: "https://letus-client-management.vercel.app/client-issues",
         buttonLabel: "고객사 이슈관리 바로가기",
-        buttons: file_url ? [{ label: "첨부파일 보기", url: file_url }] : [],
+        buttons: parseFiles(file_url, file_name).map((f, i) => ({ label: `첨부파일 보기 ${i+1}`, url: f.url })),
         sections: [
           { "name": "고객사", "value": clientData?.company_name || "알수없음" },
           { "name": "이슈유형", "value": issue_category },
@@ -113,7 +114,7 @@ export async function updateClientOperationIssue(formData: FormData) {
         subtitle: timestamp,
         buttonUrl: "https://letus-client-management.vercel.app/client-issues",
         buttonLabel: "고객사 이슈관리 바로가기",
-        buttons: response_file_url ? [{ label: "증빙파일 보기", url: response_file_url }] : [],
+        buttons: parseFiles(response_file_url, response_file_name).map((f, i) => ({ label: `증빙파일 보기 ${i+1}`, url: f.url })),
         sections: [
           { "name": "고객사", "value": (issueData as any)?.clients?.company_name || "알수없음" },
           { "name": "이슈유형", "value": (issueData as any)?.issue_category || "-" },

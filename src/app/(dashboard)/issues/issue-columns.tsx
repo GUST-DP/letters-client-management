@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { Paperclip, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { cn, parseFiles } from "@/lib/utils";
 
 export const getIssueColumns = (
   onDetail: (issue: any) => void,
@@ -145,11 +145,20 @@ export const getIssueColumns = (
     cell: ({ row }) => {
       const fileUrl = row.original.file_url;
       if (!fileUrl) return <div className="text-center text-slate-300">-</div>;
+      
+      const files = parseFiles(row.original.file_url, row.original.file_name);
       return (
-        <div className="text-center">
-          <a href={fileUrl} target="_blank" rel="noopener noreferrer" className="inline-flex h-7 px-2 items-center justify-center text-slate-500 hover:text-[#ff5c39] transition-colors" title={row.original.file_name || "첨부파일 보기"}>
-            <Paperclip className="h-4 w-4" />
-          </a>
+        <div className="text-center flex justify-center">
+          <div className="flex items-center gap-1">
+            <a href={files[0].url} target="_blank" rel="noopener noreferrer" className="inline-flex h-7 px-1 items-center justify-center text-slate-500 hover:text-[#ff5c39] transition-colors" title={files[0].name || "첨부파일 보기"}>
+              <Paperclip className="h-4 w-4" />
+            </a>
+            {files.length > 1 && (
+              <span className="text-[10px] items-center font-bold text-slate-400 bg-slate-100 rounded-full px-1.5 py-0.5">
+                {files.length}
+              </span>
+            )}
+          </div>
         </div>
       );
     },

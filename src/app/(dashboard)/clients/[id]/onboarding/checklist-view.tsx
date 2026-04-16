@@ -199,25 +199,25 @@ export function ChecklistView({ clientId, tasks, initialStatus }: ChecklistViewP
       {/* 스프레드시트 스타일 테이블 */}
       <div className="bg-white rounded-xl border shadow-sm overflow-hidden">
         <Table>
-          <TableHeader>
-            <TableRow className="hover:bg-transparent border-b">
-              <TableHead className="w-[180px] font-bold text-gray-900 text-center">카테고리</TableHead>
-              <TableHead className="w-[70px] text-center font-bold text-gray-900 border-l p-1">
+          <TableHeader className="bg-[#1B2A4E]">
+            <TableRow className="hover:bg-transparent border-none">
+              <TableHead className="w-[180px] font-bold text-blue-50 text-center border-r border-[#2C3F6D]">카테고리</TableHead>
+              <TableHead className="w-[70px] text-center font-bold text-blue-50 border-r border-[#2C3F6D] p-1">
                 <div 
-                  className="flex flex-col items-center justify-center gap-1 cursor-pointer select-none py-1 hover:bg-gray-100/50 rounded-md transition-colors"
+                  className="flex flex-col items-center justify-center gap-1 cursor-pointer select-none py-1 hover:bg-[#2A3E66] rounded-md transition-colors"
                   onClick={handleSelectAll}
                 >
-                  <span className="text-[10px] text-gray-500 font-bold whitespace-nowrap">전체</span>
+                  <span className="text-[10px] text-blue-200 font-bold whitespace-nowrap">전체</span>
                   <Checkbox 
                     checked={isAllSelected}
-                    className="w-4 h-4 border-2 border-gray-300 data-checked:bg-white data-checked:border-green-500 data-checked:text-green-600 text-transparent transition-all font-bold"
+                    className="w-4 h-4 border-2 border-blue-200 data-checked:bg-white data-checked:border-green-500 data-checked:text-green-600 text-transparent transition-all font-bold"
                   />
                 </div>
               </TableHead>
-              <TableHead className="w-[280px] font-bold text-gray-900 border-l px-6">점검 항목</TableHead>
-              <TableHead className="w-[150px] font-bold text-gray-900 border-l text-center">대상/값</TableHead>
-              <TableHead className="font-bold text-gray-900 border-l px-6">세부 내용 / 기준</TableHead>
-              <TableHead className="w-[400px] font-bold text-gray-900 border-l px-4 text-center">비고</TableHead>
+              <TableHead className="w-[280px] font-bold text-blue-50 border-r border-[#2C3F6D] px-6">점검 항목</TableHead>
+              <TableHead className="w-[150px] font-bold text-blue-50 border-r border-[#2C3F6D] text-center">대상 및 값</TableHead>
+              <TableHead className="font-bold text-blue-50 border-r border-[#2C3F6D] px-6">세부내용(기준)</TableHead>
+              <TableHead className="w-[400px] font-bold text-blue-50 px-4 text-center">비고</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -270,7 +270,7 @@ export function ChecklistView({ clientId, tasks, initialStatus }: ChecklistViewP
                           }
                         }}
                         onBlur={(e) => handleInputBlur(task.id, isDone, e.target.value.replace(/,/g, ''), taskStatus?.remarks || null)}
-                        className="h-9 text-xs text-center border-primary/20 focus:border-primary text-primary bg-blue-50/10"
+                        className="h-7 text-[10px] text-center border-primary/20 focus:border-primary text-primary bg-blue-50/10 placeholder:text-[9px]"
                         disabled={isPending}
                       />
                     ) : (
@@ -288,7 +288,7 @@ export function ChecklistView({ clientId, tasks, initialStatus }: ChecklistViewP
                         placeholder="특이사항..."
                         onChange={(e) => handleRemarkChange(task.id, e.target.value)}
                         onBlur={(e) => handleRemarkBlur(task.id, isDone, taskStatus?.task_value || null, e.target.value)}
-                        className="h-8 text-[11px] border-gray-200 focus:border-blue-300 bg-white"
+                        className="h-7 text-[10px] border-gray-200 focus:border-blue-300 bg-white placeholder:text-[9px]"
                         disabled={isPending}
                       />
                   </TableCell>

@@ -155,15 +155,15 @@ export function ChecklistManager({ initialTasks, title, description }: Props) {
         </div>
 
         <Table className="text-xs">
-          <TableHeader className="bg-slate-800">
+          <TableHeader className="bg-[#1B2A4E]">
             <TableRow className="hover:bg-transparent border-none">
-              <TableHead className="w-[60px] font-black text-slate-300 border-r border-slate-700/50 text-center text-[12px] uppercase tracking-wider px-3">#</TableHead>
-              <TableHead className="w-[150px] font-black text-slate-300 border-r border-slate-700/50 text-center text-[12px] uppercase tracking-wider px-3">카테고리</TableHead>
-              <TableHead className="w-[200px] font-black text-slate-300 border-r border-slate-700/50 text-[12px] uppercase tracking-wider px-3">점검 항목명</TableHead>
-              <TableHead className="w-[120px] font-black text-slate-300 border-r border-slate-700/50 text-center text-[12px] uppercase tracking-wider px-3">대상/값</TableHead>
-              <TableHead className="font-black text-slate-300 border-r border-slate-700/50 text-[12px] uppercase tracking-wider px-3">세부 내용 / 기준</TableHead>
-              <TableHead className="w-[100px] font-black text-slate-300 border-r border-slate-700/50 text-center text-[12px] uppercase tracking-wider px-3">수기입력</TableHead>
-              <TableHead className="w-[120px] font-black text-slate-300 text-center text-[12px] uppercase tracking-wider px-3">관리</TableHead>
+              <TableHead className="w-[60px] font-black text-blue-50 border-r border-[#2C3F6D] text-center text-[12px] uppercase tracking-wider px-3">#</TableHead>
+              <TableHead className="w-[150px] font-black text-blue-50 border-r border-[#2C3F6D] text-center text-[12px] uppercase tracking-wider px-3">카테고리</TableHead>
+              <TableHead className="w-[200px] font-black text-blue-50 border-r border-[#2C3F6D] text-[12px] uppercase tracking-wider px-3">점검 항목</TableHead>
+              <TableHead className="w-[120px] font-black text-blue-50 border-r border-[#2C3F6D] text-center text-[12px] uppercase tracking-wider px-3">대상 및 값</TableHead>
+              <TableHead className="font-black text-blue-50 border-r border-[#2C3F6D] text-[12px] uppercase tracking-wider px-3">세부내용(기준)</TableHead>
+              <TableHead className="w-[100px] font-black text-blue-50 border-r border-[#2C3F6D] text-center text-[12px] uppercase tracking-wider px-3">수기입력 여부</TableHead>
+              <TableHead className="w-[120px] font-black text-blue-50 text-center text-[12px] uppercase tracking-wider px-3">관리</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

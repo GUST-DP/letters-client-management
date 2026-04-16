@@ -204,10 +204,9 @@ export function ChecklistView({ clientId, tasks, initialStatus }: ChecklistViewP
               <TableHead className="w-[180px] font-bold text-blue-50 text-center border-r border-[#2C3F6D]">카테고리</TableHead>
               <TableHead className="w-[70px] p-0 border-r border-[#2C3F6D]">
                 <div 
-                  className="flex flex-col items-center justify-center h-full w-full gap-1 cursor-pointer select-none py-2 hover:bg-[#2A3E66] transition-colors"
+                  className="flex items-center justify-center h-full w-full cursor-pointer select-none py-2 hover:bg-[#2A3E66] transition-colors"
                   onClick={handleSelectAll}
                 >
-                  <span className="text-[9px] text-blue-300 font-black uppercase tracking-tighter leading-none mb-0.5">전체</span>
                   <Checkbox 
                     checked={isAllSelected}
                     className="w-4 h-4 border-2 border-blue-200 data-checked:bg-white data-checked:border-green-500 data-checked:text-green-600 text-transparent transition-all font-bold"

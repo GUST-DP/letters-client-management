@@ -371,28 +371,27 @@ export default async function Home() {
                 <AlertCircle className="h-3.5 w-3.5 text-white" /> 이슈등록 현황
               </CardTitle>
             </CardHeader>
-            <CardContent className="p-2 flex flex-col justify-center items-center h-full">
-              <div className="text-[28px] font-black tracking-tight leading-none mb-1 text-white flex items-baseline justify-center">
+            <CardContent className="p-2 flex flex-col justify-center h-full">
+              <div className="text-[28px] font-black tracking-tight leading-none mb-1.5 text-white flex items-baseline justify-center">
                 {issueCount}
                 <span className="text-[11px] font-bold text-white ml-0.5 shrink-0">건</span>
               </div>
-              <div className="text-[9px] font-bold text-[#ff5c39] mb-1.5">전체 이슈</div>
-              <div className="w-full grid grid-cols-2 gap-1.5">
-                <div className="bg-white/10 rounded-lg px-2 py-1.5 text-center">
-                  <div className="text-[8px] text-white/60 font-medium mb-0.5">고객사 이슈등록</div>
-                  <div className="text-[13px] font-black text-[#ff5c39] leading-none">{clientIssueCount}<span className="text-[9px] ml-0.5">개</span></div>
+              <div className="flex flex-col gap-1 w-full">
+                <div className="flex items-center justify-between text-[9px]">
+                  <span className="text-white/60 font-medium">고객사 이슈등록</span>
+                  <span className="font-black text-[#ff5c39]">{clientIssueCount}건</span>
                 </div>
-                <div className="bg-white/10 rounded-lg px-2 py-1.5 text-center">
-                  <div className="text-[8px] text-white/60 font-medium mb-0.5">고객사 조치등록</div>
-                  <div className="text-[13px] font-black text-emerald-400 leading-none">{clientCompletedCount}<span className="text-[9px] ml-0.5">개</span></div>
+                <div className="flex items-center justify-between text-[9px]">
+                  <span className="text-white/60 font-medium">고객사 조치등록</span>
+                  <span className="font-black text-emerald-400">{clientCompletedCount}건</span>
                 </div>
-                <div className="bg-white/10 rounded-lg px-2 py-1.5 text-center">
-                  <div className="text-[8px] text-white/60 font-medium mb-0.5">서비스 이슈등록</div>
-                  <div className="text-[13px] font-black text-[#ff5c39] leading-none">{serviceIssueCount}<span className="text-[9px] ml-0.5">개</span></div>
+                <div className="flex items-center justify-between text-[9px]">
+                  <span className="text-white/60 font-medium">서비스 이슈등록</span>
+                  <span className="font-black text-[#ff5c39]">{serviceIssueCount}건</span>
                 </div>
-                <div className="bg-white/10 rounded-lg px-2 py-1.5 text-center">
-                  <div className="text-[8px] text-white/60 font-medium mb-0.5">서비스 조치등록</div>
-                  <div className="text-[13px] font-black text-emerald-400 leading-none">{serviceCompletedCount}<span className="text-[9px] ml-0.5">개</span></div>
+                <div className="flex items-center justify-between text-[9px]">
+                  <span className="text-white/60 font-medium">서비스 조치등록</span>
+                  <span className="font-black text-emerald-400">{serviceCompletedCount}건</span>
                 </div>
               </div>
             </CardContent>

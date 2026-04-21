@@ -246,12 +246,12 @@ export default async function Home() {
               </CardTitle>
             </CardHeader>
             <CardContent className="p-2">
-              <div className="text-[10px] font-bold text-white text-right mb-0">원(KRW)</div>
+              <div className="text-[12px] font-bold text-white text-right mb-0">원(KRW)</div>
               <div className="text-[28px] font-black tracking-tighter font-mono text-[#ff5c39] leading-none text-right mb-1">
                 {fmtKRW(yearlyCumulativeSales)}
               </div>
               <div className="flex flex-col gap-1.5 mt-1.5">
-                <div className="flex items-center justify-between text-[11px] font-bold text-white">
+                <div className="flex items-center justify-between text-[14px] font-bold text-white">
                   <span>목표: {fmtCompact(YEARLY_GOAL)}</span>
                   <span>{yearlyAchievement}%</span>
                 </div>
@@ -271,12 +271,12 @@ export default async function Home() {
               </CardTitle>
             </CardHeader>
             <CardContent className="p-2">
-              <div className="text-[10px] font-bold text-white text-right mb-0">원(KRW)</div>
+              <div className="text-[12px] font-bold text-white text-right mb-0">원(KRW)</div>
               <div className="text-[28px] font-black tracking-tighter font-mono text-[#ff5c39] leading-none text-right mb-1">
                 {fmtKRW(totalLastSales)}
               </div>
               <div className="flex flex-col gap-1.5 mt-1.5">
-                <div className="flex items-center justify-between text-[11px] font-bold text-white">
+                <div className="flex items-center justify-between text-[14px] font-bold text-white">
                   <span>전월 대비 증감</span>
                   <span className={Number(salesMoM) >= 0 ? "text-emerald-400" : "text-rose-400"}>
                     {Number(salesMoM) >= 0 ? "▲" : "▼"} {Math.abs(Number(salesMoM))}%
@@ -294,16 +294,16 @@ export default async function Home() {
               </CardTitle>
             </CardHeader>
             <CardContent className="p-2">
-              <div className="text-[10px] font-bold text-white text-right mb-0">원(KRW)</div>
+              <div className="text-[12px] font-bold text-white text-right mb-0">원(KRW)</div>
               <div className="text-[28px] font-black tracking-tighter font-mono text-[#ff5c39] leading-none text-right mb-1">
                 {fmtKRW(totalUnpaid)}
               </div>
               <div className="flex flex-wrap gap-1 mt-1.5">
                 {sortedUnpaidMonths.length === 0 && (
-                  <span className="text-[10px] text-white">미수금 없음</span>
+                  <span className="text-[12px] text-white">미수금 없음</span>
                 )}
                 {sortedUnpaidMonths.slice(0, 3).map(([m, amt]) => (
-                  <Badge key={m} variant="secondary" className="text-[9px] bg-white/10 text-white border-none px-1 h-3.5 font-bold">
+                  <Badge key={m} variant="secondary" className="text-[11px] bg-white/10 text-white border-none px-1.5 h-4 font-bold">
                     {m.replace(/^\d{4}-/, "")}월: {fmtCompact(amt)}
                   </Badge>
                 ))}
@@ -325,18 +325,18 @@ export default async function Home() {
               </div>
               <div className="flex justify-center gap-2">
                 <div className="text-center">
-                  <div className="text-[9px] text-white font-medium">운영중</div>
-                  <div className="text-[13px] font-black text-[#ff5c39]">{activeClients.length}</div>
+                  <div className="text-[11px] text-white font-medium">운영중</div>
+                  <div className="text-[16px] font-black text-[#ff5c39]">{activeClients.length}</div>
                 </div>
                 <div className="h-5 w-px bg-white/20 my-auto" />
                 <div className="text-center">
-                  <div className="text-[9px] text-white font-medium">계약진행</div>
-                  <div className="text-[13px] font-black text-white">{progressClients.length}</div>
+                  <div className="text-[11px] text-white font-medium">계약진행</div>
+                  <div className="text-[16px] font-black text-white">{progressClients.length}</div>
                 </div>
                 <div className="h-5 w-px bg-white/20 my-auto" />
                 <div className="text-center">
-                  <div className="text-[9px] text-white font-medium">해지</div>
-                  <div className="text-[13px] font-black text-white">{terminatedClients.length}</div>
+                  <div className="text-[11px] text-white font-medium">해지</div>
+                  <div className="text-[16px] font-black text-white">{terminatedClients.length}</div>
                 </div>
               </div>
             </CardContent>
@@ -354,12 +354,12 @@ export default async function Home() {
                 {avgLeadTime}
                 <span className="text-[11px] font-bold text-white ml-0.5 shrink-0">일</span>
               </div>
-              <div className="flex items-center justify-center gap-1 text-[10px] font-medium text-white">
+              <div className="flex items-center justify-center gap-1 text-[12px] font-medium text-white">
                 <Clock className="h-2.5 w-2.5" />
                 <span>인입 ~ 계약 평균 ({leadTimes.length}건)</span>
               </div>
               {leadTimes.length === 0 && clientsData.length > 0 && (
-                <div className="text-[9px] text-white mt-1 text-center">계약일 정보 없음</div>
+                <div className="text-[11px] text-white mt-1 text-center">계약일 정보 없음</div>
               )}
             </CardContent>
           </Card>
@@ -377,19 +377,19 @@ export default async function Home() {
                 <span className="text-[11px] font-bold text-white ml-0.5 shrink-0">건</span>
               </div>
               <div className="flex flex-col gap-1 w-full">
-                <div className="flex items-center justify-between text-[9px]">
+                <div className="flex items-center justify-between text-[11px]">
                   <span className="text-white font-medium">고객사 이슈등록</span>
                   <span className="font-black text-[#ff5c39]">{clientIssueCount}건</span>
                 </div>
-                <div className="flex items-center justify-between text-[9px]">
+                <div className="flex items-center justify-between text-[11px]">
                   <span className="text-white font-medium">고객사 조치등록</span>
                   <span className="font-black text-emerald-400">{clientCompletedCount}건</span>
                 </div>
-                <div className="flex items-center justify-between text-[9px]">
+                <div className="flex items-center justify-between text-[11px]">
                   <span className="text-white font-medium">서비스 이슈등록</span>
                   <span className="font-black text-[#ff5c39]">{serviceIssueCount}건</span>
                 </div>
-                <div className="flex items-center justify-between text-[9px]">
+                <div className="flex items-center justify-between text-[11px]">
                   <span className="text-white font-medium">서비스 조치등록</span>
                   <span className="font-black text-emerald-400">{serviceCompletedCount}건</span>
                 </div>

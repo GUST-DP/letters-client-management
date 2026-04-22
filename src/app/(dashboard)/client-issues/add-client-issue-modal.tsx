@@ -42,6 +42,7 @@ const ISSUE_CATEGORIES = [
   "부족분",
   "입고 높이 미준수",
   "입고 후 패킹",
+  "혼적",
 ];
 
 const RESPONSIBLE_PARTIES = ["배송/조립팀", "물류작업자", "고객", "시스템"];

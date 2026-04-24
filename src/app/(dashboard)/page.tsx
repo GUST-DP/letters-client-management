@@ -48,40 +48,69 @@ export default async function Home() {
   // 고객사 이슈(client_operation_issues) 유형별 집계
   const { data: opIssuesFullRaw } = await supabase
     .from("client_operation_issues")
-    .select("issue_category, clients(company_name)");
+    .select("issue_category, occurrence_date, clients(company_name)");
   const opIssuesFull = opIssuesFullRaw ?? [];
 
   const clientIssueByTypeMap: Record<string, number> = {};
+  const clientIssueByTypeMonthlyMap: Record<string, number> = {};
   const issueByClientCombinedMap: Record<string, number> = {};
+  const issueByClientMonthlyMap: Record<string, number> = {};
+
   opIssuesFull.forEach((i: any) => {
     const type = i.issue_category || "기타";
-    clientIssueByTypeMap[type] = (clientIssueByTypeMap[type] || 0) + 1;
     const cName = (i.clients as any)?.company_name || "알 수 없음";
+    // 연누적
+    clientIssueByTypeMap[type] = (clientIssueByTypeMap[type] || 0) + 1;
     issueByClientCombinedMap[cName] = (issueByClientCombinedMap[cName] || 0) + 1;
+    // 당월
+    if (i.occurrence_date?.startsWith(currentMonthStr)) {
+      clientIssueByTypeMonthlyMap[type] = (clientIssueByTypeMonthlyMap[type] || 0) + 1;
+      issueByClientMonthlyMap[cName] = (issueByClientMonthlyMap[cName] || 0) + 1;
+    }
   });
+
   const clientIssueByTypeData = Object.entries(clientIssueByTypeMap)
     .map(([name, value]) => ({ name, value }))
     .sort((a, b) => b.value - a.value);
-
-  // 서비스 이슈(client_issues) 유형별 집계도 패칭 (차트 전용)
-  const { data: svcIssuesFullRaw } = await supabase
-    .from("client_issues")
-    .select("issue_type, clients(company_name)");
-  const svcIssuesFull = svcIssuesFullRaw ?? [];
-
-  const serviceIssueByTypeMap: Record<string, number> = {};
-  svcIssuesFull.forEach((i: any) => {
-    const type = i.issue_type || "기타";
-    serviceIssueByTypeMap[type] = (serviceIssueByTypeMap[type] || 0) + 1;
-    const cName = (i.clients as any)?.company_name || "알 수 없음";
-    issueByClientCombinedMap[cName] = (issueByClientCombinedMap[cName] || 0) + 1;
-  });
-  const serviceIssueByTypeData = Object.entries(serviceIssueByTypeMap)
+  const clientIssueByTypeMonthlyData = Object.entries(clientIssueByTypeMonthlyMap)
     .map(([name, value]) => ({ name, value }))
     .sort((a, b) => b.value - a.value);
 
-  // 고객사별 전체 이슈 건수 (고객사+서비스 합산) TOP 8
+  // 서비스 이슈(client_issues) 유형별 집계
+  const { data: svcIssuesFullRaw } = await supabase
+    .from("client_issues")
+    .select("issue_type, occurrence_date, clients(company_name)");
+  const svcIssuesFull = svcIssuesFullRaw ?? [];
+
+  const serviceIssueByTypeMap: Record<string, number> = {};
+  const serviceIssueByTypeMonthlyMap: Record<string, number> = {};
+
+  svcIssuesFull.forEach((i: any) => {
+    const type = i.issue_type || "기타";
+    const cName = (i.clients as any)?.company_name || "알 수 없음";
+    // 연누적
+    serviceIssueByTypeMap[type] = (serviceIssueByTypeMap[type] || 0) + 1;
+    issueByClientCombinedMap[cName] = (issueByClientCombinedMap[cName] || 0) + 1;
+    // 당월
+    if (i.occurrence_date?.startsWith(currentMonthStr)) {
+      serviceIssueByTypeMonthlyMap[type] = (serviceIssueByTypeMonthlyMap[type] || 0) + 1;
+      issueByClientMonthlyMap[cName] = (issueByClientMonthlyMap[cName] || 0) + 1;
+    }
+  });
+
+  const serviceIssueByTypeData = Object.entries(serviceIssueByTypeMap)
+    .map(([name, value]) => ({ name, value }))
+    .sort((a, b) => b.value - a.value);
+  const serviceIssueByTypeMonthlyData = Object.entries(serviceIssueByTypeMonthlyMap)
+    .map(([name, value]) => ({ name, value }))
+    .sort((a, b) => b.value - a.value);
+
+  // 고객사별 이슈 건수 TOP 8 (연누적 / 당월)
   const issueByClientCombinedData = Object.entries(issueByClientCombinedMap)
+    .map(([name, value]) => ({ name, value }))
+    .sort((a, b) => b.value - a.value)
+    .slice(0, 8);
+  const issueByClientMonthlyData = Object.entries(issueByClientMonthlyMap)
     .map(([name, value]) => ({ name, value }))
     .sort((a, b) => b.value - a.value)
     .slice(0, 8);
@@ -478,8 +507,11 @@ export default async function Home() {
 
         <IssueAnalyticsSection
             clientIssueByType={clientIssueByTypeData}
+            clientIssueByTypeMonthly={clientIssueByTypeMonthlyData}
             serviceIssueByType={serviceIssueByTypeData}
+            serviceIssueByTypeMonthly={serviceIssueByTypeMonthlyData}
             issueByClient={issueByClientCombinedData}
+            issueByClientMonthly={issueByClientMonthlyData}
           />
 
         {/* ── 하단: 미수금 + 인입경로 + 매출 TOP 5 (균형 잡힌 높이 유지) ── */}

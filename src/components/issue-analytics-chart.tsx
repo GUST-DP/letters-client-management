@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertCircle, BarChart2, Users } from "lucide-react";
@@ -16,22 +17,48 @@ const CLIENT_BAR_COLORS = [
 ];
 
 interface ChartItem { name: string; value: number; }
+type Period = "monthly" | "annual";
 
-// ── 가로형 도넛 카드 (왼쪽 범례 + 오른쪽 도넛 크게) ──────────────────────────
+// ── 기간 토글 버튼 ────────────────────────────────────────────────────────────
+function PeriodToggle({ period, onChange }: { period: Period; onChange: (p: Period) => void }) {
+  return (
+    <div className="flex items-center bg-slate-100 rounded-lg p-0.5 gap-0.5 flex-shrink-0">
+      {(["monthly", "annual"] as Period[]).map((p) => (
+        <button
+          key={p}
+          onClick={() => onChange(p)}
+          className={[
+            "text-[10px] font-black px-2 py-0.5 rounded-md transition-all",
+            period === p
+              ? "bg-slate-800 text-white shadow-sm"
+              : "text-slate-400 hover:text-slate-600",
+          ].join(" ")}
+        >
+          {p === "monthly" ? "당월" : "연누적"}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+// ── 가로형 도넛 카드 ──────────────────────────────────────────────────────────
 function HorizontalDonutCard({
   title,
   icon,
   iconColor,
-  data,
+  annualData,
+  monthlyData,
   colors,
 }: {
   title: string;
   icon: React.ReactNode;
   iconColor: string;
-  accentColor?: string;
-  data: ChartItem[];
+  annualData: ChartItem[];
+  monthlyData: ChartItem[];
   colors: string[];
 }) {
+  const [period, setPeriod] = useState<Period>("monthly");
+  const data = period === "monthly" ? monthlyData : annualData;
   const total = data.reduce((s, d) => s + d.value, 0);
 
   return (
@@ -40,19 +67,22 @@ function HorizontalDonutCard({
         <CardTitle className="text-sm font-bold text-[#414344] flex items-center gap-1.5">
           <span style={{ color: iconColor }}>{icon}</span>
           {title}
-          {total > 0 && (
-            <span className="ml-auto text-[11px] font-bold text-slate-400">총 {total}건</span>
-          )}
+          <div className="ml-auto flex items-center gap-1.5">
+            {total > 0 && (
+              <span className="text-[11px] font-bold text-slate-400">총 {total}건</span>
+            )}
+            <PeriodToggle period={period} onChange={setPeriod} />
+          </div>
         </CardTitle>
       </CardHeader>
       <CardContent className="p-3">
         {total === 0 ? (
           <div className="h-[160px] flex items-center justify-center text-slate-300 text-xs font-bold">
-            등록된 이슈 없음
+            {period === "monthly" ? "당월 이슈 없음" : "등록된 이슈 없음"}
           </div>
         ) : (
           <div className="flex items-center gap-2">
-            {/* 왼쪽: 범례 — 건수를 이름 바로 옆에 붙임 */}
+            {/* 왼쪽: 범례 */}
             <div className="flex-1 min-w-0 space-y-2">
               {data.map((d, i) => (
                 <div key={i} className="flex items-center gap-1.5 min-w-0">
@@ -73,7 +103,7 @@ function HorizontalDonutCard({
               ))}
             </div>
 
-            {/* 오른쪽: 도넛 차트 — 180px로 크게 */}
+            {/* 오른쪽: 도넛 차트 */}
             <div className="flex-shrink-0" style={{ width: 180, height: 180 }}>
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
@@ -116,7 +146,15 @@ function HorizontalDonutCard({
 }
 
 // ── 고객사별 이슈 건수 바차트 카드 ───────────────────────────────────────────
-function ClientIssueRankCard({ data }: { data: ChartItem[] }) {
+function ClientIssueRankCard({
+  annualData,
+  monthlyData,
+}: {
+  annualData: ChartItem[];
+  monthlyData: ChartItem[];
+}) {
+  const [period, setPeriod] = useState<Period>("monthly");
+  const data = period === "monthly" ? monthlyData : annualData;
   const maxVal = data.length > 0 ? Math.max(...data.map((d) => d.value)) : 1;
 
   return (
@@ -125,39 +163,35 @@ function ClientIssueRankCard({ data }: { data: ChartItem[] }) {
         <CardTitle className="text-sm font-bold text-[#414344] flex items-center gap-1.5">
           <Users className="h-4 w-4 text-slate-500" />
           고객사별 이슈 건수
-          {data.length > 0 && (
-            <span className="ml-auto text-[11px] font-bold text-slate-400">전체 합산</span>
-          )}
+          <div className="ml-auto flex items-center gap-1.5">
+            {data.length > 0 && (
+              <span className="text-[11px] font-bold text-slate-400">전체 합산</span>
+            )}
+            <PeriodToggle period={period} onChange={setPeriod} />
+          </div>
         </CardTitle>
       </CardHeader>
       <CardContent className="p-3">
         {data.length === 0 ? (
-          <div className="h-[120px] flex items-center justify-center text-slate-300 text-xs font-bold">
-            데이터 없음
+          <div className="h-[160px] flex items-center justify-center text-slate-300 text-xs font-bold">
+            {period === "monthly" ? "당월 이슈 없음" : "데이터 없음"}
           </div>
         ) : (
           <div className="space-y-2">
             {data.map((d, i) => (
               <div key={i} className="flex items-center gap-2">
-                {/* 순위 뱃지 */}
                 <div
                   className="w-[18px] h-[18px] rounded-full flex items-center justify-center text-[10px] font-black flex-shrink-0"
                   style={{
-                    background:
-                      i === 0 ? "#ff5c39" : i === 1 ? "#f97316" : i === 2 ? "#eab308" : "#e2e8f0",
+                    background: i === 0 ? "#ff5c39" : i === 1 ? "#f97316" : i === 2 ? "#eab308" : "#e2e8f0",
                     color: i < 3 ? "white" : "#64748b",
                   }}
                 >
                   {i + 1}
                 </div>
-                {/* 고객사명 */}
-                <span
-                  className="w-[78px] text-[11px] font-bold text-slate-700 truncate flex-shrink-0"
-                  title={d.name}
-                >
+                <span className="w-[78px] text-[11px] font-bold text-slate-700 truncate flex-shrink-0" title={d.name}>
                   {d.name}
                 </span>
-                {/* 바 */}
                 <div className="flex-1 h-3.5 bg-slate-100 rounded-full overflow-hidden">
                   <div
                     className="h-full rounded-full transition-all duration-700"
@@ -167,7 +201,6 @@ function ClientIssueRankCard({ data }: { data: ChartItem[] }) {
                     }}
                   />
                 </div>
-                {/* 건수 */}
                 <span className="text-[11px] font-black text-slate-800 flex-shrink-0">
                   {d.value}건
                 </span>
@@ -183,14 +216,20 @@ function ClientIssueRankCard({ data }: { data: ChartItem[] }) {
 // ── 메인 내보내기 ─────────────────────────────────────────────────────────────
 export interface IssueAnalyticsProps {
   clientIssueByType: ChartItem[];
+  clientIssueByTypeMonthly: ChartItem[];
   serviceIssueByType: ChartItem[];
+  serviceIssueByTypeMonthly: ChartItem[];
   issueByClient: ChartItem[];
+  issueByClientMonthly: ChartItem[];
 }
 
 export function IssueAnalyticsSection({
   clientIssueByType,
+  clientIssueByTypeMonthly,
   serviceIssueByType,
+  serviceIssueByTypeMonthly,
   issueByClient,
+  issueByClientMonthly,
 }: IssueAnalyticsProps) {
   return (
     <div className="grid gap-3 grid-cols-1 md:grid-cols-3">
@@ -199,21 +238,24 @@ export function IssueAnalyticsSection({
         title="고객사 이슈 유형별"
         icon={<AlertCircle className="h-4 w-4" />}
         iconColor="#ff5c39"
-        accentColor="#ff5c39"
-        data={clientIssueByType}
+        annualData={clientIssueByType}
+        monthlyData={clientIssueByTypeMonthly}
         colors={CLIENT_ISSUE_COLORS}
       />
 
       {/* ② 고객사별 이슈 건수 */}
-      <ClientIssueRankCard data={issueByClient} />
+      <ClientIssueRankCard
+        annualData={issueByClient}
+        monthlyData={issueByClientMonthly}
+      />
 
       {/* ③ 서비스 이슈 유형별 */}
       <HorizontalDonutCard
         title="서비스 이슈 유형별"
         icon={<BarChart2 className="h-4 w-4" />}
         iconColor="#3b82f6"
-        accentColor="#3b82f6"
-        data={serviceIssueByType}
+        annualData={serviceIssueByType}
+        monthlyData={serviceIssueByTypeMonthly}
         colors={SERVICE_ISSUE_COLORS}
       />
     </div>

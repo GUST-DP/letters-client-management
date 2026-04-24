@@ -17,19 +17,18 @@ const CLIENT_BAR_COLORS = [
 
 interface ChartItem { name: string; value: number; }
 
-// ── 가로형 도넛 카드 (왼쪽 범례 + 오른쪽 도넛) ───────────────────────────────
+// ── 도넛 카드 (도넛 크게 위 + 범례 아래 2열) ─────────────────────────────────
 function HorizontalDonutCard({
   title,
   icon,
   iconColor,
-  accentColor,
   data,
   colors,
 }: {
   title: string;
   icon: React.ReactNode;
   iconColor: string;
-  accentColor: string;
+  accentColor?: string;
   data: ChartItem[];
   colors: string[];
 }) {
@@ -46,49 +45,23 @@ function HorizontalDonutCard({
           )}
         </CardTitle>
       </CardHeader>
-      <CardContent className="p-3">
+      <CardContent className="px-3 pt-2 pb-3">
         {total === 0 ? (
-          <div className="h-[120px] flex items-center justify-center text-slate-300 text-xs font-bold">
+          <div className="h-[160px] flex items-center justify-center text-slate-300 text-xs font-bold">
             등록된 이슈 없음
           </div>
         ) : (
-          <div className="flex items-center gap-3">
-            {/* 왼쪽: 범례 리스트 */}
-            <div className="flex-1 min-w-0 space-y-1.5">
-              {data.map((d, i) => (
-                <div key={i} className="flex items-center justify-between gap-1.5">
-                  <div className="flex items-center gap-1.5 min-w-0">
-                    <div
-                      className="w-2 h-2 rounded-full flex-shrink-0"
-                      style={{ background: colors[i % colors.length] }}
-                    />
-                    <span
-                      className="text-[11px] font-bold text-slate-600 truncate"
-                      title={d.name}
-                    >
-                      {d.name}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-1 flex-shrink-0">
-                    <span className="text-[11px] font-black text-slate-800">{d.value}건</span>
-                    <span className="text-[10px] text-slate-400 w-7 text-right">
-                      ({total > 0 ? ((d.value / total) * 100).toFixed(0) : 0}%)
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* 오른쪽: 도넛 차트 */}
-            <div className="flex-shrink-0" style={{ width: 140, height: 140 }}>
+          <div className="flex flex-col gap-2">
+            {/* 도넛 차트 (크게) */}
+            <div className="w-full" style={{ height: 200 }}>
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
                     data={data}
                     cx="50%"
                     cy="50%"
-                    innerRadius="42%"
-                    outerRadius="82%"
+                    innerRadius="38%"
+                    outerRadius="80%"
                     paddingAngle={2}
                     dataKey="value"
                     startAngle={90}
@@ -99,20 +72,38 @@ function HorizontalDonutCard({
                     ))}
                   </Pie>
                   <Tooltip
-                    formatter={(value: any, name: any, props: any) => [
+                    formatter={(value: any, _name: any, props: any) => [
                       `${value}건`,
-                      props.payload?.name ?? name,
+                      props.payload?.name ?? _name,
                     ]}
                     contentStyle={{
                       borderRadius: "10px",
                       border: "none",
-                      boxShadow: "0 4px 12px rgba(0,0,0,0.12)",
-                      fontSize: 11,
+                      boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+                      fontSize: 12,
                       fontWeight: "bold",
                     }}
                   />
                 </PieChart>
               </ResponsiveContainer>
+            </div>
+
+            {/* 범례: 2열 그리드 */}
+            <div className="grid grid-cols-2 gap-x-3 gap-y-1.5">
+              {data.map((d, i) => (
+                <div key={i} className="flex items-center gap-1.5 min-w-0">
+                  <div
+                    className="w-2 h-2 rounded-full flex-shrink-0"
+                    style={{ background: colors[i % colors.length] }}
+                  />
+                  <span className="text-[10px] font-bold text-slate-600 truncate" title={d.name}>
+                    {d.name}
+                  </span>
+                  <span className="text-[10px] font-black text-slate-800 ml-auto flex-shrink-0">
+                    {d.value}건
+                  </span>
+                </div>
+              ))}
             </div>
           </div>
         )}

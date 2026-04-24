@@ -11,6 +11,7 @@ import { DashboardComboChartClient } from "@/components/dashboard-combo-chart-cl
 import { RiskTableClient } from "@/components/risk-table-client";
 import { RecentIssueTable } from "@/components/recent-issue-table";
 import { TransitionLink } from "@/components/ui/transition-link";
+import { IssueAnalyticsSection } from "@/components/issue-analytics-chart";
 
 // 숫자 포맷 (원 단위, 쉼표)
 const fmtKRW = (n: number) =>
@@ -42,6 +43,48 @@ export default async function Home() {
   const clientsData = clientsRaw ?? [];
   const issuesData = issuesRaw ?? [];
   const opIssuesData = opIssuesRaw ?? [];
+
+  // ── 이슈 분석용 추가 데이터 패칭 ──
+  // 고객사 이슈(client_operation_issues) 유형별 집계
+  const { data: opIssuesFullRaw } = await supabase
+    .from("client_operation_issues")
+    .select("issue_category, clients(company_name)");
+  const opIssuesFull = opIssuesFullRaw ?? [];
+
+  const clientIssueByTypeMap: Record<string, number> = {};
+  const issueByClientCombinedMap: Record<string, number> = {};
+  opIssuesFull.forEach((i: any) => {
+    const type = i.issue_category || "기타";
+    clientIssueByTypeMap[type] = (clientIssueByTypeMap[type] || 0) + 1;
+    const cName = (i.clients as any)?.company_name || "알 수 없음";
+    issueByClientCombinedMap[cName] = (issueByClientCombinedMap[cName] || 0) + 1;
+  });
+  const clientIssueByTypeData = Object.entries(clientIssueByTypeMap)
+    .map(([name, value]) => ({ name, value }))
+    .sort((a, b) => b.value - a.value);
+
+  // 서비스 이슈(client_issues) 유형별 집계도 패칭 (차트 전용)
+  const { data: svcIssuesFullRaw } = await supabase
+    .from("client_issues")
+    .select("issue_type, clients(company_name)");
+  const svcIssuesFull = svcIssuesFullRaw ?? [];
+
+  const serviceIssueByTypeMap: Record<string, number> = {};
+  svcIssuesFull.forEach((i: any) => {
+    const type = i.issue_type || "기타";
+    serviceIssueByTypeMap[type] = (serviceIssueByTypeMap[type] || 0) + 1;
+    const cName = (i.clients as any)?.company_name || "알 수 없음";
+    issueByClientCombinedMap[cName] = (issueByClientCombinedMap[cName] || 0) + 1;
+  });
+  const serviceIssueByTypeData = Object.entries(serviceIssueByTypeMap)
+    .map(([name, value]) => ({ name, value }))
+    .sort((a, b) => b.value - a.value);
+
+  // 고객사별 전체 이슈 건수 (고객사+서비스 합산) TOP 8
+  const issueByClientCombinedData = Object.entries(issueByClientCombinedMap)
+    .map(([name, value]) => ({ name, value }))
+    .sort((a, b) => b.value - a.value)
+    .slice(0, 8);
 
   // 서비스 이슈 건수 (client_issues)
   const serviceIssueCount = issuesData.length;
@@ -431,6 +474,20 @@ export default async function Home() {
 
             </CardContent>
           </Card>
+        </div>
+
+        {/* ── 이슈 분석 섹션 (매출추이 바로 아래) ── */}
+        <div className="space-y-1.5">
+          <div className="flex items-center gap-2 px-1">
+            <div className="w-1.5 h-5 bg-slate-800 rounded-full" />
+            <h2 className="text-sm font-black text-slate-800 tracking-tight">이슈 유형 분석</h2>
+            <span className="text-[11px] font-medium text-slate-400 ml-1">고객사 · 서비스 이슈 집계 현황</span>
+          </div>
+          <IssueAnalyticsSection
+            clientIssueByType={clientIssueByTypeData}
+            serviceIssueByType={serviceIssueByTypeData}
+            issueByClient={issueByClientCombinedData}
+          />
         </div>
 
         {/* ── 하단: 미수금 + 인입경로 + 매출 TOP 5 (균형 잡힌 높이 유지) ── */}

@@ -307,7 +307,7 @@ export function ClientIssueResponseForm({ selectedIssue, userEmail, userName }: 
                   })()}
                 </td>
                 <td className="px-6 py-8 border-r border-slate-200 align-top">
-                  <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-wrap min-h-[60px]">
+                  <p className="text-xs text-slate-600 leading-relaxed whitespace-pre-wrap min-h-[60px]">
                     {selectedIssue?.action_taken || (
                       <span className="text-slate-300 italic">
                         {selectedIssue ? "내용이 없습니다." : "이슈를 선택하면 표시됩니다."}
@@ -316,7 +316,7 @@ export function ClientIssueResponseForm({ selectedIssue, userEmail, userName }: 
                   </p>
                 </td>
                 <td className="px-6 py-8 border-r border-slate-200 align-top bg-emerald-50/5">
-                  <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-wrap min-h-[60px]">
+                  <p className="text-xs text-slate-600 leading-relaxed whitespace-pre-wrap min-h-[60px]">
                     {selectedIssue?.preventive_measure || (
                       <span className="text-slate-300 italic">
                         {selectedIssue ? "내용이 없습니다." : "이슈를 선택하면 표시됩니다."}

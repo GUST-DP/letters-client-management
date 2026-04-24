@@ -287,9 +287,9 @@ export function IssueTable({ data, clients, teams, userEmail, userName, onRowCli
                       </TableRow>
                     );
                   })}
-                  {/* 공백 행 추가 (개수가 5개 미만일 경우) */}
-                  {table.getRowModel().rows.length < 5 && (
-                    Array.from({ length: 5 - table.getRowModel().rows.length }).map((_, i) => (
+                  {/* 공백 행 추가 (개수가 10개 미만일 경우) */}
+                  {table.getRowModel().rows.length < 10 && (
+                    Array.from({ length: 10 - table.getRowModel().rows.length }).map((_, i) => (
                       <TableRow key={`empty-${i}`} className="border-b border-slate-50 last:border-0 hover:bg-transparent">
                         {columns.map((_, colIdx) => (
                           <TableCell key={`empty-cell-${i}-${colIdx}`} className="py-0 px-4 border-r border-slate-50 last:border-r-0 h-[28px]">

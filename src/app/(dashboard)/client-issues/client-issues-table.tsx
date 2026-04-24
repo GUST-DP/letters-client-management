@@ -372,9 +372,9 @@ export function ClientIssueTable({
                   )
                 })
               )}
-              {/* 하이라이트를 위해 공백 행 유지 (약간의 높이 확보) */}
-              {filteredData.length > 0 && filteredData.length < 5 &&
-                Array.from({ length: 5 - filteredData.length }).map((_, i) => (
+              {/* 빈 행으로 10행 고정 */}
+              {filteredData.length < 10 &&
+                Array.from({ length: 10 - filteredData.length }).map((_, i) => (
                   <tr key={`empty-${i}`} style={{height:"30px"}} className="border-b border-slate-50 last:border-0 hover:bg-transparent">
                     {Array.from({ length: 10 }).map((_, j) => (
                       <td key={j} style={{height:"30px",padding:"0 10px"}} className="border-r border-slate-50 last:border-r-0">&nbsp;</td>

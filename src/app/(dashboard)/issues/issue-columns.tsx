@@ -29,6 +29,16 @@ export const getIssueColumns = (
     size: 100,
   },
   {
+    accessorKey: "created_at",
+    header: "등록일",
+    cell: ({ row }) => {
+      const val = row.getValue("created_at") as string;
+      const dateOnly = val ? val.slice(0, 10) : "-";
+      return <div className="text-center text-slate-500">{dateOnly}</div>;
+    },
+    size: 100,
+  },
+  {
     accessorKey: "status",
     header: "진행상태",
     cell: ({ getValue }) => {

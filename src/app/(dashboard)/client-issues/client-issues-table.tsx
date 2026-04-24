@@ -124,10 +124,11 @@ export function ClientIssueTable({
   }, [data, filterClient, filterCategory, filterStatus, startDate, endDate]);
 
   const handleExport = () => {
-    const headers = ["No", "발생일", "고객사", "이슈유형", "이슈내용", "책임주체", "진행상태", "조치내용", "등록자"];
+    const headers = ["No", "발생일", "등록일", "고객사", "이슈유형", "이슈내용", "책임주체", "진행상태", "조치내용", "등록자"];
     const rows = filteredData.map((item, i) => [
       i + 1,
       `"${item.occurrence_date || ""}"`,
+      `"${item.created_at ? item.created_at.slice(0, 10) : ""}"`,
       `"${item.clients?.company_name || ""}"`,
       `"${item.issue_category || ""}"`,
       `"${(item.issue_content || "").replace(/"/g, '""')}"`,
@@ -279,7 +280,7 @@ export function ClientIssueTable({
           <table className="w-full border-collapse text-[11px] min-w-max">
             <thead className="bg-slate-800" style={{position:"sticky",top:0,zIndex:10}}>
               <tr style={{height:"28px"}}>
-                {["No", "발생일", "진행상태", "고객사", "이슈유형", "이슈내용(요약)", "첨부", "책임주체", "등록자"].map(h => (
+                {["No", "발생일", "등록일", "진행상태", "고객사", "이슈유형", "이슈내용(요약)", "첨부", "책임주체", "등록자"].map(h => (
                   <th key={h} style={{height:"28px",fontSize:"11px",lineHeight:"28px",padding:"0 12px",whiteSpace:"nowrap"}} className="text-center font-black text-slate-300 border-r border-slate-700/50 last:border-r-0 uppercase tracking-wider">
                     {h}
                   </th>
@@ -289,7 +290,7 @@ export function ClientIssueTable({
             <tbody>
               {filteredData.length === 0 ? (
                 <tr>
-                  <td colSpan={9} className="h-[220px] text-center">
+                  <td colSpan={10} className="h-[220px] text-center">
                     <div className="flex flex-col items-center justify-center gap-3">
                       <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center">
                         <FileText className="h-8 w-8 text-slate-200" />
@@ -313,6 +314,7 @@ export function ClientIssueTable({
                     >
                       <td style={{height:"30px",fontSize:"11px",lineHeight:"30px",padding:"0 10px",overflow:"hidden"}} className="border-r border-slate-100 text-center text-slate-400">{idx + 1}</td>
                       <td style={{height:"30px",fontSize:"11px",lineHeight:"30px",padding:"0 10px",overflow:"hidden",whiteSpace:"nowrap"}} className="border-r border-slate-100 text-center font-bold text-slate-700">{item.occurrence_date}</td>
+                      <td style={{height:"30px",fontSize:"11px",lineHeight:"30px",padding:"0 10px",overflow:"hidden",whiteSpace:"nowrap"}} className="border-r border-slate-100 text-center text-slate-500">{item.created_at ? item.created_at.slice(0, 10) : "-"}</td>
                       <td style={{height:"30px",fontSize:"11px",lineHeight:"30px",padding:"0 10px",overflow:"hidden"}} className="border-r border-slate-100 text-center">
                         {(() => {
                           const val = item.status || "이슈등록";
@@ -374,7 +376,7 @@ export function ClientIssueTable({
               {filteredData.length > 0 && filteredData.length < 5 &&
                 Array.from({ length: 5 - filteredData.length }).map((_, i) => (
                   <tr key={`empty-${i}`} style={{height:"30px"}} className="border-b border-slate-50 last:border-0 hover:bg-transparent">
-                    {Array.from({ length: 9 }).map((_, j) => (
+                    {Array.from({ length: 10 }).map((_, j) => (
                       <td key={j} style={{height:"30px",padding:"0 10px"}} className="border-r border-slate-50 last:border-r-0">&nbsp;</td>
                     ))}
                   </tr>

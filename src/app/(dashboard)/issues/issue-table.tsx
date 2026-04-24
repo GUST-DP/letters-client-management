@@ -69,7 +69,7 @@ export function IssueTable({ data, clients, teams, userEmail, userName, onRowCli
 
   const handleExportExcel = () => {
     const headers = [
-      "No", "발생일", "진행상태", "고객사", "이슈유형", 
+      "No", "발생일", "등록일", "진행상태", "고객사", "이슈유형", 
       "건명", "이슈내용", "발생주체", "발생원인", 
       "담당자 및 권역장", "시공팀", "이슈등록자"
     ];
@@ -77,6 +77,7 @@ export function IssueTable({ data, clients, teams, userEmail, userName, onRowCli
     const rows = filteredData.map((item, index) => [
       index + 1,
       `"${item.occurrence_date || ""}"`,
+      `"${item.created_at ? item.created_at.slice(0, 10) : ""}"`,
       `"${item.status || ""}"`,
       `"${item.client?.company_name || ""}"`,
       `"${item.issue_type || ""}"`,

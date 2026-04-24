@@ -80,15 +80,15 @@ function HorizontalDonutCard({
             </div>
 
             {/* 오른쪽: 도넛 차트 */}
-            <div className="flex-shrink-0" style={{ width: 110, height: 110 }}>
+            <div className="flex-shrink-0" style={{ width: 140, height: 140 }}>
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
                     data={data}
                     cx="50%"
                     cy="50%"
-                    innerRadius="45%"
-                    outerRadius="85%"
+                    innerRadius="42%"
+                    outerRadius="82%"
                     paddingAngle={2}
                     dataKey="value"
                     startAngle={90}
@@ -99,7 +99,10 @@ function HorizontalDonutCard({
                     ))}
                   </Pie>
                   <Tooltip
-                    formatter={(v: any) => [`${v}건`, ""]}
+                    formatter={(value: any, name: any, props: any) => [
+                      `${value}건`,
+                      props.payload?.name ?? name,
+                    ]}
                     contentStyle={{
                       borderRadius: "10px",
                       border: "none",
@@ -171,7 +174,7 @@ function ClientIssueRankCard({ data }: { data: ChartItem[] }) {
                   />
                 </div>
                 {/* 건수 */}
-                <span className="text-[11px] font-black text-slate-800 w-7 text-right flex-shrink-0">
+                <span className="text-[11px] font-black text-slate-800 flex-shrink-0">
                   {d.value}건
                 </span>
               </div>

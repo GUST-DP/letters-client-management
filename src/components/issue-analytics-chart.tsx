@@ -1,9 +1,8 @@
 "use client";
 
-import {
-  PieChart, Pie, Cell, Tooltip, ResponsiveContainer,
-  BarChart, Bar, XAxis, YAxis, LabelList, CartesianGrid,
-} from "recharts";
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { AlertCircle, BarChart2, Users } from "lucide-react";
 
 // ── 색상 팔레트 ──────────────────────────────────────────────────────────────
 const CLIENT_ISSUE_COLORS = [
@@ -13,144 +12,182 @@ const SERVICE_ISSUE_COLORS = [
   "#3b82f6", "#6366f1", "#8b5cf6", "#0ea5e9", "#14b8a6", "#64748b", "#f43f5e", "#22c55e",
 ];
 const CLIENT_BAR_COLORS = [
-  "#ff5c39", "#f97316", "#eab308", "#10b981", "#3b82f6", "#a78bfa", "#ec4899", "#06b6d4",
+  "#ff5c39", "#f97316", "#eab308", "#10b981", "#3b82f6", "#a78bfa", "#ec4899", "#64748b",
 ];
 
 interface ChartItem { name: string; value: number; }
 
-// ── 도넛 차트 ────────────────────────────────────────────────────────────────
-function IssueDonutChart({
+// ── 가로형 도넛 카드 (왼쪽 범례 + 오른쪽 도넛) ───────────────────────────────
+function HorizontalDonutCard({
+  title,
+  icon,
+  iconColor,
+  accentColor,
   data,
   colors,
-  emptyLabel,
 }: {
+  title: string;
+  icon: React.ReactNode;
+  iconColor: string;
+  accentColor: string;
   data: ChartItem[];
   colors: string[];
-  emptyLabel: string;
 }) {
   const total = data.reduce((s, d) => s + d.value, 0);
-  if (total === 0)
-    return (
-      <div className="flex-1 flex items-center justify-center text-slate-300 text-xs font-bold">
-        {emptyLabel}
-      </div>
-    );
 
   return (
-    <div className="flex flex-col gap-2 w-full h-full">
-      {/* 도넛 */}
-      <div className="w-full" style={{ height: 160 }}>
-        <ResponsiveContainer width="100%" height="100%">
-          <PieChart>
-            <Pie
-              data={data}
-              cx="50%"
-              cy="50%"
-              innerRadius="48%"
-              outerRadius="82%"
-              paddingAngle={2}
-              dataKey="value"
-              startAngle={90}
-              endAngle={-270}
-            >
-              {data.map((_, i) => (
-                <Cell key={i} fill={colors[i % colors.length]} />
+    <Card className="border-none shadow-sm">
+      <CardHeader className="px-3 pt-1.5 pb-0">
+        <CardTitle className="text-sm font-bold text-[#414344] flex items-center gap-1.5">
+          <span style={{ color: iconColor }}>{icon}</span>
+          {title}
+          {total > 0 && (
+            <span className="ml-auto text-[11px] font-bold text-slate-400">총 {total}건</span>
+          )}
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="p-3">
+        {total === 0 ? (
+          <div className="h-[120px] flex items-center justify-center text-slate-300 text-xs font-bold">
+            등록된 이슈 없음
+          </div>
+        ) : (
+          <div className="flex items-center gap-3">
+            {/* 왼쪽: 범례 리스트 */}
+            <div className="flex-1 min-w-0 space-y-1.5">
+              {data.map((d, i) => (
+                <div key={i} className="flex items-center justify-between gap-1.5">
+                  <div className="flex items-center gap-1.5 min-w-0">
+                    <div
+                      className="w-2 h-2 rounded-full flex-shrink-0"
+                      style={{ background: colors[i % colors.length] }}
+                    />
+                    <span
+                      className="text-[11px] font-bold text-slate-600 truncate"
+                      title={d.name}
+                    >
+                      {d.name}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1 flex-shrink-0">
+                    <span className="text-[11px] font-black text-slate-800">{d.value}건</span>
+                    <span className="text-[10px] text-slate-400 w-7 text-right">
+                      ({total > 0 ? ((d.value / total) * 100).toFixed(0) : 0}%)
+                    </span>
+                  </div>
+                </div>
               ))}
-            </Pie>
-            <Tooltip
-              formatter={(v: any) => [`${v}건`, ""]}
-              contentStyle={{
-                borderRadius: "10px",
-                border: "none",
-                boxShadow: "0 4px 12px rgba(0,0,0,0.12)",
-                fontSize: 11,
-                fontWeight: "bold",
-              }}
-            />
-          </PieChart>
-        </ResponsiveContainer>
-      </div>
-
-      {/* 범례 */}
-      <div className="space-y-1.5 px-1">
-        {data.map((d, i) => (
-          <div key={i} className="flex items-center justify-between gap-1">
-            <div className="flex items-center gap-1.5 min-w-0">
-              <div
-                className="w-2 h-2 rounded-full flex-shrink-0"
-                style={{ background: colors[i % colors.length] }}
-              />
-              <span className="text-[11px] font-bold text-slate-600 truncate">{d.name}</span>
             </div>
-            <div className="flex items-center gap-1 flex-shrink-0">
-              <span className="text-[11px] font-black text-slate-800">{d.value}건</span>
-              <span className="text-[10px] text-slate-400 w-7 text-right">
-                ({total > 0 ? ((d.value / total) * 100).toFixed(0) : 0}%)
-              </span>
+
+            {/* 오른쪽: 도넛 차트 */}
+            <div className="flex-shrink-0" style={{ width: 110, height: 110 }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={data}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius="45%"
+                    outerRadius="85%"
+                    paddingAngle={2}
+                    dataKey="value"
+                    startAngle={90}
+                    endAngle={-270}
+                  >
+                    {data.map((_, i) => (
+                      <Cell key={i} fill={colors[i % colors.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    formatter={(v: any) => [`${v}건`, ""]}
+                    contentStyle={{
+                      borderRadius: "10px",
+                      border: "none",
+                      boxShadow: "0 4px 12px rgba(0,0,0,0.12)",
+                      fontSize: 11,
+                      fontWeight: "bold",
+                    }}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
             </div>
           </div>
-        ))}
-      </div>
-    </div>
+        )}
+      </CardContent>
+    </Card>
   );
 }
 
-// ── 고객사별 이슈 가로 바차트 ────────────────────────────────────────────────
-function ClientIssueBarChart({ data }: { data: ChartItem[] }) {
-  if (data.length === 0)
-    return (
-      <div className="flex-1 flex items-center justify-center text-slate-300 text-xs font-bold">
-        데이터 없음
-      </div>
-    );
-
-  const maxVal = Math.max(...data.map((d) => d.value));
+// ── 고객사별 이슈 건수 바차트 카드 ───────────────────────────────────────────
+function ClientIssueRankCard({ data }: { data: ChartItem[] }) {
+  const maxVal = data.length > 0 ? Math.max(...data.map((d) => d.value)) : 1;
 
   return (
-    <div className="w-full space-y-2">
-      {data.map((d, i) => (
-        <div key={i} className="flex items-center gap-2">
-          {/* 순위 뱃지 */}
-          <div
-            className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black flex-shrink-0"
-            style={{
-              background: i === 0 ? "#ff5c39" : i === 1 ? "#f97316" : i === 2 ? "#eab308" : "#e2e8f0",
-              color: i < 3 ? "white" : "#64748b",
-            }}
-          >
-            {i + 1}
+    <Card className="border-none shadow-sm">
+      <CardHeader className="px-3 pt-1.5 pb-0">
+        <CardTitle className="text-sm font-bold text-[#414344] flex items-center gap-1.5">
+          <Users className="h-4 w-4 text-slate-500" />
+          고객사별 이슈 건수
+          {data.length > 0 && (
+            <span className="ml-auto text-[11px] font-bold text-slate-400">전체 합산</span>
+          )}
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="p-3">
+        {data.length === 0 ? (
+          <div className="h-[120px] flex items-center justify-center text-slate-300 text-xs font-bold">
+            데이터 없음
           </div>
-          {/* 고객사명 */}
-          <div className="w-[80px] flex-shrink-0">
-            <span className="text-[11px] font-bold text-slate-700 truncate block" title={d.name}>
-              {d.name}
-            </span>
+        ) : (
+          <div className="space-y-2">
+            {data.map((d, i) => (
+              <div key={i} className="flex items-center gap-2">
+                {/* 순위 뱃지 */}
+                <div
+                  className="w-[18px] h-[18px] rounded-full flex items-center justify-center text-[10px] font-black flex-shrink-0"
+                  style={{
+                    background:
+                      i === 0 ? "#ff5c39" : i === 1 ? "#f97316" : i === 2 ? "#eab308" : "#e2e8f0",
+                    color: i < 3 ? "white" : "#64748b",
+                  }}
+                >
+                  {i + 1}
+                </div>
+                {/* 고객사명 */}
+                <span
+                  className="w-[78px] text-[11px] font-bold text-slate-700 truncate flex-shrink-0"
+                  title={d.name}
+                >
+                  {d.name}
+                </span>
+                {/* 바 */}
+                <div className="flex-1 h-3.5 bg-slate-100 rounded-full overflow-hidden">
+                  <div
+                    className="h-full rounded-full transition-all duration-700"
+                    style={{
+                      width: `${(d.value / maxVal) * 100}%`,
+                      background: CLIENT_BAR_COLORS[i % CLIENT_BAR_COLORS.length],
+                    }}
+                  />
+                </div>
+                {/* 건수 */}
+                <span className="text-[11px] font-black text-slate-800 w-7 text-right flex-shrink-0">
+                  {d.value}건
+                </span>
+              </div>
+            ))}
           </div>
-          {/* 바 */}
-          <div className="flex-1 h-4 bg-slate-100 rounded-full overflow-hidden">
-            <div
-              className="h-full rounded-full transition-all duration-700"
-              style={{
-                width: `${(d.value / maxVal) * 100}%`,
-                background: CLIENT_BAR_COLORS[i % CLIENT_BAR_COLORS.length],
-              }}
-            />
-          </div>
-          {/* 건수 */}
-          <span className="text-[11px] font-black text-slate-800 w-8 text-right flex-shrink-0">
-            {d.value}건
-          </span>
-        </div>
-      ))}
-    </div>
+        )}
+      </CardContent>
+    </Card>
   );
 }
 
 // ── 메인 내보내기 ─────────────────────────────────────────────────────────────
 export interface IssueAnalyticsProps {
-  clientIssueByType: ChartItem[];   // 고객사 이슈 유형별
-  serviceIssueByType: ChartItem[];  // 서비스 이슈 유형별
-  issueByClient: ChartItem[];       // 고객사별 이슈 건수 (전체)
+  clientIssueByType: ChartItem[];
+  serviceIssueByType: ChartItem[];
+  issueByClient: ChartItem[];
 }
 
 export function IssueAnalyticsSection({
@@ -160,49 +197,28 @@ export function IssueAnalyticsSection({
 }: IssueAnalyticsProps) {
   return (
     <div className="grid gap-3 grid-cols-1 md:grid-cols-3">
-
       {/* ① 고객사 이슈 유형별 */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-3 flex flex-col gap-2">
-        <div className="flex items-center gap-2 pb-1 border-b border-slate-100">
-          <div className="w-2 h-5 bg-[#ff5c39] rounded-full flex-shrink-0" />
-          <span className="text-[12px] font-black text-slate-800 tracking-tight">고객사 이슈 유형별</span>
-          <span className="ml-auto text-[10px] font-bold text-slate-400">
-            총 {clientIssueByType.reduce((s, d) => s + d.value, 0)}건
-          </span>
-        </div>
-        <IssueDonutChart
-          data={clientIssueByType}
-          colors={CLIENT_ISSUE_COLORS}
-          emptyLabel="등록된 이슈 없음"
-        />
-      </div>
+      <HorizontalDonutCard
+        title="고객사 이슈 유형별"
+        icon={<AlertCircle className="h-4 w-4" />}
+        iconColor="#ff5c39"
+        accentColor="#ff5c39"
+        data={clientIssueByType}
+        colors={CLIENT_ISSUE_COLORS}
+      />
 
-      {/* ② 서비스 이슈 유형별 */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-3 flex flex-col gap-2">
-        <div className="flex items-center gap-2 pb-1 border-b border-slate-100">
-          <div className="w-2 h-5 bg-[#3b82f6] rounded-full flex-shrink-0" />
-          <span className="text-[12px] font-black text-slate-800 tracking-tight">서비스 이슈 유형별</span>
-          <span className="ml-auto text-[10px] font-bold text-slate-400">
-            총 {serviceIssueByType.reduce((s, d) => s + d.value, 0)}건
-          </span>
-        </div>
-        <IssueDonutChart
-          data={serviceIssueByType}
-          colors={SERVICE_ISSUE_COLORS}
-          emptyLabel="등록된 이슈 없음"
-        />
-      </div>
+      {/* ② 고객사별 이슈 건수 */}
+      <ClientIssueRankCard data={issueByClient} />
 
-      {/* ③ 고객사별 이슈 건수 TOP */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-3 flex flex-col gap-2">
-        <div className="flex items-center gap-2 pb-1 border-b border-slate-100">
-          <div className="w-2 h-5 bg-slate-700 rounded-full flex-shrink-0" />
-          <span className="text-[12px] font-black text-slate-800 tracking-tight">고객사별 이슈 건수</span>
-          <span className="ml-auto text-[10px] font-bold text-slate-400">전체 합산</span>
-        </div>
-        <ClientIssueBarChart data={issueByClient} />
-      </div>
-
+      {/* ③ 서비스 이슈 유형별 */}
+      <HorizontalDonutCard
+        title="서비스 이슈 유형별"
+        icon={<BarChart2 className="h-4 w-4" />}
+        iconColor="#3b82f6"
+        accentColor="#3b82f6"
+        data={serviceIssueByType}
+        colors={SERVICE_ISSUE_COLORS}
+      />
     </div>
   );
 }

@@ -476,19 +476,11 @@ export default async function Home() {
           </Card>
         </div>
 
-        {/* ── 이슈 분석 섹션 (매출추이 바로 아래) ── */}
-        <div className="space-y-1.5">
-          <div className="flex items-center gap-2 px-1">
-            <div className="w-1.5 h-5 bg-slate-800 rounded-full" />
-            <h2 className="text-sm font-black text-slate-800 tracking-tight">이슈 유형 분석</h2>
-            <span className="text-[11px] font-medium text-slate-400 ml-1">고객사 · 서비스 이슈 집계 현황</span>
-          </div>
-          <IssueAnalyticsSection
+        <IssueAnalyticsSection
             clientIssueByType={clientIssueByTypeData}
             serviceIssueByType={serviceIssueByTypeData}
             issueByClient={issueByClientCombinedData}
           />
-        </div>
 
         {/* ── 하단: 미수금 + 인입경로 + 매출 TOP 5 (균형 잡힌 높이 유지) ── */}
         <div className="flex flex-col lg:flex-row gap-3 w-full items-stretch">

@@ -44,6 +44,14 @@ export default async function Home() {
   const issuesData = issuesRaw ?? [];
   const opIssuesData = opIssuesRaw ?? [];
 
+  // ── 날짜 변수 미리 선언 (이슈 분석 필터링용) ──
+  const today = new Date();
+  const currentYear = today.getFullYear();
+  const currentMonth = today.getMonth() + 1;
+  const currentMonthStr = `${currentYear}-${String(currentMonth).padStart(2, "0")}`;
+  const lastMonthDate = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+  const lastMonthStr = `${lastMonthDate.getFullYear()}-${String(lastMonthDate.getMonth() + 1).padStart(2, "0")}`;
+
   // ── 이슈 분석용 추가 데이터 패칭 ──
   // 고객사 이슈(client_operation_issues) 유형별 집계
   const { data: opIssuesFullRaw } = await supabase
@@ -174,13 +182,6 @@ export default async function Home() {
   const issueBySubjectData = Object.entries(issueBySubject)
     .map(([name, value]) => ({ name, value }))
     .sort((a, b) => b.value - a.value);
-
-  const today = new Date();
-  const currentYear = today.getFullYear();
-  const currentMonth = today.getMonth() + 1;
-  const currentMonthStr = `${currentYear}-${String(currentMonth).padStart(2, "0")}`;
-  const lastMonthDate = new Date(today.getFullYear(), today.getMonth() - 1, 1);
-  const lastMonthStr = `${lastMonthDate.getFullYear()}-${String(lastMonthDate.getMonth() + 1).padStart(2, "0")}`;
 
   // ── 금월 / 전월 매출
   const totalCurrentSales = salesData.filter(s => s.sales_month === currentMonthStr).reduce((sum, s) => sum + Number(s.total_amount), 0);

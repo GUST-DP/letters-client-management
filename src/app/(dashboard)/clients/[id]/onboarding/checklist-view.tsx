@@ -135,7 +135,10 @@ export function ChecklistView({ clientId, tasks, initialStatus }: ChecklistViewP
     setUploadingId(taskId);
     try {
       const supabase = createClient();
-      const filePath = `onboarding/${clientId}/${taskId}_${Date.now()}_${file.name}`;
+      // 파일명에 한글, 특수문자가 들어가면 Invalid key 에러가 발생할 수 있으므로 확장자만 남기고 고유 키로 저장합니다.
+      const extension = file.name.split('.').pop();
+      const safeFileName = `${taskId}_${Date.now()}.${extension}`;
+      const filePath = `onboarding/${clientId}/${safeFileName}`;
       
       const { error: upErr } = await supabase.storage
         .from("onboarding-files")

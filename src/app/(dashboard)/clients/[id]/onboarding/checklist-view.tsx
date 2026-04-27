@@ -273,7 +273,7 @@ export function ChecklistView({ clientId, tasks, initialStatus }: ChecklistViewP
                         disabled={isPending}
                       />
                     ) : (
-                      <span className={`px-2 py-1 rounded bg-gray-100 ${isDone ? 'text-gray-300' : 'text-gray-500'}`}>
+                      <span className={`${isDone ? 'text-gray-300' : 'text-gray-500'}`}>
                          {task.target || "-"}
                       </span>
                     )}

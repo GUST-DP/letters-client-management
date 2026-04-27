@@ -98,7 +98,17 @@ export async function addTaskAction(data: {
   is_input: boolean;
 }) {
   const supabase = await createClient();
-  const { error } = await supabase.from("onboarding_tasks").insert([data]);
+
+  // 현재 최대 sort_order 조회 후 +1 자동 부여
+  const { data: maxRow } = await supabase
+    .from("onboarding_tasks")
+    .select("sort_order")
+    .order("sort_order", { ascending: false })
+    .limit(1)
+    .single();
+  const nextOrder = (maxRow?.sort_order ?? 0) + 1;
+
+  const { error } = await supabase.from("onboarding_tasks").insert([{ ...data, sort_order: nextOrder }]);
 
   if (error) {
     console.error("체크리스트 항목 추가 실패:", error);

@@ -107,9 +107,13 @@ export function ChecklistView({ clientId, tasks, initialStatus }: ChecklistViewP
   };
 
   const handleInputBlur = async (taskId: string, isCompleted: boolean, value: string, remarks: string | null) => {
+    const shouldBeCompleted = isCompleted || (value.trim() !== "");
+    if (!isCompleted && value.trim() !== "") {
+      setStatus(prev => prev.map(s => s.task_id === taskId ? { ...s, is_completed: true, completed_at: new Date().toISOString() } : s));
+    }
     startTransition(async () => {
       const ts = status.find(s => s.task_id === taskId);
-      await toggleOnboardingTaskAction(clientId, taskId, isCompleted, value, remarks, ts?.file_url || null, ts?.file_name || null);
+      await toggleOnboardingTaskAction(clientId, taskId, shouldBeCompleted, value, remarks, ts?.file_url || null, ts?.file_name || null);
     });
   };
 
@@ -125,9 +129,13 @@ export function ChecklistView({ clientId, tasks, initialStatus }: ChecklistViewP
   };
 
   const handleDateBlur = async (taskId: string, isCompleted: boolean, value: string | null, remarks: string | null) => {
+    const shouldBeCompleted = isCompleted || (value !== null && value.trim() !== "");
+    if (!isCompleted && value && value.trim() !== "") {
+      setStatus(prev => prev.map(s => s.task_id === taskId ? { ...s, is_completed: true, completed_at: new Date().toISOString() } : s));
+    }
     const ts = status.find(s => s.task_id === taskId);
     startTransition(async () => {
-      await toggleOnboardingTaskAction(clientId, taskId, isCompleted, value, remarks, ts?.file_url || null, ts?.file_name || null);
+      await toggleOnboardingTaskAction(clientId, taskId, shouldBeCompleted, value, remarks, ts?.file_url || null, ts?.file_name || null);
     });
   };
 
@@ -156,20 +164,20 @@ export function ChecklistView({ clientId, tasks, initialStatus }: ChecklistViewP
       const fileUrl = urlData.publicUrl;
       const ts = status.find(s => s.task_id === taskId);
 
-      // 상태 업데이트
+      // 상태 업데이트 (자동 체크 포함)
       setStatus(prev => {
         const idx = prev.findIndex(s => s.task_id === taskId);
         if (idx > -1) {
-          return prev.map((s, i) => i === idx ? { ...s, file_url: fileUrl, file_name: file.name } : s);
+          return prev.map((s, i) => i === idx ? { ...s, file_url: fileUrl, file_name: file.name, is_completed: true, completed_at: s.completed_at || new Date().toISOString() } : s);
         } else {
-          return [...prev, { task_id: taskId, is_completed: false, completed_at: null, task_value: null, remarks: null, file_url: fileUrl, file_name: file.name }];
+          return [...prev, { task_id: taskId, is_completed: true, completed_at: new Date().toISOString(), task_value: null, remarks: null, file_url: fileUrl, file_name: file.name }];
         }
       });
 
       startTransition(async () => {
         await toggleOnboardingTaskAction(
           clientId, taskId,
-          ts?.is_completed || false,
+          true, // 파일 업로드 시 자동 체크
           ts?.task_value || null,
           ts?.remarks || null,
           fileUrl,
@@ -350,7 +358,7 @@ export function ChecklistView({ clientId, tasks, initialStatus }: ChecklistViewP
                           if (/^[0-9.]*$/.test(rawVal)) handleInputChange(task.id, rawVal);
                         }}
                         onBlur={(e) => handleInputBlur(task.id, isDone, e.target.value.replace(/,/g, ''), taskStatus?.remarks || null)}
-                        className="h-7 text-[10px] text-center border-primary/20 focus:border-primary text-primary bg-blue-50/10 placeholder:text-[9px]"
+                        className="h-7 w-full text-[11px] text-center rounded-md border border-slate-200 bg-white text-slate-700 focus:outline-none focus:ring-1 focus:ring-slate-300 placeholder:text-slate-400 shadow-sm"
                         disabled={isPending}
                       />
                     )}
@@ -361,27 +369,29 @@ export function ChecklistView({ clientId, tasks, initialStatus }: ChecklistViewP
                         value={taskValue || ""}
                         onChange={(e) => handleDateChange(task.id, e.target.value)}
                         onBlur={(e) => handleDateBlur(task.id, isDone, e.target.value || null, taskStatus?.remarks || null)}
-                        className="w-full h-7 text-[11px] text-center rounded-md border border-primary/20 bg-violet-50/20 text-violet-700 focus:outline-none focus:border-violet-400 px-1"
+                        className="h-7 w-full text-[11px] text-center rounded-md border border-slate-200 bg-white text-slate-700 focus:outline-none focus:ring-1 focus:ring-slate-300 px-1 shadow-sm"
                         disabled={isPending}
                       />
                     )}
 
                     {task.input_type === "file" && (
-                      <div className="flex flex-col items-center gap-1">
+                      <div className="flex flex-col items-center gap-1 w-full">
                         {taskStatus?.file_name ? (
-                          <div className="flex items-center gap-1 bg-amber-50 border border-amber-200 rounded px-2 py-1 text-[10px] text-amber-700 font-medium max-w-full">
-                            <Paperclip className="w-3 h-3 flex-shrink-0" />
-                            <span className="truncate max-w-[120px]">{taskStatus.file_name}</span>
+                          <div className="flex items-center justify-between gap-1 w-full h-7 px-2 rounded-md border border-slate-200 bg-slate-50 text-[11px] text-slate-700 font-medium shadow-sm">
+                            <div className="flex items-center gap-1.5 overflow-hidden">
+                               <Paperclip className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
+                               <span className="truncate">{taskStatus.file_name}</span>
+                            </div>
                             <button
                               onClick={() => handleFileRemove(task.id)}
-                              className="ml-1 hover:text-red-500 flex-shrink-0"
+                              className="text-slate-400 hover:text-red-500 flex-shrink-0 transition-colors"
                             >
-                              <X className="w-3 h-3" />
+                              <X className="w-3.5 h-3.5" />
                             </button>
                           </div>
                         ) : (
-                          <label className={`cursor-pointer flex items-center gap-1 text-[10px] font-medium px-2 py-1 rounded border border-dashed border-amber-300 text-amber-600 hover:bg-amber-50 transition-colors ${uploadingId === task.id ? 'opacity-50 pointer-events-none' : ''}`}>
-                            <Paperclip className="w-3 h-3" />
+                          <label className={`cursor-pointer flex items-center justify-center gap-1.5 w-full h-7 text-[11px] font-medium rounded-md border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 hover:text-slate-700 hover:border-slate-300 transition-all shadow-sm ${uploadingId === task.id ? 'opacity-50 pointer-events-none' : ''}`}>
+                            <Paperclip className="w-3.5 h-3.5 text-slate-400" />
                             {uploadingId === task.id ? "업로드 중..." : "파일 첨부"}
                             <input
                               type="file"

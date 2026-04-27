@@ -206,7 +206,7 @@ export function ChecklistManager({ initialTasks, title, description }: Props) {
         <Table className="text-xs">
           <TableHeader className="bg-[#1B2A4E]">
             <TableRow className="hover:bg-transparent border-none">
-              <TableHead className="w-[50px] font-black text-blue-50 border-r border-[#2C3F6D] text-center text-[12px] uppercase tracking-wider px-2">순서</TableHead>
+              <TableHead className="w-[60px] font-black text-blue-50 border-r border-[#2C3F6D] text-center text-[12px] uppercase tracking-wider px-2">순서</TableHead>
               <TableHead className="w-[50px] font-black text-blue-50 border-r border-[#2C3F6D] text-center text-[12px] uppercase tracking-wider px-2">#</TableHead>
               <TableHead className="w-[150px] font-black text-blue-50 border-r border-[#2C3F6D] text-center text-[12px] uppercase tracking-wider px-3">카테고리</TableHead>
               <TableHead className="w-[200px] font-black text-blue-50 border-r border-[#2C3F6D] text-[12px] uppercase tracking-wider px-3">점검 항목</TableHead>
@@ -220,21 +220,21 @@ export function ChecklistManager({ initialTasks, title, description }: Props) {
             {initialTasks.map((task, index) => (
               <TableRow key={task.id} className="border-b border-slate-100 transition-all hover:bg-slate-50/50 group">
                 {/* 순서 변경 버튼 */}
-                <TableCell className="py-0 px-1 border-r border-slate-100 text-center">
-                  <div className="flex flex-col items-center gap-0.5">
+                <TableCell className="py-1 px-1 border-r border-slate-100 text-center align-middle">
+                  <div className="flex flex-col items-center gap-1">
                     <button
                       onClick={() => handleReorder(task.id, "up")}
                       disabled={isPending || index === 0}
-                      className="p-0.5 rounded hover:bg-slate-100 disabled:opacity-20 transition-colors"
+                      className="p-1 rounded bg-white border border-slate-300 text-slate-700 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-300 disabled:opacity-30 transition-all shadow-sm"
                     >
-                      <ChevronUp className="w-3.5 h-3.5 text-slate-400" />
+                      <ChevronUp className="w-4 h-4 stroke-[3]" />
                     </button>
                     <button
                       onClick={() => handleReorder(task.id, "down")}
                       disabled={isPending || index === initialTasks.length - 1}
-                      className="p-0.5 rounded hover:bg-slate-100 disabled:opacity-20 transition-colors"
+                      className="p-1 rounded bg-white border border-slate-300 text-slate-700 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-300 disabled:opacity-30 transition-all shadow-sm"
                     >
-                      <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+                      <ChevronDown className="w-4 h-4 stroke-[3]" />
                     </button>
                   </div>
                 </TableCell>

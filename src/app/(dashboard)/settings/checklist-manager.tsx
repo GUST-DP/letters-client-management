@@ -81,8 +81,9 @@ const INPUT_TYPE_BADGE: Record<string, string> = {
 function toSelectVal(v: InputType): string {
   return v ?? "none";
 }
-function fromSelectVal(v: string): InputType {
-  return v === "none" ? null : (v as InputType);
+function fromSelectVal(v: string | null | undefined): InputType {
+  if (!v || v === "none") return null;
+  return v as InputType;
 }
 
 export function ChecklistManager({ initialTasks, title, description }: Props) {

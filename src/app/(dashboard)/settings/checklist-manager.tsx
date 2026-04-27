@@ -203,7 +203,7 @@ export function ChecklistManager({ initialTasks, title, description }: Props) {
                       placeholder="대상..."
                     />
                   ) : (
-                    <span className="bg-slate-100 px-2 py-0.5 rounded text-slate-600 font-bold text-[10px]">{task.target || "-"}</span>
+                    <span className="text-slate-600 font-bold text-[11px]">{task.target || "-"}</span>
                   )}
                 </TableCell>
                 <TableCell className="py-0 px-3 border-r border-slate-100 align-middle">

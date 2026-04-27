@@ -25,12 +25,11 @@ export default async function SettingsPage({
     .select("*")
     .order("created_at", { ascending: false });
 
-  // 체크리스트(마스터 테스크) 목록 조회
+  // 체크리스트(마스터 테스크) 목록 조회 — 삽입 순서(Phase 1→5) 고정
   const { data: tasks } = await supabase
     .from("onboarding_tasks")
     .select("*")
-    .order("category", { ascending: true })
-    .order("id", { ascending: true });
+    .order("created_at", { ascending: true });
 
   const renderContent = () => {
     switch (currentTab) {

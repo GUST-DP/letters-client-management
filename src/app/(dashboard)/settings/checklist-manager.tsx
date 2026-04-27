@@ -12,18 +12,21 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
 import { 
   Plus, 
   Pencil, 
   Trash2, 
   Save, 
-  X
+  X,
+  ChevronUp,
+  ChevronDown,
 } from "lucide-react";
 import { 
   addTaskAction, 
   updateTaskAction, 
-  deleteTaskAction 
+  deleteTaskAction,
+  reorderTaskAction,
+  type InputType,
 } from "./actions";
 import { toast } from "sonner";
 import {
@@ -35,6 +38,13 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface Task {
   id: string;
@@ -43,6 +53,8 @@ interface Task {
   target: string | null;
   description: string | null;
   is_input: boolean;
+  input_type: InputType;
+  sort_order: number;
   created_at: string;
 }
 
@@ -52,6 +64,27 @@ interface Props {
   description: string;
 }
 
+const INPUT_TYPE_LABELS: Record<string, string> = {
+  "none":  "없음",
+  "text":  "수기입력",
+  "date":  "날짜선택",
+  "file":  "첨부파일",
+};
+
+const INPUT_TYPE_BADGE: Record<string, string> = {
+  "none": "bg-slate-100 text-slate-400",
+  "text": "bg-blue-50 text-blue-600",
+  "date": "bg-violet-50 text-violet-600",
+  "file": "bg-amber-50 text-amber-600",
+};
+
+function toSelectVal(v: InputType): string {
+  return v ?? "none";
+}
+function fromSelectVal(v: string): InputType {
+  return v === "none" ? null : (v as InputType);
+}
+
 export function ChecklistManager({ initialTasks, title, description }: Props) {
   const [isPending, startTransition] = useTransition();
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -59,14 +92,14 @@ export function ChecklistManager({ initialTasks, title, description }: Props) {
   const [isDeleting, setIsDeleting] = useState(false);
   const router = useRouter();
   
-  // 추가 모달 관련 상태
+  // 추가 모달
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [newForm, setNewForm] = useState({
     category: "",
     task_name: "",
     target: "",
     description: "",
-    is_input: false,
+    input_type: null as InputType,
   });
 
   const handleEditStart = (task: Task) => {
@@ -92,7 +125,7 @@ export function ChecklistManager({ initialTasks, title, description }: Props) {
         task_name: editForm.task_name,
         target: editForm.target,
         description: editForm.description,
-        is_input: editForm.is_input,
+        input_type: editForm.input_type,
       });
 
       if (result.error) {
@@ -100,6 +133,7 @@ export function ChecklistManager({ initialTasks, title, description }: Props) {
       } else {
         toast.success("항목이 수정되었습니다.");
         setEditingId(null);
+        router.refresh();
       }
     });
   };
@@ -127,13 +161,27 @@ export function ChecklistManager({ initialTasks, title, description }: Props) {
     }
 
     startTransition(async () => {
-      const result = await addTaskAction(newForm);
+      const result = await addTaskAction({
+        ...newForm,
+        input_type: newForm.input_type,
+      });
       if (result.error) {
         toast.error(result.error);
       } else {
         toast.success("새로운 체크리스트 항목이 추가되었습니다.");
         setIsAddOpen(false);
-        setNewForm({ category: "", task_name: "", target: "", description: "", is_input: false });
+        setNewForm({ category: "", task_name: "", target: "", description: "", input_type: null });
+        router.refresh();
+      }
+    });
+  };
+
+  const handleReorder = (id: string, direction: "up" | "down") => {
+    startTransition(async () => {
+      const result = await reorderTaskAction(id, direction);
+      if (result.error) {
+        toast.error(result.error);
+      } else {
         router.refresh();
       }
     });
@@ -142,7 +190,7 @@ export function ChecklistManager({ initialTasks, title, description }: Props) {
   return (
     <div className="space-y-3">
       <div className="rounded-2xl border border-slate-200 overflow-hidden shadow-xl bg-white animate-in fade-in slide-in-from-bottom-2 duration-500">
-        {/* 통합 헤더 영역 */}
+        {/* 통합 헤더 */}
         <div className="px-3 py-3 flex justify-between items-center border-b border-slate-100 bg-slate-50/30">
           <div>
             <h2 className="text-xl font-black text-slate-900 tracking-tight">{title}</h2>
@@ -157,18 +205,39 @@ export function ChecklistManager({ initialTasks, title, description }: Props) {
         <Table className="text-xs">
           <TableHeader className="bg-[#1B2A4E]">
             <TableRow className="hover:bg-transparent border-none">
-              <TableHead className="w-[60px] font-black text-blue-50 border-r border-[#2C3F6D] text-center text-[12px] uppercase tracking-wider px-3">#</TableHead>
+              <TableHead className="w-[50px] font-black text-blue-50 border-r border-[#2C3F6D] text-center text-[12px] uppercase tracking-wider px-2">순서</TableHead>
+              <TableHead className="w-[50px] font-black text-blue-50 border-r border-[#2C3F6D] text-center text-[12px] uppercase tracking-wider px-2">#</TableHead>
               <TableHead className="w-[150px] font-black text-blue-50 border-r border-[#2C3F6D] text-center text-[12px] uppercase tracking-wider px-3">카테고리</TableHead>
               <TableHead className="w-[200px] font-black text-blue-50 border-r border-[#2C3F6D] text-[12px] uppercase tracking-wider px-3">점검 항목</TableHead>
               <TableHead className="w-[120px] font-black text-blue-50 border-r border-[#2C3F6D] text-center text-[12px] uppercase tracking-wider px-3">대상 및 값</TableHead>
               <TableHead className="font-black text-blue-50 border-r border-[#2C3F6D] text-[12px] uppercase tracking-wider px-3">세부내용(기준)</TableHead>
-              <TableHead className="w-[100px] font-black text-blue-50 border-r border-[#2C3F6D] text-center text-[12px] uppercase tracking-wider px-3">수기입력 여부</TableHead>
+              <TableHead className="w-[110px] font-black text-blue-50 border-r border-[#2C3F6D] text-center text-[12px] uppercase tracking-wider px-3">입력 유형</TableHead>
               <TableHead className="w-[120px] font-black text-blue-50 text-center text-[12px] uppercase tracking-wider px-3">관리</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {initialTasks.map((task, index) => (
               <TableRow key={task.id} className="border-b border-slate-100 transition-all hover:bg-slate-50/50 group">
+                {/* 순서 변경 버튼 */}
+                <TableCell className="py-0 px-1 border-r border-slate-100 text-center">
+                  <div className="flex flex-col items-center gap-0.5">
+                    <button
+                      onClick={() => handleReorder(task.id, "up")}
+                      disabled={isPending || index === 0}
+                      className="p-0.5 rounded hover:bg-slate-100 disabled:opacity-20 transition-colors"
+                    >
+                      <ChevronUp className="w-3.5 h-3.5 text-slate-400" />
+                    </button>
+                    <button
+                      onClick={() => handleReorder(task.id, "down")}
+                      disabled={isPending || index === initialTasks.length - 1}
+                      className="p-0.5 rounded hover:bg-slate-100 disabled:opacity-20 transition-colors"
+                    >
+                      <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+                    </button>
+                  </div>
+                </TableCell>
+
                 <TableCell className="py-0 px-3 border-r border-slate-100 text-center text-slate-400 font-bold">
                   {index + 1}
                 </TableCell>
@@ -217,19 +286,32 @@ export function ChecklistManager({ initialTasks, title, description }: Props) {
                     <span className="text-slate-500 font-medium line-clamp-1">{task.description || "-"}</span>
                   )}
                 </TableCell>
-                <TableCell className="py-0 px-3 border-r border-slate-100 text-center align-middle">
-                  <div className="flex justify-center">
-                    {editingId === task.id ? (
-                      <Checkbox 
-                        checked={editForm.is_input} 
-                        onCheckedChange={(val) => setEditForm({ ...editForm, is_input: !!val })}
-                        className="rounded-md"
-                      />
-                    ) : (
-                      <div className={`w-2.5 h-2.5 rounded-full ring-4 ring-offset-1 ${task.is_input ? 'bg-emerald-500 ring-emerald-100' : 'bg-slate-200 ring-slate-50'}`} />
-                    )}
-                  </div>
+
+                {/* 입력 유형 */}
+                <TableCell className="py-0 px-2 border-r border-slate-100 text-center align-middle">
+                  {editingId === task.id ? (
+                    <Select
+                      value={toSelectVal(editForm.input_type ?? null)}
+                      onValueChange={(v) => setEditForm({ ...editForm, input_type: fromSelectVal(v) })}
+                    >
+                      <SelectTrigger className="h-6 text-[10px] border-slate-200">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="none">없음</SelectItem>
+                        <SelectItem value="text">수기입력</SelectItem>
+                        <SelectItem value="date">날짜선택</SelectItem>
+                        <SelectItem value="file">첨부파일</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  ) : (
+                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${INPUT_TYPE_BADGE[toSelectVal(task.input_type)]}`}>
+                      {INPUT_TYPE_LABELS[toSelectVal(task.input_type)]}
+                    </span>
+                  )}
                 </TableCell>
+
+                {/* 관리 버튼 */}
                 <TableCell className="py-0 px-3 align-middle">
                   <div className="flex items-center justify-center gap-1.5">
                     {editingId === task.id ? (
@@ -238,7 +320,7 @@ export function ChecklistManager({ initialTasks, title, description }: Props) {
                           variant="ghost" 
                           size="icon" 
                           className="h-5 w-5 text-emerald-600 hover:bg-emerald-50 rounded-lg"
-                          onClick= {handleUpdate}
+                          onClick={handleUpdate}
                           disabled={isPending}
                         >
                           <Save className="w-4 h-4" />
@@ -283,7 +365,7 @@ export function ChecklistManager({ initialTasks, title, description }: Props) {
 
       {/* 항목 추가 다이얼로그 */}
       <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-[480px]">
           <DialogHeader>
             <DialogTitle>새 체크리스트 항목 추가</DialogTitle>
             <DialogDescription>
@@ -298,7 +380,7 @@ export function ChecklistManager({ initialTasks, title, description }: Props) {
                 value={newForm.category}
                 onChange={(e) => setNewForm({ ...newForm, category: e.target.value })}
                 className="col-span-3"
-                placeholder="예: 마케팅 / 시스템"
+                placeholder="예: Phase 1. 계약"
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
@@ -318,7 +400,7 @@ export function ChecklistManager({ initialTasks, title, description }: Props) {
                 value={newForm.target}
                 onChange={(e) => setNewForm({ ...newForm, target: e.target.value })}
                 className="col-span-3"
-                placeholder="유형 또는 값"
+                placeholder="공통 / 고객사 / 레터스"
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
@@ -332,16 +414,22 @@ export function ChecklistManager({ initialTasks, title, description }: Props) {
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label className="text-right">수기입력 여부</Label>
-              <div className="flex items-center gap-2 col-span-3">
-                <Checkbox 
-                  id="is_input"
-                  checked={newForm.is_input}
-                  onCheckedChange={(val) => setNewForm({ ...newForm, is_input: !!val })}
-                />
-                <Label htmlFor="is_input" className="text-xs text-gray-500 font-normal">
-                  체크 시 사용자가 숫자를 직접 입력할 수 있습니다.
-                </Label>
+              <Label className="text-right">입력 유형</Label>
+              <div className="col-span-3">
+                <Select
+                  value={toSelectVal(newForm.input_type)}
+                  onValueChange={(v) => setNewForm({ ...newForm, input_type: fromSelectVal(v) })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="입력 유형 선택" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">없음 (체크만)</SelectItem>
+                    <SelectItem value="text">수기입력 (숫자/텍스트)</SelectItem>
+                    <SelectItem value="date">날짜선택</SelectItem>
+                    <SelectItem value="file">첨부파일</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
           </div>

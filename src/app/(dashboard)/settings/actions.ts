@@ -3,7 +3,6 @@
 import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
 
-// --- (기존 추가 액션들 유지를 위해 가져오기) ---
 // --- 코스트센터 (cost_centers) 관련 액션 ---
 export async function addCostCenterAction(formData: FormData) {
   const name = formData.get("name") as string;
@@ -90,12 +89,14 @@ export async function deleteServiceTypeAction(id: string) {
 
 // --- 체크리스트 마스터 (onboarding_tasks) 관련 액션 ---
 
+export type InputType = "text" | "date" | "file" | null;
+
 export async function addTaskAction(data: {
   category: string;
   task_name: string;
   target?: string;
   description?: string;
-  is_input: boolean;
+  input_type: InputType;
 }) {
   const supabase = await createClient();
 
@@ -108,7 +109,15 @@ export async function addTaskAction(data: {
     .single();
   const nextOrder = (maxRow?.sort_order ?? 0) + 1;
 
-  const { error } = await supabase.from("onboarding_tasks").insert([{ ...data, sort_order: nextOrder }]);
+  const { error } = await supabase.from("onboarding_tasks").insert([{
+    category: data.category,
+    task_name: data.task_name,
+    target: data.target,
+    description: data.description,
+    input_type: data.input_type,
+    is_input: !!data.input_type,
+    sort_order: nextOrder,
+  }]);
 
   if (error) {
     console.error("체크리스트 항목 추가 실패:", error);
@@ -124,12 +133,15 @@ export async function updateTaskAction(id: string, data: {
   task_name?: string;
   target?: string | null;
   description?: string | null;
-  is_input?: boolean;
+  input_type?: InputType;
 }) {
   const supabase = await createClient();
   const { error } = await supabase
     .from("onboarding_tasks")
-    .update(data)
+    .update({
+      ...data,
+      is_input: !!data.input_type,
+    })
     .eq("id", id);
 
   if (error) {
@@ -152,6 +164,49 @@ export async function deleteTaskAction(id: string) {
     console.error("체크리스트 항목 삭제 실패:", error);
     return { error: "항목 삭제에 실패했습니다." };
   }
+
+  revalidatePath("/settings");
+  return { success: true };
+}
+
+/**
+ * ▲▼ 순서 변경: 해당 항목과 인접 항목의 sort_order 스왑
+ */
+export async function reorderTaskAction(id: string, direction: "up" | "down") {
+  const supabase = await createClient();
+
+  // 현재 항목의 sort_order 조회
+  const { data: current } = await supabase
+    .from("onboarding_tasks")
+    .select("sort_order")
+    .eq("id", id)
+    .single();
+
+  if (!current) return { error: "항목을 찾을 수 없습니다." };
+
+  const currentOrder = current.sort_order;
+
+  // 인접 항목 조회 (위 또는 아래)
+  const { data: neighbor } = await supabase
+    .from("onboarding_tasks")
+    .select("id, sort_order")
+    .eq("sort_order", direction === "up" ? currentOrder - 1 : currentOrder + 1)
+    .single();
+
+  if (!neighbor) return { error: "이미 맨 처음/끝 항목입니다." };
+
+  // sort_order 스왑
+  const { error: e1 } = await supabase
+    .from("onboarding_tasks")
+    .update({ sort_order: neighbor.sort_order })
+    .eq("id", id);
+
+  const { error: e2 } = await supabase
+    .from("onboarding_tasks")
+    .update({ sort_order: currentOrder })
+    .eq("id", neighbor.id);
+
+  if (e1 || e2) return { error: "순서 변경에 실패했습니다." };
 
   revalidatePath("/settings");
   return { success: true };

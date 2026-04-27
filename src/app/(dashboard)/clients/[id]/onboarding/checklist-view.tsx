@@ -1,14 +1,20 @@
 "use client";
 
-import { useState, useTransition, useMemo, useEffect } from "react";
-import { OnboardingTask, ClientOnboardingStatus, toggleOnboardingTaskAction, toggleAllOnboardingTasksAction } from "../../onboarding-actions";
+import { useState, useTransition, useMemo } from "react";
+import {
+  OnboardingTask,
+  ClientOnboardingStatus,
+  toggleOnboardingTaskAction,
+  toggleAllOnboardingTasksAction,
+} from "../../onboarding-actions";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { Progress } from "@/components/ui/progress";
-import { CheckCircle2, Save, ChevronRight } from "lucide-react";
+import { CheckCircle2, Save, ChevronRight, Paperclip, X, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
+import { createClient } from "@/utils/supabase/client";
 import {
   Table,
   TableBody,
@@ -28,6 +34,7 @@ export function ChecklistView({ clientId, tasks, initialStatus }: ChecklistViewP
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [status, setStatus] = useState<ClientOnboardingStatus[]>(initialStatus);
+  const [uploadingId, setUploadingId] = useState<string | null>(null);
 
   const totalCount = tasks.length;
   const completedCount = status.filter(s => s.is_completed).length;
@@ -62,14 +69,10 @@ export function ChecklistView({ clientId, tasks, initialStatus }: ChecklistViewP
   const handleToggle = async (taskId: string, currentVal: boolean) => {
     const newVal = !currentVal;
     const taskStatus = status.find(s => s.task_id === taskId);
-    const existingValue = taskStatus?.task_value || null;
-    const existingRemarks = taskStatus?.remarks || null;
-    
-    // UI 즉시 업데이트
     const prevStatus = [...status];
-    const existingIdx = status.findIndex(s => s.task_id === taskId);
-    
+
     let nextStatus = [...status];
+    const existingIdx = status.findIndex(s => s.task_id === taskId);
     if (existingIdx > -1) {
       nextStatus[existingIdx] = { ...nextStatus[existingIdx], is_completed: newVal };
     } else {
@@ -78,14 +81,16 @@ export function ChecklistView({ clientId, tasks, initialStatus }: ChecklistViewP
     setStatus(nextStatus);
 
     startTransition(async () => {
-      const result = await toggleOnboardingTaskAction(clientId, taskId, newVal, existingValue, existingRemarks);
+      const result = await toggleOnboardingTaskAction(
+        clientId, taskId, newVal,
+        taskStatus?.task_value || null,
+        taskStatus?.remarks || null,
+        taskStatus?.file_url || null,
+        taskStatus?.file_name || null,
+      );
       if ("error" in result) {
         toast.error(`업데이트 실패: ${result.error}`);
         setStatus(prevStatus);
-      } else {
-        if (completedCount + (newVal ? 1 : -1) === totalCount && newVal) {
-           toast.success("축하합니다! 모든 온보딩이 완료되었습니다.", { position: "top-center" });
-        }
       }
     });
   };
@@ -103,10 +108,88 @@ export function ChecklistView({ clientId, tasks, initialStatus }: ChecklistViewP
 
   const handleInputBlur = async (taskId: string, isCompleted: boolean, value: string, remarks: string | null) => {
     startTransition(async () => {
-      const result = await toggleOnboardingTaskAction(clientId, taskId, isCompleted, value, remarks);
-      if ("error" in result) {
-        toast.error(`입력값 저장 실패: ${result.error}`);
+      const ts = status.find(s => s.task_id === taskId);
+      await toggleOnboardingTaskAction(clientId, taskId, isCompleted, value, remarks, ts?.file_url || null, ts?.file_name || null);
+    });
+  };
+
+  const handleDateChange = (taskId: string, value: string) => {
+    setStatus(prev => {
+      const existingIdx = prev.findIndex(s => s.task_id === taskId);
+      if (existingIdx > -1) {
+        return prev.map((s, i) => i === existingIdx ? { ...s, task_value: value } : s);
+      } else {
+        return [...prev, { task_id: taskId, is_completed: false, completed_at: null, task_value: value, remarks: null }];
       }
+    });
+  };
+
+  const handleDateBlur = async (taskId: string, isCompleted: boolean, value: string | null, remarks: string | null) => {
+    const ts = status.find(s => s.task_id === taskId);
+    startTransition(async () => {
+      await toggleOnboardingTaskAction(clientId, taskId, isCompleted, value, remarks, ts?.file_url || null, ts?.file_name || null);
+    });
+  };
+
+  const handleFileUpload = async (taskId: string, file: File) => {
+    setUploadingId(taskId);
+    try {
+      const supabase = createClient();
+      const filePath = `onboarding/${clientId}/${taskId}_${Date.now()}_${file.name}`;
+      
+      const { error: upErr } = await supabase.storage
+        .from("onboarding-files")
+        .upload(filePath, file, { upsert: true });
+
+      if (upErr) {
+        toast.error(`파일 업로드 실패: ${upErr.message}`);
+        return;
+      }
+
+      const { data: urlData } = supabase.storage
+        .from("onboarding-files")
+        .getPublicUrl(filePath);
+
+      const fileUrl = urlData.publicUrl;
+      const ts = status.find(s => s.task_id === taskId);
+
+      // 상태 업데이트
+      setStatus(prev => {
+        const idx = prev.findIndex(s => s.task_id === taskId);
+        if (idx > -1) {
+          return prev.map((s, i) => i === idx ? { ...s, file_url: fileUrl, file_name: file.name } : s);
+        } else {
+          return [...prev, { task_id: taskId, is_completed: false, completed_at: null, task_value: null, remarks: null, file_url: fileUrl, file_name: file.name }];
+        }
+      });
+
+      startTransition(async () => {
+        await toggleOnboardingTaskAction(
+          clientId, taskId,
+          ts?.is_completed || false,
+          ts?.task_value || null,
+          ts?.remarks || null,
+          fileUrl,
+          file.name,
+        );
+      });
+      toast.success("파일이 업로드되었습니다.");
+    } finally {
+      setUploadingId(null);
+    }
+  };
+
+  const handleFileRemove = async (taskId: string) => {
+    const ts = status.find(s => s.task_id === taskId);
+    setStatus(prev => prev.map(s => s.task_id === taskId ? { ...s, file_url: null, file_name: null } : s));
+    startTransition(async () => {
+      await toggleOnboardingTaskAction(
+        clientId, taskId,
+        ts?.is_completed || false,
+        ts?.task_value || null,
+        ts?.remarks || null,
+        null, null,
+      );
     });
   };
 
@@ -122,19 +205,15 @@ export function ChecklistView({ clientId, tasks, initialStatus }: ChecklistViewP
   };
 
   const handleRemarkBlur = async (taskId: string, isCompleted: boolean, value: string | null, remarks: string) => {
+    const ts = status.find(s => s.task_id === taskId);
     startTransition(async () => {
-      const result = await toggleOnboardingTaskAction(clientId, taskId, isCompleted, value, remarks);
-      if ("error" in result) {
-        toast.error(`비고 저장 실패: ${result.error}`);
-      }
+      await toggleOnboardingTaskAction(clientId, taskId, isCompleted, value, remarks, ts?.file_url || null, ts?.file_name || null);
     });
   };
 
   const handleSelectAll = async () => {
     const nextVal = !isAllSelected;
     const prevStatus = [...status];
-
-    // UI 선반영
     const nextStatus = tasks.map(t => {
       const existing = status.find(s => s.task_id === t.id);
       return {
@@ -142,7 +221,9 @@ export function ChecklistView({ clientId, tasks, initialStatus }: ChecklistViewP
         is_completed: nextVal,
         completed_at: nextVal ? new Date().toISOString() : null,
         task_value: existing?.task_value || null,
-        remarks: existing?.remarks || null
+        remarks: existing?.remarks || null,
+        file_url: existing?.file_url || null,
+        file_name: existing?.file_name || null,
       };
     });
     setStatus(nextStatus);
@@ -158,7 +239,6 @@ export function ChecklistView({ clientId, tasks, initialStatus }: ChecklistViewP
     });
   };
 
-  // 숫자 천 단위 쉼표 포맷팅 함수
   const formatNumberWithCommas = (value: string) => {
     if (!value) return "";
     const parts = value.split(".");
@@ -196,25 +276,25 @@ export function ChecklistView({ clientId, tasks, initialStatus }: ChecklistViewP
         </div>
       </div>
 
-      {/* 스프레드시트 스타일 테이블 */}
+      {/* 테이블 */}
       <div className="bg-white rounded-xl border shadow-sm overflow-hidden">
         <Table>
           <TableHeader className="bg-[#1B2A4E]">
             <TableRow className="hover:bg-transparent border-none">
               <TableHead className="w-[180px] font-bold text-blue-50 text-center border-r border-[#2C3F6D]">카테고리</TableHead>
               <TableHead className="w-[70px] p-0 border-r border-[#2C3F6D]">
-                <div 
+                <div
                   className="flex items-center justify-center h-full w-full cursor-pointer select-none py-2 hover:bg-[#2A3E66] transition-colors"
                   onClick={handleSelectAll}
                 >
-                  <Checkbox 
+                  <Checkbox
                     checked={isAllSelected}
                     className="w-4 h-4 border-2 border-blue-200 data-checked:bg-white data-checked:border-green-500 data-checked:text-green-600 text-transparent transition-all font-bold"
                   />
                 </div>
               </TableHead>
-              <TableHead className="w-[280px] font-bold text-blue-50 border-r border-[#2C3F6D] px-6">점검 항목</TableHead>
-              <TableHead className="w-[150px] font-bold text-blue-50 border-r border-[#2C3F6D] text-center">대상 및 값</TableHead>
+              <TableHead className="w-[240px] font-bold text-blue-50 border-r border-[#2C3F6D] px-6">점검 항목</TableHead>
+              <TableHead className="w-[200px] font-bold text-blue-50 border-r border-[#2C3F6D] text-center">대상 및 값</TableHead>
               <TableHead className="font-bold text-blue-50 border-r border-[#2C3F6D] px-6">세부내용(기준)</TableHead>
               <TableHead className="w-[400px] font-bold text-blue-50 px-4 text-center">비고</TableHead>
             </TableRow>
@@ -227,23 +307,21 @@ export function ChecklistView({ clientId, tasks, initialStatus }: ChecklistViewP
               const rowSpan = categorySpans[idx];
 
               return (
-                <TableRow 
-                  key={task.id} 
+                <TableRow
+                  key={task.id}
                   className={`group transition-colors ${isDone ? 'bg-green-50/10' : 'hover:bg-gray-50/50'}`}
                 >
                   {rowSpan && (
-                    <TableCell 
-                      rowSpan={rowSpan} 
+                    <TableCell
+                      rowSpan={rowSpan}
                       className="border-r py-2 align-top bg-white text-primary group-hover:bg-gray-50/5 text-center"
                     >
-                      <div className="sticky top-4">
-                        {task.category}
-                      </div>
+                      <div className="sticky top-4">{task.category}</div>
                     </TableCell>
                   )}
-                  
+
                   <TableCell className="border-l text-center align-middle">
-                    <Checkbox 
+                    <Checkbox
                       id={task.id}
                       checked={isDone}
                       onCheckedChange={() => handleToggle(task.id, isDone)}
@@ -255,8 +333,10 @@ export function ChecklistView({ clientId, tasks, initialStatus }: ChecklistViewP
                   <TableCell className={`py-2 px-6 ${(isDone && !task.is_input) ? 'text-gray-400 line-through' : 'text-gray-900'}`}>
                     {task.task_name}
                   </TableCell>
-                  <TableCell className="border-l py-2 text-center px-4">
-                    {task.is_input ? (
+
+                  {/* 대상 및 값 — input_type에 따라 분기 */}
+                  <TableCell className="border-l py-2 text-center px-3">
+                    {task.input_type === "text" && (
                       <Input
                         value={formatNumberWithCommas(taskValue)}
                         placeholder="기입..."
@@ -264,32 +344,75 @@ export function ChecklistView({ clientId, tasks, initialStatus }: ChecklistViewP
                         inputMode="decimal"
                         onChange={(e) => {
                           const rawVal = e.target.value.replace(/,/g, '');
-                          if (/^[0-9.]*$/.test(rawVal)) {
-                            handleInputChange(task.id, rawVal);
-                          }
+                          if (/^[0-9.]*$/.test(rawVal)) handleInputChange(task.id, rawVal);
                         }}
                         onBlur={(e) => handleInputBlur(task.id, isDone, e.target.value.replace(/,/g, ''), taskStatus?.remarks || null)}
                         className="h-7 text-[10px] text-center border-primary/20 focus:border-primary text-primary bg-blue-50/10 placeholder:text-[9px]"
                         disabled={isPending}
                       />
-                    ) : (
-                      <span className={`${isDone ? 'text-gray-300' : 'text-gray-500'}`}>
-                         {task.target || "-"}
+                    )}
+
+                    {task.input_type === "date" && (
+                      <input
+                        type="date"
+                        value={taskValue || ""}
+                        onChange={(e) => handleDateChange(task.id, e.target.value)}
+                        onBlur={(e) => handleDateBlur(task.id, isDone, e.target.value || null, taskStatus?.remarks || null)}
+                        className="w-full h-7 text-[11px] text-center rounded-md border border-primary/20 bg-violet-50/20 text-violet-700 focus:outline-none focus:border-violet-400 px-1"
+                        disabled={isPending}
+                      />
+                    )}
+
+                    {task.input_type === "file" && (
+                      <div className="flex flex-col items-center gap-1">
+                        {taskStatus?.file_name ? (
+                          <div className="flex items-center gap-1 bg-amber-50 border border-amber-200 rounded px-2 py-1 text-[10px] text-amber-700 font-medium max-w-full">
+                            <Paperclip className="w-3 h-3 flex-shrink-0" />
+                            <span className="truncate max-w-[120px]">{taskStatus.file_name}</span>
+                            <button
+                              onClick={() => handleFileRemove(task.id)}
+                              className="ml-1 hover:text-red-500 flex-shrink-0"
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
+                          </div>
+                        ) : (
+                          <label className={`cursor-pointer flex items-center gap-1 text-[10px] font-medium px-2 py-1 rounded border border-dashed border-amber-300 text-amber-600 hover:bg-amber-50 transition-colors ${uploadingId === task.id ? 'opacity-50 pointer-events-none' : ''}`}>
+                            <Paperclip className="w-3 h-3" />
+                            {uploadingId === task.id ? "업로드 중..." : "파일 첨부"}
+                            <input
+                              type="file"
+                              className="hidden"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) handleFileUpload(task.id, file);
+                              }}
+                            />
+                          </label>
+                        )}
+                      </div>
+                    )}
+
+                    {!task.input_type && (
+                      <span className={`${isDone ? 'text-gray-300' : 'text-gray-500'} text-[11px]`}>
+                        {task.target || "-"}
                       </span>
                     )}
                   </TableCell>
+
                   <TableCell className={`border-l py-2 px-6 leading-relaxed ${(isDone && !task.is_input) ? 'text-gray-300' : 'text-gray-500'}`}>
                     {task.description || "-"}
                   </TableCell>
+
                   <TableCell className="border-l py-2 px-4 shadow-sm">
-                     <Input
-                        value={taskStatus?.remarks || ""}
-                        placeholder="특이사항..."
-                        onChange={(e) => handleRemarkChange(task.id, e.target.value)}
-                        onBlur={(e) => handleRemarkBlur(task.id, isDone, taskStatus?.task_value || null, e.target.value)}
-                        className="h-7 text-[10px] border-gray-200 focus:border-blue-300 bg-white placeholder:text-[9px]"
-                        disabled={isPending}
-                      />
+                    <Input
+                      value={taskStatus?.remarks || ""}
+                      placeholder="특이사항..."
+                      onChange={(e) => handleRemarkChange(task.id, e.target.value)}
+                      onBlur={(e) => handleRemarkBlur(task.id, isDone, taskStatus?.task_value || null, e.target.value)}
+                      className="h-7 text-[10px] border-gray-200 focus:border-blue-300 bg-white placeholder:text-[9px]"
+                      disabled={isPending}
+                    />
                   </TableCell>
                 </TableRow>
               );
@@ -298,9 +421,9 @@ export function ChecklistView({ clientId, tasks, initialStatus }: ChecklistViewP
         </Table>
       </div>
 
-      {/* 하단 플로팅 저장 버튼 */}
+      {/* 하단 플로팅 버튼 */}
       <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-30">
-        <Button 
+        <Button
           onClick={() => router.push('/clients')}
           className="h-14 px-10 rounded-full shadow-2xl bg-primary hover:bg-primary/90 text-white font-bold text-lg gap-3 transition-transform hover:scale-105 active:scale-95"
         >

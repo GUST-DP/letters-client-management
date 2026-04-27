@@ -3,6 +3,8 @@
 import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
 
+export type InputType = "text" | "date" | "file" | null;
+
 export type OnboardingTask = {
   id: string;
   category: string;
@@ -11,6 +13,7 @@ export type OnboardingTask = {
   target: string | null;
   sort_order: number;
   is_input: boolean;
+  input_type: InputType;
 };
 
 export type ClientOnboardingStatus = {
@@ -19,6 +22,8 @@ export type ClientOnboardingStatus = {
   completed_at: string | null;
   task_value?: string | null;
   remarks?: string | null;
+  file_url?: string | null;
+  file_name?: string | null;
 };
 
 // 체크리스트 마스터 데이터 초기화용 (최초 1회만 사용 권장)
@@ -125,6 +130,7 @@ export async function getClientOnboardingStatusAction(clientId: string) {
         target: mt.target,
         sort_order: mt.sort_order,
         is_input: mt.is_input,
+        input_type: mt.input_type,
         remarks: null
       }));
       
@@ -165,15 +171,25 @@ export async function getClientOnboardingStatusAction(clientId: string) {
 /**
  * 항목 상태 업데이트 (입력값 포함)
  */
-export async function toggleOnboardingTaskAction(clientId: string, taskId: string, isCompleted: boolean, taskValue: string | null = null, remarks: string | null = null) {
+export async function toggleOnboardingTaskAction(
+  clientId: string,
+  taskId: string,
+  isCompleted: boolean,
+  taskValue: string | null = null,
+  remarks: string | null = null,
+  fileUrl: string | null = null,
+  fileName: string | null = null,
+) {
   const supabase = await createClient();
   
-  const updateData: any = {
+  const updateData: Record<string, unknown> = {
     is_completed: isCompleted,
     completed_at: isCompleted ? new Date().toISOString() : null,
     updated_at: new Date().toISOString(),
     task_value: taskValue,
-    remarks: remarks
+    remarks: remarks,
+    file_url: fileUrl,
+    file_name: fileName,
   };
 
   const { error } = await supabase
@@ -183,8 +199,6 @@ export async function toggleOnboardingTaskAction(clientId: string, taskId: strin
     .eq('task_id', taskId);
 
   if (error) return { error: error.message };
-
-  // await checkAndSetOperatingStatus(clientId); // 자동 상태 변경 제거
 
   revalidatePath(`/clients/${clientId}/onboarding`);
   revalidatePath(`/clients`);

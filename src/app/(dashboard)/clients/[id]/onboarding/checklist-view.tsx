@@ -138,7 +138,7 @@ export function ChecklistView({ clientId, tasks, initialStatus }: ChecklistViewP
       const filePath = `onboarding/${clientId}/${taskId}_${Date.now()}_${file.name}`;
       
       const { error: upErr } = await supabase.storage
-        .from("onboarding-files")
+        .from("issue_attachments")
         .upload(filePath, file, { upsert: true });
 
       if (upErr) {
@@ -147,7 +147,7 @@ export function ChecklistView({ clientId, tasks, initialStatus }: ChecklistViewP
       }
 
       const { data: urlData } = supabase.storage
-        .from("onboarding-files")
+        .from("issue_attachments")
         .getPublicUrl(filePath);
 
       const fileUrl = urlData.publicUrl;

@@ -221,18 +221,18 @@ export function ChecklistManager({ initialTasks, title, description }: Props) {
               <TableRow key={task.id} className="border-b border-slate-100 transition-all hover:bg-slate-50/50 group">
                 {/* 순서 변경 버튼 */}
                 <TableCell className="py-1 px-1 border-r border-slate-100 text-center align-middle">
-                  <div className="flex flex-col items-center gap-1">
+                  <div className="flex items-center justify-center gap-0.5">
                     <button
                       onClick={() => handleReorder(task.id, "up")}
                       disabled={isPending || index === 0}
-                      className="p-1 rounded bg-white border border-slate-300 text-slate-700 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-300 disabled:opacity-30 transition-all shadow-sm"
+                      className="p-1 rounded text-slate-400 hover:bg-blue-50 hover:text-blue-600 disabled:opacity-20 transition-colors"
                     >
                       <ChevronUp className="w-4 h-4 stroke-[3]" />
                     </button>
                     <button
                       onClick={() => handleReorder(task.id, "down")}
                       disabled={isPending || index === initialTasks.length - 1}
-                      className="p-1 rounded bg-white border border-slate-300 text-slate-700 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-300 disabled:opacity-30 transition-all shadow-sm"
+                      className="p-1 rounded text-slate-400 hover:bg-blue-50 hover:text-blue-600 disabled:opacity-20 transition-colors"
                     >
                       <ChevronDown className="w-4 h-4 stroke-[3]" />
                     </button>

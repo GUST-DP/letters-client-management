@@ -2,7 +2,7 @@
 
 import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
-import { sendTeamsMessage, getKSTTimestamp } from "@/lib/teams";
+import { sendSlackMessage, getKSTTimestamp } from "@/lib/slack";
 import { parseFiles } from "@/lib/utils";
 
 export async function createClientOperationIssue(formData: FormData) {
@@ -34,7 +34,7 @@ export async function createClientOperationIssue(formData: FormData) {
 
   if (error) return { error: error.message };
 
-  // 팀즈 알림 전송 (배경 실행)
+  // 슬랙 알림 전송 (배경 실행)
   (async () => {
     try {
       const { data: clientData } = await supabase
@@ -45,7 +45,7 @@ export async function createClientOperationIssue(formData: FormData) {
 
       const timestamp = getKSTTimestamp(); // 한국 표준시(KST) 기준
 
-      sendTeamsMessage({
+      sendSlackMessage({
         title: `🔔 새로운 [고객사]이슈가 등록되었습니다.`,
         subtitle: timestamp,
         buttonUrl: "https://letus-client-management.vercel.app/client-issues",
@@ -59,7 +59,7 @@ export async function createClientOperationIssue(formData: FormData) {
         lastSection: { "name": "이슈내용 요약", "value": issue_content },
       });
     } catch (err) {
-      console.error("팀즈 알림 실패 (고객사 이슈 등록):", err);
+      console.error("슬랙 알림 실패 (고객사 이슈 등록):", err);
     }
   })();
 
@@ -98,7 +98,7 @@ export async function updateClientOperationIssue(formData: FormData) {
 
   if (error) return { error: error.message };
 
-  // 팀즈 알림 전송 (배경 실행)
+  // 슬랙 알림 전송 (배경 실행)
   (async () => {
     try {
       const { data: issueData } = await supabase
@@ -109,7 +109,7 @@ export async function updateClientOperationIssue(formData: FormData) {
 
       const timestamp = getKSTTimestamp(); // 한국 표준시(KST) 기준
 
-      sendTeamsMessage({
+      sendSlackMessage({
         title: `✅ 조치사항이 등록되었습니다.`,
         subtitle: timestamp,
         buttonUrl: "https://letus-client-management.vercel.app/client-issues",
@@ -128,7 +128,7 @@ export async function updateClientOperationIssue(formData: FormData) {
         ],
       });
     } catch (err) {
-      console.error("팀즈 알림 실패 (고객사 이슈 업데이트):", err);
+      console.error("슬랙 알림 실패 (고객사 이슈 업데이트):", err);
     }
   })();
 

@@ -2,7 +2,7 @@
 
 import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
-import { sendTeamsMessage, getKSTTimestamp } from "@/lib/teams";
+import { sendSlackMessage, getKSTTimestamp } from "@/lib/slack";
 import { parseFiles } from "@/lib/utils";
 
 export async function createIssue(formData: FormData) {
@@ -33,7 +33,7 @@ export async function createIssue(formData: FormData) {
   const file_url = formData.get('file_url') as string || null;
   const file_name = formData.get('file_name') as string || null;
 
-  // 팀즈 알림 전송 (배경 실행)
+  // 슬랙 알림 전송 (배경 실행)
   (async () => {
     try {
       const { data: clientData } = await supabase
@@ -44,7 +44,7 @@ export async function createIssue(formData: FormData) {
 
       const timestamp = getKSTTimestamp(); // 한국 표준시(KST) 기준
 
-      sendTeamsMessage({
+      sendSlackMessage({
         title: `🔔 새로운 [서비스]이슈가 등록되었습니다.`,
         subtitle: timestamp,
         subtitles: [`📌 건명: ${formData.get('title') || "-"}`],
@@ -61,7 +61,7 @@ export async function createIssue(formData: FormData) {
         lastSection: { "name": "이슈내용 요약", "value": formData.get('issue_content') as string },
       });
     } catch (err) {
-      console.error("팀즈 알림 실패 (서비스 이슈 등록):", err);
+      console.error("슬랙 알림 실패 (서비스 이슈 등록):", err);
     }
   })();
 
@@ -103,7 +103,7 @@ export async function updateIssueResponse(formData: FormData) {
     return { error: error.message };
   }
 
-  // 팀즈 알림 전송 (배경 실행)
+  // 슬랙 알림 전송 (배경 실행)
   (async () => {
     try {
       const { data: issueData } = await supabase
@@ -114,7 +114,7 @@ export async function updateIssueResponse(formData: FormData) {
 
       const timestamp = getKSTTimestamp(); // 한국 표준시(KST) 기준
 
-      sendTeamsMessage({
+      sendSlackMessage({
         title: `✅ 조치등록이 완료되었습니다.`,
         subtitle: timestamp,
         subtitles: [`📌 건명: ${(issueData as any)?.title || "-"}`],
@@ -135,7 +135,7 @@ export async function updateIssueResponse(formData: FormData) {
         ],
       });
     } catch (err) {
-      console.error("팀즈 알림 실패 (서비스 이슈 조치 완료):", err);
+      console.error("슬랙 알림 실패 (서비스 이슈 조치 완료):", err);
     }
   })();
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   flexRender,
   getCoreRowModel,
@@ -122,6 +122,19 @@ export function ClientIssueTable({
       return true;
     });
   }, [data, filterClient, filterCategory, filterStatus, startDate, endDate]);
+
+  const [pageIndex, setPageIndex] = useState(0);
+  const pageSize = 10;
+  const pageCount = Math.ceil(filteredData.length / pageSize) || 1;
+
+  useEffect(() => {
+    setPageIndex(0);
+  }, [filterClient, filterCategory, filterStatus, startDate, endDate]);
+
+  const paginatedData = useMemo(() => {
+    const start = pageIndex * pageSize;
+    return filteredData.slice(start, start + pageSize);
+  }, [filteredData, pageIndex]);
 
   const handleExport = () => {
     const headers = ["No", "발생일", "등록일", "고객사", "이슈유형", "이슈내용", "책임주체", "진행상태", "조치내용", "등록자"];
@@ -288,7 +301,7 @@ export function ClientIssueTable({
               </tr>
             </thead>
             <tbody>
-              {filteredData.length === 0 ? (
+              {paginatedData.length === 0 ? (
                 <tr>
                   <td colSpan={10} className="h-[220px] text-center">
                     <div className="flex flex-col items-center justify-center gap-3">
@@ -300,7 +313,7 @@ export function ClientIssueTable({
                   </td>
                 </tr>
               ) : (
-                filteredData.map((item, idx) => {
+                paginatedData.map((item, idx) => {
                   const isSelected = selectedId === item.id;
                   return (
                     <tr
@@ -312,7 +325,7 @@ export function ClientIssueTable({
                       style={{height:"30px"}}
                       onClick={() => onRowClick?.(item)}
                     >
-                      <td style={{height:"30px",fontSize:"11px",lineHeight:"30px",padding:"0 10px",overflow:"hidden"}} className="border-r border-slate-100 text-center text-slate-400">{idx + 1}</td>
+                      <td style={{height:"30px",fontSize:"11px",lineHeight:"30px",padding:"0 10px",overflow:"hidden"}} className="border-r border-slate-100 text-center text-slate-400">{pageIndex * pageSize + idx + 1}</td>
                       <td style={{height:"30px",fontSize:"11px",lineHeight:"30px",padding:"0 10px",overflow:"hidden",whiteSpace:"nowrap"}} className="border-r border-slate-100 text-center font-bold text-slate-700">{item.occurrence_date}</td>
                       <td style={{height:"30px",fontSize:"11px",lineHeight:"30px",padding:"0 10px",overflow:"hidden",whiteSpace:"nowrap"}} className="border-r border-slate-100 text-center text-slate-500">{item.created_at ? item.created_at.slice(0, 10) : "-"}</td>
                       <td style={{height:"30px",fontSize:"11px",lineHeight:"30px",padding:"0 10px",overflow:"hidden"}} className="border-r border-slate-100 text-center">
@@ -373,8 +386,8 @@ export function ClientIssueTable({
                 })
               )}
               {/* 빈 행으로 10행 고정 */}
-              {filteredData.length < 10 &&
-                Array.from({ length: 10 - filteredData.length }).map((_, i) => (
+              {paginatedData.length < 10 &&
+                Array.from({ length: 10 - paginatedData.length }).map((_, i) => (
                   <tr key={`empty-${i}`} style={{height:"30px"}} className="border-b border-slate-50 last:border-0 hover:bg-transparent">
                     {Array.from({ length: 10 }).map((_, j) => (
                       <td key={j} style={{height:"30px",padding:"0 10px"}} className="border-r border-slate-50 last:border-r-0">&nbsp;</td>
@@ -387,10 +400,37 @@ export function ClientIssueTable({
         </div>
       </div>
 
-      {/* 하단 카운터 */}
+      {/* 페이징 컨트롤 */}
       <div className="flex items-center justify-between px-2">
-        <div className="bg-slate-100 px-3 py-1 rounded-full text-[11px] font-black text-slate-500 uppercase tracking-tighter">
-          Total {filteredData.length}
+        <div className="flex items-center gap-3">
+          <div className="bg-slate-100 px-3 py-1 rounded-full text-[11px] font-black text-slate-500 uppercase tracking-tighter">
+            Total {filteredData.length}
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setPageIndex(p => Math.max(0, p - 1))}
+            disabled={pageIndex === 0}
+            className="h-8 w-8 p-0 rounded-lg hover:bg-slate-100 text-slate-400"
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+          <div className="flex items-center bg-white border border-slate-200 rounded-lg h-8 px-4 shadow-sm">
+             <span className="text-[13px] font-black text-slate-800">{pageIndex + 1}</span>
+             <span className="text-[11px] font-bold text-slate-300 mx-2">/</span>
+             <span className="text-[13px] font-bold text-slate-400">{pageCount}</span>
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setPageIndex(p => Math.min(pageCount - 1, p + 1))}
+            disabled={pageIndex >= pageCount - 1}
+            className="h-8 w-8 p-0 rounded-lg hover:bg-slate-100 text-slate-400"
+          >
+            <ChevronRight className="h-4 w-4" />
+          </Button>
         </div>
       </div>
 

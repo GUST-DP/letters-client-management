@@ -233,7 +233,13 @@ export function IssueAnalyticsSection({
 }: IssueAnalyticsProps) {
   return (
     <div className="grid gap-3 grid-cols-1 md:grid-cols-3">
-      {/* ① 고객사 이슈 유형별 */}
+      {/* ① 고객사별 이슈 건수 */}
+      <ClientIssueRankCard
+        annualData={issueByClient}
+        monthlyData={issueByClientMonthly}
+      />
+
+      {/* ② 고객사 이슈 유형별 */}
       <HorizontalDonutCard
         title="고객사 이슈 유형별"
         icon={<AlertCircle className="h-4 w-4" />}
@@ -241,12 +247,6 @@ export function IssueAnalyticsSection({
         annualData={clientIssueByType}
         monthlyData={clientIssueByTypeMonthly}
         colors={CLIENT_ISSUE_COLORS}
-      />
-
-      {/* ② 고객사별 이슈 건수 */}
-      <ClientIssueRankCard
-        annualData={issueByClient}
-        monthlyData={issueByClientMonthly}
       />
 
       {/* ③ 서비스 이슈 유형별 */}

@@ -71,7 +71,7 @@ export default async function Home() {
   // 고객사 이슈(client_operation_issues) 유형별 집계
   const { data: opIssuesFullRaw } = await supabase
     .from("client_operation_issues")
-    .select("issue_category, occurrence_date, clients(company_name)");
+    .select("issue_category, occurrence_date, created_at, clients(company_name)");
   const opIssuesFull = opIssuesFullRaw ?? [];
 
   const clientIssueByTypeMap: Record<string, number> = {};
@@ -84,17 +84,23 @@ export default async function Home() {
   opIssuesFull.forEach((i: any) => {
     const type = i.issue_category || "기타";
     const cName = (i.clients as any)?.company_name || "알 수 없음";
-    // 연누적
-    clientIssueByTypeMap[type] = (clientIssueByTypeMap[type] || 0) + 1;
-    issueByClientCombinedMap[cName] = (issueByClientCombinedMap[cName] || 0) + 1;
-    // 당월
-    if (i.occurrence_date?.startsWith(currentMonthStr)) {
+    // 등록일 (created_at) 기준 날짜 추출 (YYYY-MM-DD)
+    const registeredDateStr = i.created_at ? i.created_at.slice(0, 10) : "";
+    const registeredMonthStr = registeredDateStr.slice(0, 7); // YYYY-MM
+    // 연누적 (등록일 연도 기준)
+    const registeredYear = registeredDateStr ? parseInt(registeredDateStr.slice(0, 4)) : 0;
+    if (registeredYear === currentYear) {
+      clientIssueByTypeMap[type] = (clientIssueByTypeMap[type] || 0) + 1;
+      issueByClientCombinedMap[cName] = (issueByClientCombinedMap[cName] || 0) + 1;
+    }
+    // 당월 (등록일 기준)
+    if (registeredMonthStr === currentMonthStr) {
       clientIssueByTypeMonthlyMap[type] = (clientIssueByTypeMonthlyMap[type] || 0) + 1;
       issueByClientMonthlyMap[cName] = (issueByClientMonthlyMap[cName] || 0) + 1;
     }
-    // 당주 (ISO 주차 기준)
-    if (i.occurrence_date) {
-      const d = new Date(i.occurrence_date);
+    // 당주 (ISO 주차 기준 - 등록일 기준)
+    if (registeredDateStr) {
+      const d = new Date(registeredDateStr);
       const isoWeek = getISOWeek(d);
       if (isoWeek.year === currentISOWeek.year && isoWeek.week === currentISOWeek.week) {
         clientIssueByTypeWeeklyMap[type] = (clientIssueByTypeWeeklyMap[type] || 0) + 1;
@@ -116,7 +122,7 @@ export default async function Home() {
   // 서비스 이슈(client_issues) 유형별 집계
   const { data: svcIssuesFullRaw } = await supabase
     .from("client_issues")
-    .select("issue_type, occurrence_date, clients(company_name)");
+    .select("issue_type, occurrence_date, created_at, clients(company_name)");
   const svcIssuesFull = svcIssuesFullRaw ?? [];
 
   const serviceIssueByTypeMap: Record<string, number> = {};
@@ -126,17 +132,23 @@ export default async function Home() {
   svcIssuesFull.forEach((i: any) => {
     const type = i.issue_type || "기타";
     const cName = (i.clients as any)?.company_name || "알 수 없음";
-    // 연누적
-    serviceIssueByTypeMap[type] = (serviceIssueByTypeMap[type] || 0) + 1;
-    issueByClientCombinedMap[cName] = (issueByClientCombinedMap[cName] || 0) + 1;
-    // 당월
-    if (i.occurrence_date?.startsWith(currentMonthStr)) {
+    // 등록일 (created_at) 기준 날짜 추출 (YYYY-MM-DD)
+    const registeredDateStr = i.created_at ? i.created_at.slice(0, 10) : "";
+    const registeredMonthStr = registeredDateStr.slice(0, 7); // YYYY-MM
+    // 연누적 (등록일 연도 기준)
+    const registeredYear = registeredDateStr ? parseInt(registeredDateStr.slice(0, 4)) : 0;
+    if (registeredYear === currentYear) {
+      serviceIssueByTypeMap[type] = (serviceIssueByTypeMap[type] || 0) + 1;
+      issueByClientCombinedMap[cName] = (issueByClientCombinedMap[cName] || 0) + 1;
+    }
+    // 당월 (등록일 기준)
+    if (registeredMonthStr === currentMonthStr) {
       serviceIssueByTypeMonthlyMap[type] = (serviceIssueByTypeMonthlyMap[type] || 0) + 1;
       issueByClientMonthlyMap[cName] = (issueByClientMonthlyMap[cName] || 0) + 1;
     }
-    // 당주 (ISO 주차 기준)
-    if (i.occurrence_date) {
-      const d = new Date(i.occurrence_date);
+    // 당주 (ISO 주차 기준 - 등록일 기준)
+    if (registeredDateStr) {
+      const d = new Date(registeredDateStr);
       const isoWeek = getISOWeek(d);
       if (isoWeek.year === currentISOWeek.year && isoWeek.week === currentISOWeek.week) {
         serviceIssueByTypeWeeklyMap[type] = (serviceIssueByTypeWeeklyMap[type] || 0) + 1;

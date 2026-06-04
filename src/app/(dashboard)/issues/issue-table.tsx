@@ -59,9 +59,10 @@ export function IssueTable({ data, clients, teams, userEmail, userName, onRowCli
         if (clientName !== filterClient) return false;
       }
       
-      // 기간 조회 필터
-      if (startDate && item.occurrence_date < startDate) return false;
-      if (endDate && item.occurrence_date > endDate) return false;
+      // 등록일 기준 기간 조회 필터 (created_at)
+      const registeredDate = item.created_at ? item.created_at.slice(0, 10) : "";
+      if (startDate && registeredDate < startDate) return false;
+      if (endDate && registeredDate > endDate) return false;
 
       return true;
     });
@@ -166,7 +167,7 @@ export function IssueTable({ data, clients, teams, userEmail, userName, onRowCli
       <div className="flex flex-nowrap items-center justify-between bg-white px-3 py-2 rounded-2xl border border-slate-200 shadow-sm overflow-x-auto min-w-0">
         <div className="flex items-center gap-2.5 flex-1 min-w-0 overflow-hidden">
           <div className="flex items-center gap-1.5 border-r border-slate-200 pr-3 shrink-0">
-            <label className="text-[10px] font-black text-slate-400 uppercase whitespace-nowrap">조회기간</label>
+            <label className="text-[10px] font-black text-slate-400 uppercase whitespace-nowrap">등록일기준</label>
             <div className="flex items-center gap-1">
               <input 
                 type="date" 

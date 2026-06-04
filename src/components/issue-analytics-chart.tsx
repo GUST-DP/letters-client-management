@@ -17,13 +17,21 @@ const CLIENT_BAR_COLORS = [
 ];
 
 interface ChartItem { name: string; value: number; }
-type Period = "monthly" | "annual";
+type Period = "weekly" | "monthly" | "annual";
 
 // ── 기간 토글 버튼 ────────────────────────────────────────────────────────────
-function PeriodToggle({ period, onChange }: { period: Period; onChange: (p: Period) => void }) {
+function PeriodToggle({
+  period,
+  onChange,
+  weekLabel,
+}: {
+  period: Period;
+  onChange: (p: Period) => void;
+  weekLabel?: string;
+}) {
   return (
     <div className="flex items-center bg-slate-100 rounded-lg p-0.5 gap-0.5 flex-shrink-0">
-      {(["monthly", "annual"] as Period[]).map((p) => (
+      {(["weekly", "monthly", "annual"] as Period[]).map((p) => (
         <button
           key={p}
           onClick={() => onChange(p)}
@@ -34,7 +42,7 @@ function PeriodToggle({ period, onChange }: { period: Period; onChange: (p: Peri
               : "text-slate-400 hover:text-slate-600",
           ].join(" ")}
         >
-          {p === "monthly" ? "당월" : "연누적"}
+          {p === "weekly" ? (weekLabel || "당주") : p === "monthly" ? "당월" : "연누적"}
         </button>
       ))}
     </div>
@@ -48,18 +56,29 @@ function HorizontalDonutCard({
   iconColor,
   annualData,
   monthlyData,
+  weeklyData,
   colors,
+  weekLabel,
 }: {
   title: string;
   icon: React.ReactNode;
   iconColor: string;
   annualData: ChartItem[];
   monthlyData: ChartItem[];
+  weeklyData: ChartItem[];
   colors: string[];
+  weekLabel?: string;
 }) {
-  const [period, setPeriod] = useState<Period>("monthly");
-  const data = period === "monthly" ? monthlyData : annualData;
+  const [period, setPeriod] = useState<Period>("weekly");
+  const data = period === "weekly" ? weeklyData : period === "monthly" ? monthlyData : annualData;
   const total = data.reduce((s, d) => s + d.value, 0);
+
+  const emptyMsg =
+    period === "weekly"
+      ? `${weekLabel || "당주"} 이슈 없음`
+      : period === "monthly"
+      ? "당월 이슈 없음"
+      : "등록된 이슈 없음";
 
   return (
     <Card className="border-none shadow-sm">
@@ -71,14 +90,14 @@ function HorizontalDonutCard({
             {total > 0 && (
               <span className="text-[11px] font-bold text-slate-400">총 {total}건</span>
             )}
-            <PeriodToggle period={period} onChange={setPeriod} />
+            <PeriodToggle period={period} onChange={setPeriod} weekLabel={weekLabel} />
           </div>
         </CardTitle>
       </CardHeader>
       <CardContent className="p-3">
         {total === 0 ? (
           <div className="h-[160px] flex items-center justify-center text-slate-300 text-xs font-bold">
-            {period === "monthly" ? "당월 이슈 없음" : "등록된 이슈 없음"}
+            {emptyMsg}
           </div>
         ) : (
           <div className="flex items-center gap-2">
@@ -149,12 +168,16 @@ function HorizontalDonutCard({
 function ClientIssueRankCard({
   annualData,
   monthlyData,
+  weeklyData,
+  weekLabel,
 }: {
   annualData: ChartItem[];
   monthlyData: ChartItem[];
+  weeklyData: ChartItem[];
+  weekLabel?: string;
 }) {
-  const [period, setPeriod] = useState<Period>("monthly");
-  const data = period === "monthly" ? monthlyData : annualData;
+  const [period, setPeriod] = useState<Period>("weekly");
+  const data = period === "weekly" ? weeklyData : period === "monthly" ? monthlyData : annualData;
   const maxVal = data.length > 0 ? Math.max(...data.map((d) => d.value)) : 1;
 
   return (
@@ -167,14 +190,18 @@ function ClientIssueRankCard({
             {data.length > 0 && (
               <span className="text-[11px] font-bold text-slate-400">전체 합산</span>
             )}
-            <PeriodToggle period={period} onChange={setPeriod} />
+            <PeriodToggle period={period} onChange={setPeriod} weekLabel={weekLabel} />
           </div>
         </CardTitle>
       </CardHeader>
       <CardContent className="p-3">
         {data.length === 0 ? (
           <div className="h-[160px] flex items-center justify-center text-slate-300 text-xs font-bold">
-            {period === "monthly" ? "당월 이슈 없음" : "데이터 없음"}
+            {period === "weekly"
+              ? `${weekLabel || "당주"} 이슈 없음`
+              : period === "monthly"
+              ? "당월 이슈 없음"
+              : "데이터 없음"}
           </div>
         ) : (
           <div className="space-y-2">
@@ -217,19 +244,27 @@ function ClientIssueRankCard({
 export interface IssueAnalyticsProps {
   clientIssueByType: ChartItem[];
   clientIssueByTypeMonthly: ChartItem[];
+  clientIssueByTypeWeekly: ChartItem[];
   serviceIssueByType: ChartItem[];
   serviceIssueByTypeMonthly: ChartItem[];
+  serviceIssueByTypeWeekly: ChartItem[];
   issueByClient: ChartItem[];
   issueByClientMonthly: ChartItem[];
+  issueByClientWeekly: ChartItem[];
+  currentWeekLabel: string;
 }
 
 export function IssueAnalyticsSection({
   clientIssueByType,
   clientIssueByTypeMonthly,
+  clientIssueByTypeWeekly,
   serviceIssueByType,
   serviceIssueByTypeMonthly,
+  serviceIssueByTypeWeekly,
   issueByClient,
   issueByClientMonthly,
+  issueByClientWeekly,
+  currentWeekLabel,
 }: IssueAnalyticsProps) {
   return (
     <div className="grid gap-3 grid-cols-1 md:grid-cols-3">
@@ -237,6 +272,8 @@ export function IssueAnalyticsSection({
       <ClientIssueRankCard
         annualData={issueByClient}
         monthlyData={issueByClientMonthly}
+        weeklyData={issueByClientWeekly}
+        weekLabel={currentWeekLabel}
       />
 
       {/* ② 고객사 이슈 유형별 */}
@@ -246,7 +283,9 @@ export function IssueAnalyticsSection({
         iconColor="#ff5c39"
         annualData={clientIssueByType}
         monthlyData={clientIssueByTypeMonthly}
+        weeklyData={clientIssueByTypeWeekly}
         colors={CLIENT_ISSUE_COLORS}
+        weekLabel={currentWeekLabel}
       />
 
       {/* ③ 서비스 이슈 유형별 */}
@@ -256,7 +295,9 @@ export function IssueAnalyticsSection({
         iconColor="#3b82f6"
         annualData={serviceIssueByType}
         monthlyData={serviceIssueByTypeMonthly}
+        weeklyData={serviceIssueByTypeWeekly}
         colors={SERVICE_ISSUE_COLORS}
+        weekLabel={currentWeekLabel}
       />
     </div>
   );

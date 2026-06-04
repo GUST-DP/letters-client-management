@@ -52,6 +52,21 @@ export default async function Home() {
   const lastMonthDate = new Date(today.getFullYear(), today.getMonth() - 1, 1);
   const lastMonthStr = `${lastMonthDate.getFullYear()}-${String(lastMonthDate.getMonth() + 1).padStart(2, "0")}`;
 
+  // ── ISO 주차 계산 헬퍼 ──
+  // ISO 8601: 월요일 시작, 1월 첫 번째 목요일이 포함된 주가 W01
+  function getISOWeek(date: Date): { year: number; week: number } {
+    const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+    const dayNum = d.getUTCDay() || 7; // 일요일=7
+    d.setUTCDate(d.getUTCDate() + 4 - dayNum); // 가장 가까운 목요일
+    const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+    const weekNo = Math.ceil((((d.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
+    return { year: d.getUTCFullYear(), week: weekNo };
+  }
+
+  // 현재 주차 정보
+  const currentISOWeek = getISOWeek(today);
+  const currentWeekStr = `W${String(currentISOWeek.week).padStart(2, "0")}`; // e.g. "W23"
+
   // ── 이슈 분석용 추가 데이터 패칭 ──
   // 고객사 이슈(client_operation_issues) 유형별 집계
   const { data: opIssuesFullRaw } = await supabase
@@ -61,8 +76,10 @@ export default async function Home() {
 
   const clientIssueByTypeMap: Record<string, number> = {};
   const clientIssueByTypeMonthlyMap: Record<string, number> = {};
+  const clientIssueByTypeWeeklyMap: Record<string, number> = {};
   const issueByClientCombinedMap: Record<string, number> = {};
   const issueByClientMonthlyMap: Record<string, number> = {};
+  const issueByClientWeeklyMap: Record<string, number> = {};
 
   opIssuesFull.forEach((i: any) => {
     const type = i.issue_category || "기타";
@@ -75,12 +92,24 @@ export default async function Home() {
       clientIssueByTypeMonthlyMap[type] = (clientIssueByTypeMonthlyMap[type] || 0) + 1;
       issueByClientMonthlyMap[cName] = (issueByClientMonthlyMap[cName] || 0) + 1;
     }
+    // 당주 (ISO 주차 기준)
+    if (i.occurrence_date) {
+      const d = new Date(i.occurrence_date);
+      const isoWeek = getISOWeek(d);
+      if (isoWeek.year === currentISOWeek.year && isoWeek.week === currentISOWeek.week) {
+        clientIssueByTypeWeeklyMap[type] = (clientIssueByTypeWeeklyMap[type] || 0) + 1;
+        issueByClientWeeklyMap[cName] = (issueByClientWeeklyMap[cName] || 0) + 1;
+      }
+    }
   });
 
   const clientIssueByTypeData = Object.entries(clientIssueByTypeMap)
     .map(([name, value]) => ({ name, value }))
     .sort((a, b) => b.value - a.value);
   const clientIssueByTypeMonthlyData = Object.entries(clientIssueByTypeMonthlyMap)
+    .map(([name, value]) => ({ name, value }))
+    .sort((a, b) => b.value - a.value);
+  const clientIssueByTypeWeeklyData = Object.entries(clientIssueByTypeWeeklyMap)
     .map(([name, value]) => ({ name, value }))
     .sort((a, b) => b.value - a.value);
 
@@ -92,6 +121,7 @@ export default async function Home() {
 
   const serviceIssueByTypeMap: Record<string, number> = {};
   const serviceIssueByTypeMonthlyMap: Record<string, number> = {};
+  const serviceIssueByTypeWeeklyMap: Record<string, number> = {};
 
   svcIssuesFull.forEach((i: any) => {
     const type = i.issue_type || "기타";
@@ -104,6 +134,15 @@ export default async function Home() {
       serviceIssueByTypeMonthlyMap[type] = (serviceIssueByTypeMonthlyMap[type] || 0) + 1;
       issueByClientMonthlyMap[cName] = (issueByClientMonthlyMap[cName] || 0) + 1;
     }
+    // 당주 (ISO 주차 기준)
+    if (i.occurrence_date) {
+      const d = new Date(i.occurrence_date);
+      const isoWeek = getISOWeek(d);
+      if (isoWeek.year === currentISOWeek.year && isoWeek.week === currentISOWeek.week) {
+        serviceIssueByTypeWeeklyMap[type] = (serviceIssueByTypeWeeklyMap[type] || 0) + 1;
+        issueByClientWeeklyMap[cName] = (issueByClientWeeklyMap[cName] || 0) + 1;
+      }
+    }
   });
 
   const serviceIssueByTypeData = Object.entries(serviceIssueByTypeMap)
@@ -112,13 +151,20 @@ export default async function Home() {
   const serviceIssueByTypeMonthlyData = Object.entries(serviceIssueByTypeMonthlyMap)
     .map(([name, value]) => ({ name, value }))
     .sort((a, b) => b.value - a.value);
+  const serviceIssueByTypeWeeklyData = Object.entries(serviceIssueByTypeWeeklyMap)
+    .map(([name, value]) => ({ name, value }))
+    .sort((a, b) => b.value - a.value);
 
-  // 고객사별 이슈 건수 TOP 8 (연누적 / 당월)
+  // 고객사별 이슈 건수 TOP 8 (연누적 / 당월 / 당주)
   const issueByClientCombinedData = Object.entries(issueByClientCombinedMap)
     .map(([name, value]) => ({ name, value }))
     .sort((a, b) => b.value - a.value)
     .slice(0, 8);
   const issueByClientMonthlyData = Object.entries(issueByClientMonthlyMap)
+    .map(([name, value]) => ({ name, value }))
+    .sort((a, b) => b.value - a.value)
+    .slice(0, 8);
+  const issueByClientWeeklyData = Object.entries(issueByClientWeeklyMap)
     .map(([name, value]) => ({ name, value }))
     .sort((a, b) => b.value - a.value)
     .slice(0, 8);
@@ -509,10 +555,14 @@ export default async function Home() {
         <IssueAnalyticsSection
             clientIssueByType={clientIssueByTypeData}
             clientIssueByTypeMonthly={clientIssueByTypeMonthlyData}
+            clientIssueByTypeWeekly={clientIssueByTypeWeeklyData}
             serviceIssueByType={serviceIssueByTypeData}
             serviceIssueByTypeMonthly={serviceIssueByTypeMonthlyData}
+            serviceIssueByTypeWeekly={serviceIssueByTypeWeeklyData}
             issueByClient={issueByClientCombinedData}
             issueByClientMonthly={issueByClientMonthlyData}
+            issueByClientWeekly={issueByClientWeeklyData}
+            currentWeekLabel={currentWeekStr}
           />
 
         {/* ── 하단: 미수금 + 인입경로 + 매출 TOP 5 (균형 잡힌 높이 유지) ── */}
